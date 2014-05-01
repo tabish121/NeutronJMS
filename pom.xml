@@ -67,7 +67,7 @@
   </properties>
 
   <issueManagement>
-    <url>https://github.com/fusesource/hawtjms/issues</url>
+    <url>https://github.com/fusesource/neutronjms/issues</url>
     <system>GitHub Issues</system>
   </issueManagement>
 
@@ -90,7 +90,7 @@
   <dependencyManagement>
     <dependencies>
       <!-- =============================== -->
-      <!-- Internal hawtJMS Dependencies -->
+      <!-- Internal NeutronJMS Dependencies -->
       <!-- =============================== -->
       <dependency>
         <groupId>io.neutronjms</groupId>
