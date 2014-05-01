@@ -22,16 +22,16 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>io.hawtjms</groupId>
-  <artifactId>hawtjms-parent</artifactId>
+  <groupId>io.neutronjms</groupId>
+  <artifactId>neutronjms-parent</artifactId>
   <version>1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
-  <name>hawtJMS</name>
+  <name>NeutronJMS</name>
   <inceptionYear>2013</inceptionYear>
-  <url>https://github.com/fusesource/hawtjms/</url>
+  <url>https://github.com/fusesource/neutronjms/</url>
 
   <description>
-      hawtJMS is a JMS framework featuring support for a variety of wire level protocols and
+      NeutronJMS is a JMS framework featuring support for a variety of wire level protocols and
       advance messaging features.
   </description>
 
@@ -50,7 +50,7 @@
     <hawtdispatch-version>1.20</hawtdispatch-version>
     <activemq-version>5.10-SNAPSHOT</activemq-version>
     <apollo-version>1.7</apollo-version>
-    <proton-version>0.6.redhat-002</proton-version>
+    <proton-version>0.7</proton-version>
     <fuse-joram-tests-version>1.0</fuse-joram-tests-version>
     <jetty-version>8.1.14.v20131031</jetty-version>
     <vertex-version>2.0.2-final</vertex-version>
@@ -72,19 +72,19 @@
   </issueManagement>
 
   <scm>
-    <connection>scm:git:git://github.com/fusesource/hawtjms.git</connection>
-    <developerConnection>scm:git:git://github.com/fusesource/hawtjms.git</developerConnection>
-    <url>hhttps://github.com/fusesource/hawtjms</url>
+    <connection>scm:git:git://github.com/tabish121/NeutronJMS.git</connection>
+    <developerConnection>scm:git:git://github.com/tabish121/NeutronJMS.git</developerConnection>
+    <url>hhttps://github.com/tabish121/NeutronJMS/issues</url>
     <tag>HEAD</tag>
   </scm>
 
   <modules>
-    <module>hawtjms-core</module>
-    <module>hawtjms-amqp</module>
-    <module>hawtjms-discovery</module>
-    <module>hawtjms-stomp</module>
-    <module>hawtjms-tests</module>
-    <module>hawtjms-test-support</module>
+    <module>neutronjms-core</module>
+    <module>neutronjms-amqp</module>
+    <module>neutronjms-discovery</module>
+    <module>neutronjms-stomp</module>
+    <module>neutronjms-tests</module>
+    <module>neutronjms-test-support</module>
   </modules>
 
   <dependencyManagement>
@@ -93,28 +93,28 @@
       <!-- Internal hawtJMS Dependencies -->
       <!-- =============================== -->
       <dependency>
-        <groupId>io.hawtjms</groupId>
-        <artifactId>hawtjms-core</artifactId>
+        <groupId>io.neutronjms</groupId>
+        <artifactId>neutronjms-core</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>io.hawtjms</groupId>
-        <artifactId>hawtjms-amqp</artifactId>
+        <groupId>io.neutronjms</groupId>
+        <artifactId>neutronjms-amqp</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>io.hawtjms</groupId>
-        <artifactId>hawtjms-stomp</artifactId>
+        <groupId>io.neutronjms</groupId>
+        <artifactId>neutronjms-stomp</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>io.hawtjms</groupId>
-        <artifactId>hawtjms-test-support</artifactId>
+        <groupId>io.neutronjms</groupId>
+        <artifactId>neutronjms-test-support</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>io.hawtjms</groupId>
-        <artifactId>hawtjms-discovery</artifactId>
+        <groupId>io.neutronjms</groupId>
+        <artifactId>neutronjms-discovery</artifactId>
         <version>${project.version}</version>
       </dependency>
 

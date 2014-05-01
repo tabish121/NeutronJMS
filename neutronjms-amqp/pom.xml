@@ -18,14 +18,14 @@
 <project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>io.hawtjms</groupId>
-    <artifactId>hawtjms-parent</artifactId>
+    <groupId>io.neutronjms</groupId>
+    <artifactId>neutronjms-parent</artifactId>
     <version>1.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>hawtjms-amqp</artifactId>
-  <name>hawtjms-amqp</name>
-  <description>An AMQP implementation for hawtJMS</description>
+  <artifactId>neutronjms-amqp</artifactId>
+  <name>neutronjms-amqp</name>
+  <description>An AMQP implementation for NeutronJMS</description>
   <packaging>jar</packaging>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -36,8 +36,8 @@
     <!-- Required Dependencies                -->
     <!-- =================================== -->
     <dependency>
-      <groupId>io.hawtjms</groupId>
-      <artifactId>hawtjms-core</artifactId>
+      <groupId>io.neutronjms</groupId>
+      <artifactId>neutronjms-core</artifactId>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -72,8 +72,8 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>io.hawtjms</groupId>
-      <artifactId>hawtjms-test-support</artifactId>
+      <groupId>io.neutronjms</groupId>
+      <artifactId>neutronjms-test-support</artifactId>
       <scope>test</scope>
     </dependency>
 

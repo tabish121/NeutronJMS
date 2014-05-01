@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
   Licensed to the Apache Software Foundation (ASF) under one or more
   contributor license agreements.  See the NOTICE file distributed with
@@ -15,55 +15,58 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>io.hawtjms</groupId>
-    <artifactId>hawtjms-parent</artifactId>
+    <groupId>io.neutronjms</groupId>
+    <artifactId>neutronjms-parent</artifactId>
     <version>1.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>hawtjms-tests</artifactId>
-  <name>hawtjms-tests</name>
-  <description>An overall set of tests covering the range of hawJMS modules</description>
+  <artifactId>neutronjms-core</artifactId>
   <packaging>jar</packaging>
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-  </properties>
+  <name>NeutronJMS Core</name>
+  <description>The core JMS Framework implementation for NeutronJMS</description>
 
   <dependencies>
     <!-- =================================== -->
-    <!-- Required Dependencies                -->
+    <!-- Required Dependencies               -->
     <!-- =================================== -->
-    <dependency>
-      <groupId>io.hawtjms</groupId>
-      <artifactId>hawtjms-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>io.hawtjms</groupId>
-      <artifactId>hawtjms-amqp</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>io.hawtjms</groupId>
-      <artifactId>hawtjms-stomp</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>io.hawtjms</groupId>
-      <artifactId>hawtjms-discovery</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>io.hawtjms</groupId>
-      <artifactId>hawtjms-test-support</artifactId>
-    </dependency>
-
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-jms_1.1_spec</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.fusesource.hawtbuf</groupId>
+      <artifactId>hawtbuf</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.apache.activemq</groupId>
       <artifactId>apollo-selector</artifactId>
       <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.qpid</groupId>
+      <artifactId>proton-jms</artifactId>
+      <version>${proton-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.vertx</groupId>
+      <artifactId>vertx-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.vertx</groupId>
+      <artifactId>vertx-platform</artifactId>
+    </dependency>
+
+    <!-- would be nice if we could make this dependency optional -->
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-j2ee-management_1.1_spec</artifactId>
     </dependency>
 
     <!-- =================================== -->
@@ -125,4 +128,37 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+
+  <build>
+    <resources>
+      <resource>
+        <directory>${project.basedir}/src/main/resources</directory>
+        <includes>
+          <include>**/*</include>
+        </includes>
+      </resource>
+      <resource>
+        <directory>${project.basedir}/src/main/filtered-resources</directory>
+        <filtering>true</filtering>
+        <includes>
+          <include>**/*</include>
+        </includes>
+      </resource>
+    </resources>
+  </build>
+
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>findbugs-maven-plugin</artifactId>
+        <version>${findbugs-maven-plugin-version}</version>
+        <configuration>
+          <threshold>Normal</threshold>
+          <effort>Default</effort>
+        </configuration>
+      </plugin>
+    </plugins>
+  </reporting>
+
 </project>

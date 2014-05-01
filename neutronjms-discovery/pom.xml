@@ -18,14 +18,14 @@
 <project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>io.hawtjms</groupId>
-    <artifactId>hawtjms-parent</artifactId>
+    <groupId>io.neutronjms</groupId>
+    <artifactId>neutronjms-parent</artifactId>
     <version>1.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>hawtjms-stomp</artifactId>
-  <name>hawtjms-stomp</name>
-  <description>A STOMP implementation of a hawtJMS Provider.</description>
+  <artifactId>neutronjms-discovery</artifactId>
+  <name>neutronjms-discovery</name>
+  <description>The Broker Discovery module for NeutronJMS</description>
   <packaging>jar</packaging>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -36,8 +36,8 @@
     <!-- Required Dependencies                -->
     <!-- =================================== -->
     <dependency>
-      <groupId>io.hawtjms</groupId>
-      <artifactId>hawtjms-core</artifactId>
+      <groupId>io.neutronjms</groupId>
+      <artifactId>neutronjms-core</artifactId>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -53,18 +53,8 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-        <groupId>org.mockito</groupId>
-        <artifactId>mockito-all</artifactId>
-        <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>io.hawtjms</groupId>
-      <artifactId>hawtjms-test-support</artifactId>
       <scope>test</scope>
     </dependency>
 
@@ -82,7 +72,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.activemq</groupId>
-      <artifactId>activemq-stomp</artifactId>
+      <artifactId>activemq-amqp</artifactId>
       <version>${activemq-version}</version>
       <scope>test</scope>
     </dependency>
