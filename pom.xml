@@ -63,6 +63,7 @@
     <maven-eclipse-plugin-version>2.9</maven-eclipse-plugin-version>
     <maven-idea-plugin-version>2.5</maven-idea-plugin-version>
     <maven-compiler-plugin-version>3.1</maven-compiler-plugin-version>
+    <maven-antrun-plugin-version>1.6.5</maven-antrun-plugin-version>
     <findbugs-maven-plugin-version>2.5.2</findbugs-maven-plugin-version>
   </properties>
 
@@ -85,7 +86,7 @@
     <module>neutronjms-stomp</module>
     <module>neutronjms-tests</module>
     <module>neutronjms-test-support</module>
-    <module>neutronjms-openwire</module>
+    <module>neutronjms-openwire-provider</module>
   </modules>
 
   <dependencyManagement>
@@ -106,6 +107,16 @@
       <dependency>
         <groupId>io.neutronjms</groupId>
         <artifactId>neutronjms-stomp</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.neutronjms</groupId>
+        <artifactId>neutronjms-openwire</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.neutronjms</groupId>
+        <artifactId>neutronjms-openwire-generator</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -170,6 +181,11 @@
         <groupId>io.vertx</groupId>
         <artifactId>vertx-platform</artifactId>
         <version>${vertex-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>${maven-antrun-plugin-version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
