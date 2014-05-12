@@ -28,7 +28,7 @@ import org.apache.activemq.broker.TransportConnector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AmqpTestSupport extends HawtJmsTestSupport {
+public class AmqpTestSupport extends NeutronJmsTestSupport {
 
     protected static final Logger LOG = LoggerFactory.getLogger(AmqpTestSupport.class);
 

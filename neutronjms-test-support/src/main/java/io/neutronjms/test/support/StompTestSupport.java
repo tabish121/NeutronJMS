@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Test Support class for STOMP based tests.
  */
-public class StompTestSupport extends HawtJmsTestSupport {
+public class StompTestSupport extends NeutronJmsTestSupport {
 
     protected static final Logger LOG = LoggerFactory.getLogger(StompTestSupport.class);
 

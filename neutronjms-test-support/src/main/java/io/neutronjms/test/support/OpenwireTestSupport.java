@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Test support class used in OpenWire based tests.
  */
-public class OpenwireTestSupport extends HawtJmsTestSupport {
+public class OpenwireTestSupport extends NeutronJmsTestSupport {
 
     protected static final Logger LOG = LoggerFactory.getLogger(OpenwireTestSupport.class);
 
