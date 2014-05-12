@@ -203,11 +203,11 @@ public class AmqpConnection extends AbstractAmqpResource<JmsConnectionInfo, Conn
                 if (resource instanceof AmqpSession) {
                     AmqpSession session = (AmqpSession) resource;
                     sessions.put(session.getSessionId(), session);
-                    LOG.info("Session {} is now open", session.getSessionId());
+                    LOG.debug("Session {} is now open", session.getSessionId());
                 } else if (resource instanceof AmqpTemporaryDestination) {
                     AmqpTemporaryDestination destination = (AmqpTemporaryDestination) resource;
                     tempDests.put(destination.getJmsDestination(), destination);
-                    LOG.info("Temporary Destination {} is now open", destination);
+                    LOG.debug("Temporary Destination {} is now open", destination);
                 }
 
                 iterator.remove();
@@ -222,11 +222,11 @@ public class AmqpConnection extends AbstractAmqpResource<JmsConnectionInfo, Conn
                 if (resource instanceof AmqpSession) {
                     AmqpSession session = (AmqpSession) resource;
                     sessions.remove(session.getSessionId());
-                    LOG.info("Session {} is now closed", session.getSessionId());
+                    LOG.debug("Session {} is now closed", session.getSessionId());
                 } else if (resource instanceof AmqpTemporaryDestination) {
                     AmqpTemporaryDestination destination = (AmqpTemporaryDestination) resource;
                     tempDests.remove(destination.getJmsDestination());
-                    LOG.info("Temporary Destination {} is now closed", destination);
+                    LOG.debug("Temporary Destination {} is now closed", destination);
                 }
 
                 iterator.remove();
