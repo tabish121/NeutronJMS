@@ -110,10 +110,12 @@ public class AmqpConnection extends AbstractAmqpResource<JmsConnectionInfo, Conn
         return temporary;
     }
 
+    /**
+     * Called on receiving an event from Proton indicating a state change on the remote
+     * side of the Connection.
+     */
     @Override
-    public void processUpdates() {
-
-        processSaslHandshake();
+    public void processStateChange() {
 
         if (!connected && isOpen()) {
             connected = true;
@@ -143,8 +145,8 @@ public class AmqpConnection extends AbstractAmqpResource<JmsConnectionInfo, Conn
             });
         }
 
-        // We are opened and something on the remote end has closed us, signal an error.
-        // TODO - need to figure out exactly what the failure states are.
+        // We are still active (connected or not) and something on the remote end has
+        // closed us, signal an error if one was sent.
         if (endpoint.getLocalState() == EndpointState.ACTIVE &&
             endpoint.getRemoteState() != EndpointState.ACTIVE) {
 
@@ -159,6 +161,16 @@ public class AmqpConnection extends AbstractAmqpResource<JmsConnectionInfo, Conn
             }
         }
 
+        // Transition cleanly to closed state.
+        if (connected && endpoint.getRemoteState() == EndpointState.CLOSED) {
+            closed();
+        }
+    }
+
+    @Override
+    public void processUpdates() {
+
+        processSaslHandshake();
         processPendingResources();
 
         for (AmqpSession session : this.sessions.values()) {
@@ -167,11 +179,6 @@ public class AmqpConnection extends AbstractAmqpResource<JmsConnectionInfo, Conn
 
         for (AmqpTemporaryDestination tempDest : this.tempDests.values()) {
             tempDest.processUpdates();
-        }
-
-        // Transition cleanly to closed state.
-        if (connected && endpoint.getRemoteState() == EndpointState.CLOSED) {
-            closed();
         }
     }
 
@@ -200,11 +207,7 @@ public class AmqpConnection extends AbstractAmqpResource<JmsConnectionInfo, Conn
         while (iterator.hasNext()) {
             AmqpResource resource = iterator.next();
             if (resource.isOpen()) {
-                if (resource instanceof AmqpSession) {
-                    AmqpSession session = (AmqpSession) resource;
-                    sessions.put(session.getSessionId(), session);
-                    LOG.debug("Session {} is now open", session.getSessionId());
-                } else if (resource instanceof AmqpTemporaryDestination) {
+                if (resource instanceof AmqpTemporaryDestination) {
                     AmqpTemporaryDestination destination = (AmqpTemporaryDestination) resource;
                     tempDests.put(destination.getJmsDestination(), destination);
                     LOG.debug("Temporary Destination {} is now open", destination);
@@ -219,11 +222,7 @@ public class AmqpConnection extends AbstractAmqpResource<JmsConnectionInfo, Conn
         while (iterator.hasNext()) {
             AmqpResource resource = iterator.next();
             if (resource.isClosed()) {
-                if (resource instanceof AmqpSession) {
-                    AmqpSession session = (AmqpSession) resource;
-                    sessions.remove(session.getSessionId());
-                    LOG.debug("Session {} is now closed", session.getSessionId());
-                } else if (resource instanceof AmqpTemporaryDestination) {
+                if (resource instanceof AmqpTemporaryDestination) {
                     AmqpTemporaryDestination destination = (AmqpTemporaryDestination) resource;
                     tempDests.remove(destination.getJmsDestination());
                     LOG.debug("Temporary Destination {} is now closed", destination);
@@ -241,6 +240,14 @@ public class AmqpConnection extends AbstractAmqpResource<JmsConnectionInfo, Conn
 
     void addToPendingClose(AmqpResource session) {
         this.pendingClose.add(session);
+    }
+
+    void addSession(AmqpSession session) {
+        this.sessions.put(session.getSessionId(), session);
+    }
+
+    void removeSession(AmqpSession session) {
+        this.pendingClose.remove(session.getSessionId());
     }
 
     public JmsConnectionInfo getConnectionInfo() {

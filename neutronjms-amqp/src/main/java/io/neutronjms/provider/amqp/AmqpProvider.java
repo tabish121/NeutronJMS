@@ -47,10 +47,13 @@ import java.util.concurrent.TimeUnit;
 
 import javax.jms.JMSException;
 
+import org.apache.qpid.proton.engine.Collector;
 import org.apache.qpid.proton.engine.Connection;
 import org.apache.qpid.proton.engine.EngineFactory;
+import org.apache.qpid.proton.engine.Event;
 import org.apache.qpid.proton.engine.Sasl;
 import org.apache.qpid.proton.engine.Transport;
+import org.apache.qpid.proton.engine.impl.CollectorImpl;
 import org.apache.qpid.proton.engine.impl.EngineFactoryImpl;
 import org.apache.qpid.proton.engine.impl.ProtocolTracer;
 import org.apache.qpid.proton.engine.impl.TransportImpl;
@@ -90,6 +93,7 @@ public class AmqpProvider extends AbstractAsyncProvider implements TransportList
     private final JmsDefaultMessageFactory messageFactory = new JmsDefaultMessageFactory();
     private final EngineFactory engineFactory = new EngineFactoryImpl();
     private final Transport protonTransport = engineFactory.createTransport();
+    private final Collector protonCollector = new CollectorImpl();
 
     /**
      * Create a new instance of an AmqpProvider bonded to the given remote URI.
@@ -206,6 +210,7 @@ public class AmqpProvider extends AbstractAsyncProvider implements TransportList
 
                             Connection protonConnection = engineFactory.createConnection();
                             protonTransport.bind(protonConnection);
+                            protonConnection.collect(protonCollector);
                             Sasl sasl = protonTransport.sasl();
                             if (sasl != null) {
                                 sasl.client();
@@ -604,8 +609,38 @@ public class AmqpProvider extends AbstractAsyncProvider implements TransportList
     }
 
     private void processUpdates() {
-        connection.processUpdates();
-        // TODO - Handle exceptions and fire back to the client when they happen.
+
+        Event protonEvent = null;
+        while ((protonEvent = protonCollector.peek()) != null) {
+            LOG.trace("New Proton Event: {}", protonEvent.getType());
+
+            switch (protonEvent.getType()) {
+                case CONNECTION_REMOTE_STATE:
+                    AmqpConnection connection = (AmqpConnection) protonEvent.getConnection().getContext();
+                    connection.processStateChange();
+                    break;
+                case SESSION_REMOTE_STATE:
+                    AmqpSession session = (AmqpSession) protonEvent.getSession().getContext();
+                    session.processStateChange();
+                    break;
+                case LINK_REMOTE_STATE:
+                    break;
+                case LINK_FLOW:
+                    break;
+                case DELIVERY:
+                    break;
+                default:
+                    break;
+            }
+
+            protonCollector.pop();
+        }
+
+        try {
+            connection.processUpdates();
+        } catch (Exception ex) {
+            fireProviderException(ex);
+        }
     }
 
     private void pumpToProtonTransport() {

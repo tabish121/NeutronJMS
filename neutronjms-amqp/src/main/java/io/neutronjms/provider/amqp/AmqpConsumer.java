@@ -88,6 +88,11 @@ public class AmqpConsumer extends AbstractAmqpResource<JmsConsumerInfo, Receiver
         request.onSuccess();
     }
 
+    @Override
+    public void processStateChange() {
+        // TODO - Handle open / close state change.
+    }
+
     /**
      * Process all incoming deliveries that have been fully read.
      */

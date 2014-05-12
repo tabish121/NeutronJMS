@@ -59,6 +59,11 @@ public class AmqpTemporaryDestination extends AbstractAmqpResource<JmsDestinatio
     }
 
     @Override
+    public void processStateChange() {
+        // TODO - Handle open / close state change.
+    }
+
+    @Override
     protected void doOpen() {
 
         String sourceAddress = info.getName();

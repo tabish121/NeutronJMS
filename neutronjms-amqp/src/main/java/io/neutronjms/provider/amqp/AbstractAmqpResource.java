@@ -179,4 +179,5 @@ public abstract class AbstractAmqpResource<R extends JmsResource, E extends Endp
     protected abstract void doOpen();
 
     protected abstract void doClose();
+
 }

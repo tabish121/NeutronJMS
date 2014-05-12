@@ -82,6 +82,11 @@ public class AmqpTransactionContext extends AbstractAmqpResource<JmsSessionInfo,
     }
 
     @Override
+    public void processStateChange() {
+        // TODO - Handle open / close state change.
+    }
+
+    @Override
     public void processUpdates() {
         if (pendingDelivery != null && pendingDelivery.remotelySettled()) {
             DeliveryState state = pendingDelivery.getRemoteState();

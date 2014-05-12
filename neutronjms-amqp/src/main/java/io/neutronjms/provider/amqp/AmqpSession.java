@@ -33,6 +33,7 @@ import java.util.Map;
 
 import javax.jms.IllegalStateException;
 
+import org.apache.qpid.proton.engine.EndpointState;
 import org.apache.qpid.proton.engine.Session;
 import org.apache.qpid.proton.message.MessageFactory;
 import org.slf4j.Logger;
@@ -74,12 +75,12 @@ public class AmqpSession extends AbstractAmqpResource<JmsSessionInfo, Session> {
 
     @Override
     protected void doOpen() {
-        this.connection.addToPendingOpen(this);
+        this.connection.addSession(this);
     }
 
     @Override
     protected void doClose() {
-        this.connection.addToPendingClose(this);
+        this.connection.removeSession(this);
     }
 
     /**
@@ -200,6 +201,19 @@ public class AmqpSession extends AbstractAmqpResource<JmsSessionInfo, Session> {
         }
 
         getTransactionContext().rollback(request);
+    }
+
+    /**
+     * Called when the Proton engine signals a change in the remote state of this Session.
+     */
+    @Override
+    public void processStateChange() {
+        EndpointState remoteState = endpoint.getRemoteState();
+        if (remoteState == EndpointState.ACTIVE) {
+            opened();
+        } else {
+            closed();
+        }
     }
 
     /**
