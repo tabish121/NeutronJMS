@@ -28,7 +28,7 @@ import org.apache.qpid.proton.engine.Sender;
 /**
  * Base class for Producer instances.
  */
-public abstract class AmqpProducer extends AbstractAmqpResource<JmsProducerInfo, Sender> implements AmqpLink {
+public abstract class AmqpProducer extends AbstractAmqpResource<JmsProducerInfo, Sender> {
 
     protected final AmqpSession session;
 
@@ -56,11 +56,6 @@ public abstract class AmqpProducer extends AbstractAmqpResource<JmsProducerInfo,
      * @return true if this is an anonymous producer or false if fixed to a given destination.
      */
     public abstract boolean isAnonymous();
-
-    /**
-     * Process any updates to a pending send that's awaiting the accepted disposition.
-     */
-    public abstract void processDeliveryUpdates();
 
     /**
      * @return the JmsProducerId that was assigned to this AmqpProducer.

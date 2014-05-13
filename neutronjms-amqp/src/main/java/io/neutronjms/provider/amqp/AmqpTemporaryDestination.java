@@ -23,7 +23,6 @@ import org.apache.qpid.proton.amqp.messaging.Target;
 import org.apache.qpid.proton.amqp.transport.ReceiverSettleMode;
 import org.apache.qpid.proton.amqp.transport.SenderSettleMode;
 import org.apache.qpid.proton.engine.EndpointState;
-import org.apache.qpid.proton.engine.Link;
 import org.apache.qpid.proton.engine.Sender;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +39,7 @@ import org.slf4j.LoggerFactory;
  * the broker in the case where the user does not have authorization to access temporary
  * destinations.
  */
-public class AmqpTemporaryDestination extends AbstractAmqpResource<JmsDestination, Sender> implements AmqpLink {
+public class AmqpTemporaryDestination extends AbstractAmqpResource<JmsDestination, Sender> {
 
     private static final Logger LOG = LoggerFactory.getLogger(AmqpTemporaryDestination.class);
 
@@ -114,11 +113,6 @@ public class AmqpTemporaryDestination extends AbstractAmqpResource<JmsDestinatio
     @Override
     protected void doClose() {
         this.connection.removeTemporaryDestination(this);
-    }
-
-    @Override
-    public Link getProtonLink() {
-        return this.endpoint;
     }
 
     public AmqpConnection getConnection() {

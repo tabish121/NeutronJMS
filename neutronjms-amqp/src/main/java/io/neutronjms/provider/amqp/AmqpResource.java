@@ -98,6 +98,18 @@ public interface AmqpResource {
     void processStateChange();
 
     /**
+     * Called when the Proton Engine signals an Delivery related event has been triggered
+     * for the given endpoint.
+     */
+    void processDeliveryUpdates();
+
+    /**
+     * Called when the Proton Engine signals an Flow related event has been triggered
+     * for the given endpoint.
+     */
+    void processFlowUpdates();
+
+    /**
      * Called when data has been read from the remote peer.  The resource should
      * check the status of any pending work and complete or update the state to
      * match the new remote state.

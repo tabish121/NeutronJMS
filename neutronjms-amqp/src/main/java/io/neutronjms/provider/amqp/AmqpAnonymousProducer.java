@@ -25,7 +25,6 @@ import io.neutronjms.util.IdGenerator;
 import java.io.IOException;
 
 import org.apache.qpid.proton.engine.EndpointState;
-import org.apache.qpid.proton.engine.Link;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,18 +73,6 @@ public class AmqpAnonymousProducer extends AmqpProducer {
     }
 
     @Override
-    public void processStateChange() {
-    }
-
-    @Override
-    public void processUpdates() {
-    }
-
-    @Override
-    public void processDeliveryUpdates() {
-    }
-
-    @Override
     public void open(AsyncResult<Void> request) {
         // Trigger an immediate open, we don't talk to the Broker until
         // a send occurs so we must not let the client block.
@@ -105,11 +92,6 @@ public class AmqpAnonymousProducer extends AmqpProducer {
 
     @Override
     protected void doClose() {
-    }
-
-    @Override
-    public Link getProtonLink() {
-        return null;
     }
 
     @Override

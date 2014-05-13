@@ -65,17 +65,13 @@ public class AmqpQueueBrowser extends AmqpConsumer {
         if (!endpoint.getDrain() && endpoint.current() == null && endpoint.getUnsettled() == 0) {
             LOG.trace("QueueBrowser {} will try to drain remote.", getConsumerId());
             this.endpoint.drain(info.getPrefetchSize());
+        } else {
+            endpoint.setDrain(false);
         }
     }
 
     @Override
-    public void processUpdates() {
-        if (endpoint.getDrain() && endpoint.current() != null) {
-            LOG.trace("{} incoming delivery, cancel drain.", getConsumerId());
-            endpoint.setDrain(false);
-        }
-        super.processUpdates();
-
+    public void processFlowUpdates() {
         if (endpoint.getDrain() && endpoint.getCredit() == endpoint.getRemoteCredit()) {
             JmsInboundMessageDispatch browseDone = new JmsInboundMessageDispatch();
             browseDone.setConsumerId(getConsumerId());
@@ -83,6 +79,17 @@ public class AmqpQueueBrowser extends AmqpConsumer {
         } else {
             endpoint.setDrain(false);
         }
+
+        super.processFlowUpdates();
+    }
+
+    @Override
+    public void processDeliveryUpdates() {
+        if (endpoint.getDrain() && endpoint.current() != null) {
+            LOG.trace("{} incoming delivery, cancel drain.", getConsumerId());
+            endpoint.setDrain(false);
+        }
+        super.processDeliveryUpdates();
     }
 
     @Override

@@ -27,6 +27,8 @@ import org.apache.qpid.proton.amqp.transport.AmqpError;
 import org.apache.qpid.proton.amqp.transport.ErrorCondition;
 import org.apache.qpid.proton.engine.Endpoint;
 import org.apache.qpid.proton.engine.EndpointState;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Abstract base for all AmqpResource implementations to extend.
@@ -36,6 +38,8 @@ import org.apache.qpid.proton.engine.EndpointState;
  * and shutdown.
  */
 public abstract class AbstractAmqpResource<R extends JmsResource, E extends Endpoint> implements AmqpResource {
+
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractAmqpResource.class);
 
     protected AsyncResult<Void> openRequest;
     protected AsyncResult<Void> closeRequest;
@@ -184,6 +188,44 @@ public abstract class AbstractAmqpResource<R extends JmsResource, E extends Endp
         }
 
         return message;
+    }
+
+    @Override
+    public void processStateChange() {
+        EndpointState remoteState = endpoint.getRemoteState();
+
+        if (remoteState == EndpointState.ACTIVE) {
+            if (isAwaitingOpen()) {
+                LOG.debug("Link {} is now open: ", this);
+                opened();
+            }
+
+            // Should not receive an ACTIVE event if not awaiting the open state.
+        } else if (remoteState == EndpointState.CLOSED) {
+            if (isAwaitingClose()) {
+                LOG.debug("Link {} is now closed: ", this);
+                closed();
+            } else if (isAwaitingOpen()) {
+                // Error on Open, create exception and signal failure.
+                LOG.warn("Open of link {} failed: ", this);
+                Exception remoteError = this.getRemoteError();
+                failed(remoteError);
+            } else {
+                // TODO - Handle remote asynchronous close.
+            }
+        }
+    }
+
+    @Override
+    public void processDeliveryUpdates() {
+    }
+
+    @Override
+    public void processFlowUpdates() {
+    }
+
+    @Override
+    public void processUpdates() {
     }
 
     protected abstract void doOpen();

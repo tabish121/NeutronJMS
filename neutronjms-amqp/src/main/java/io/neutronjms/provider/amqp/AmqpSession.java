@@ -26,14 +26,11 @@ import io.neutronjms.jms.meta.JmsSessionInfo;
 import io.neutronjms.jms.meta.JmsTransactionId;
 import io.neutronjms.provider.AsyncResult;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import javax.jms.IllegalStateException;
 
-import org.apache.qpid.proton.engine.EndpointState;
 import org.apache.qpid.proton.engine.Session;
 import org.apache.qpid.proton.message.MessageFactory;
 import org.slf4j.Logger;
@@ -48,9 +45,6 @@ public class AmqpSession extends AbstractAmqpResource<JmsSessionInfo, Session> {
 
     private final Map<JmsConsumerId, AmqpConsumer> consumers = new HashMap<JmsConsumerId, AmqpConsumer>();
     private final Map<JmsProducerId, AmqpProducer> producers = new HashMap<JmsProducerId, AmqpProducer>();
-
-    private final ArrayList<AmqpLink> pendingOpenLinks = new ArrayList<AmqpLink>();
-    private final ArrayList<AmqpLink> pendingCloseLinks = new ArrayList<AmqpLink>();
 
     public AmqpSession(AmqpConnection connection, JmsSessionInfo info) {
         super(info, connection.getProtonConnection().session());
@@ -203,76 +197,6 @@ public class AmqpSession extends AbstractAmqpResource<JmsSessionInfo, Session> {
         getTransactionContext().rollback(request);
     }
 
-    /**
-     * Called when the Proton engine signals a change in the remote state of this Session.
-     */
-    @Override
-    public void processStateChange() {
-        EndpointState remoteState = endpoint.getRemoteState();
-        if (remoteState == EndpointState.ACTIVE) {
-            opened();
-        } else {
-            closed();
-        }
-    }
-
-    /**
-     * Called from the parent Connection to check for and react to state changes in the
-     * underlying Proton connection which might indicate a sender / receiver / link state
-     * has changed.
-     */
-    @Override
-    public void processUpdates() {
-        processPendingLinks();
-        processTransactionState();
-    }
-
-    private void processTransactionState() {
-        if (this.txContext != null) {
-            this.txContext.processUpdates();
-        }
-    }
-
-    private void processPendingLinks() {
-
-        if (pendingOpenLinks.isEmpty() && pendingCloseLinks.isEmpty()) {
-            return;
-        }
-
-        Iterator<AmqpLink> linkIterator = pendingOpenLinks.iterator();
-        while (linkIterator.hasNext()) {
-            AmqpLink candidate = linkIterator.next();
-            LOG.trace("Checking Link {} for open state: {}", candidate, candidate.isOpen());
-            if (candidate.isOpen()) {
-                if (candidate instanceof AmqpProducer) {
-                    AmqpProducer producer = (AmqpProducer) candidate;
-                    producers.put(producer.getProducerId(), producer);
-                }
-
-                LOG.debug("Link {} is now open: ", candidate);
-                candidate.opened();
-            } else if (candidate.isClosed()) {
-                LOG.warn("Open of link {} failed: ", candidate);
-                Exception remoteError = candidate.getRemoteError();
-                candidate.failed(remoteError);
-            } else {
-                // Don't remove, it's still pending.
-                continue;
-            }
-
-            linkIterator.remove();
-        }
-
-        linkIterator = pendingCloseLinks.iterator();
-        while (linkIterator.hasNext()) {
-            AmqpLink candidate = linkIterator.next();
-            if (candidate.isClosed()) {
-                candidate.closed();
-                linkIterator.remove();
-            }
-        }
-    }
-
     void addResource(AmqpConsumer consumer) {
         consumers.put(consumer.getConsumerId(), consumer);
     }
@@ -334,14 +258,6 @@ public class AmqpSession extends AbstractAmqpResource<JmsSessionInfo, Session> {
 
     public MessageFactory getMessageFactory() {
         return this.connection.getMessageFactory();
-    }
-
-    void addPedingLinkOpen(AmqpLink link) {
-        this.pendingOpenLinks.add(link);
-    }
-
-    void addPedingLinkClose(AmqpLink link) {
-        this.pendingCloseLinks.add(link);
     }
 
     boolean isTransacted() {

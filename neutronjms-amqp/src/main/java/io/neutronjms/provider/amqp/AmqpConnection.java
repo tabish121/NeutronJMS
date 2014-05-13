@@ -147,7 +147,7 @@ public class AmqpConnection extends AbstractAmqpResource<JmsConnectionInfo, Conn
             if (endpoint.getRemoteCondition().getCondition() != null) {
                 LOG.info("Error condition detected on Connection open {}.", endpoint.getRemoteCondition().getCondition());
                 Exception remoteError = getRemoteError();
-                if (openRequest != null) {
+                if (isAwaitingOpen()) {
                     openRequest.onFailure(remoteError);
                 } else {
                     provider.fireProviderException(remoteError);
@@ -163,16 +163,6 @@ public class AmqpConnection extends AbstractAmqpResource<JmsConnectionInfo, Conn
 
     @Override
     public void processUpdates() {
-
-        processSaslHandshake();
-
-        for (AmqpSession session : this.sessions.values()) {
-            session.processUpdates();
-        }
-    }
-
-    private void processSaslHandshake() {
-
         if (connected || authenticator == null) {
             return;
         }

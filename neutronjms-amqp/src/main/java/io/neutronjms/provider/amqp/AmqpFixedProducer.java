@@ -39,7 +39,6 @@ import org.apache.qpid.proton.amqp.transport.DeliveryState;
 import org.apache.qpid.proton.amqp.transport.ReceiverSettleMode;
 import org.apache.qpid.proton.amqp.transport.SenderSettleMode;
 import org.apache.qpid.proton.engine.Delivery;
-import org.apache.qpid.proton.engine.Link;
 import org.apache.qpid.proton.engine.Sender;
 import org.apache.qpid.proton.jms.AutoOutboundTransformer;
 import org.apache.qpid.proton.jms.EncodedMessage;
@@ -121,16 +120,6 @@ public class AmqpFixedProducer extends AmqpProducer {
         }
     }
 
-
-    @Override
-    public void processStateChange() {
-        // TODO - Handle open / close state change.
-    }
-
-    @Override
-    public void processUpdates() {
-    }
-
     @Override
     public void processDeliveryUpdates() {
         List<Delivery> toRemove = new ArrayList<Delivery>();
@@ -180,18 +169,10 @@ public class AmqpFixedProducer extends AmqpProducer {
         endpoint.setTarget(target);
         endpoint.setSenderSettleMode(SenderSettleMode.UNSETTLED);
         endpoint.setReceiverSettleMode(ReceiverSettleMode.FIRST);
-
-        this.session.addPedingLinkOpen(this);
     }
 
     @Override
     protected void doClose() {
-        this.session.addPedingLinkClose(this);
-    }
-
-    @Override
-    public Link getProtonLink() {
-        return this.endpoint;
     }
 
     public AmqpSession getSession() {

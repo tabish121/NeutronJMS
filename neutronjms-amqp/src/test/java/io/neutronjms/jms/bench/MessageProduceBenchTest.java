@@ -30,13 +30,11 @@ import javax.jms.TextMessage;
 import javax.jms.Topic;
 
 import org.apache.activemq.broker.jmx.QueueViewMBean;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
  * Collect some basic throughput data on message producer.
  */
-@Ignore
 public class MessageProduceBenchTest extends AmqpTestSupport {
 
     @Test

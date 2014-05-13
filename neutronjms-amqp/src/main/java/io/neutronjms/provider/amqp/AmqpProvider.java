@@ -611,46 +611,43 @@ public class AmqpProvider extends AbstractAsyncProvider implements TransportList
     }
 
     private void processUpdates() {
+        try {
+            Event protonEvent = null;
+            while ((protonEvent = protonCollector.peek()) != null) {
+                LOG.trace("New Proton Event: {}", protonEvent.getType());
 
-        Event protonEvent = null;
-        while ((protonEvent = protonCollector.peek()) != null) {
-            LOG.trace("New Proton Event: {}", protonEvent.getType());
+                AmqpResource amqpResource = null;
+                switch (protonEvent.getType()) {
+                    case CONNECTION_REMOTE_STATE:
+                        AmqpConnection connection = (AmqpConnection) protonEvent.getConnection().getContext();
+                        connection.processStateChange();
+                        break;
+                    case SESSION_REMOTE_STATE:
+                        AmqpSession session = (AmqpSession) protonEvent.getSession().getContext();
+                        session.processStateChange();
+                        break;
+                    case LINK_REMOTE_STATE:
+                        AmqpResource resource = (AmqpResource) protonEvent.getLink().getContext();
+                        resource.processStateChange();
+                        break;
+                    case LINK_FLOW:
+                        amqpResource = (AmqpResource) protonEvent.getLink().getContext();
+                        amqpResource.processFlowUpdates();
+                        break;
+                    case DELIVERY:
+                        amqpResource = (AmqpResource) protonEvent.getLink().getContext();
+                        amqpResource.processDeliveryUpdates();
+                        break;
+                    default:
+                        break;
+                }
 
-            switch (protonEvent.getType()) {
-                case CONNECTION_REMOTE_STATE:
-                    AmqpConnection connection = (AmqpConnection) protonEvent.getConnection().getContext();
-                    connection.processStateChange();
-                    break;
-                case SESSION_REMOTE_STATE:
-                    AmqpSession session = (AmqpSession) protonEvent.getSession().getContext();
-                    session.processStateChange();
-                    break;
-                case LINK_REMOTE_STATE:
-                    AmqpResource resource = (AmqpResource) protonEvent.getLink().getContext();
-                    resource.processStateChange();
-                    break;
-                case LINK_FLOW:
-                    break;
-                case DELIVERY:
-                    Object amqpResource = protonEvent.getLink().getContext();
-                    if (amqpResource instanceof AmqpConsumer) {
-                        AmqpConsumer consumer = (AmqpConsumer) amqpResource;
-                        consumer.processDelivery();
-                    } else if (amqpResource instanceof AmqpProducer) {
-                        AmqpProducer producer = (AmqpProducer) amqpResource;
-                        producer.processDeliveryUpdates();
-                    }
-                    break;
-                default:
-                    break;
+                protonCollector.pop();
             }
 
-            protonCollector.pop();
-        }
-
-        try {
             connection.processUpdates();
         } catch (Exception ex) {
+            LOG.warn("Caught Exception during update processing: {}", ex.getMessage());
             fireProviderException(ex);
         }
     }
