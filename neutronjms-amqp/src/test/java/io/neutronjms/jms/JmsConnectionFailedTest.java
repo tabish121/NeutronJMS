@@ -25,15 +25,10 @@ import javax.jms.Connection;
 import javax.jms.ExceptionListener;
 import javax.jms.JMSException;
 
-import org.junit.Ignore;
-
 /**
  * Test Connection methods contracts when connection has failed.
  */
-@Ignore
 public class JmsConnectionFailedTest extends JmsConnectionClosedTest {
-
-    // TODO - Figure out why this sometimes hangs.
 
     @Override
     protected Connection createConnection() throws Exception {
