@@ -31,10 +31,12 @@ import org.apache.qpid.proton.engine.Sender;
 public abstract class AmqpProducer extends AbstractAmqpResource<JmsProducerInfo, Sender> {
 
     protected final AmqpSession session;
+    protected final AmqpConnection connection;
 
     public AmqpProducer(AmqpSession session, JmsProducerInfo info) {
         super(info);
         this.session = session;
+        this.connection = session.getConnection();
 
         // Add a shortcut back to this Producer for quicker lookup.
         this.info.getProducerId().setProviderHint(this);
