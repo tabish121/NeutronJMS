@@ -25,9 +25,6 @@ import io.neutronjms.util.IOExceptionSupport;
 
 import java.net.URI;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 import javax.jms.JMSSecurityException;
@@ -56,9 +53,6 @@ public class AmqpConnection extends AbstractAmqpResource<JmsConnectionInfo, Conn
     private AmqpSaslAuthenticator authenticator;
     private final AmqpSession connectionSession;
     private final MessageFactory messageFactory = protonFactoryLoader.loadFactory();
-
-    private final List<AmqpResource> pendingOpen = new LinkedList<AmqpResource>();
-    private final List<AmqpResource> pendingClose = new LinkedList<AmqpResource>();
 
     private String queuePrefix;
     private String topicPrefix;
@@ -171,14 +165,9 @@ public class AmqpConnection extends AbstractAmqpResource<JmsConnectionInfo, Conn
     public void processUpdates() {
 
         processSaslHandshake();
-        processPendingResources();
 
         for (AmqpSession session : this.sessions.values()) {
             session.processUpdates();
-        }
-
-        for (AmqpTemporaryDestination tempDest : this.tempDests.values()) {
-            tempDest.processUpdates();
         }
     }
 
@@ -197,49 +186,12 @@ public class AmqpConnection extends AbstractAmqpResource<JmsConnectionInfo, Conn
         }
     }
 
-    private void processPendingResources() {
-
-        if (pendingOpen.isEmpty() && pendingClose.isEmpty()) {
-            return;
-        }
-
-        Iterator<AmqpResource> iterator = pendingOpen.iterator();
-        while (iterator.hasNext()) {
-            AmqpResource resource = iterator.next();
-            if (resource.isOpen()) {
-                if (resource instanceof AmqpTemporaryDestination) {
-                    AmqpTemporaryDestination destination = (AmqpTemporaryDestination) resource;
-                    tempDests.put(destination.getJmsDestination(), destination);
-                    LOG.debug("Temporary Destination {} is now open", destination);
-                }
-
-                iterator.remove();
-                resource.opened();
-            }
-        }
-
-        iterator = pendingClose.iterator();
-        while (iterator.hasNext()) {
-            AmqpResource resource = iterator.next();
-            if (resource.isClosed()) {
-                if (resource instanceof AmqpTemporaryDestination) {
-                    AmqpTemporaryDestination destination = (AmqpTemporaryDestination) resource;
-                    tempDests.remove(destination.getJmsDestination());
-                    LOG.debug("Temporary Destination {} is now closed", destination);
-                }
-
-                iterator.remove();
-                resource.closed();
-            }
-        }
+    void addTemporaryDestination(AmqpTemporaryDestination destination) {
+        tempDests.put(destination.getJmsDestination(), destination);
     }
 
-    void addToPendingOpen(AmqpResource session) {
-        this.pendingOpen.add(session);
-    }
-
-    void addToPendingClose(AmqpResource session) {
-        this.pendingClose.add(session);
+    void removeTemporaryDestination(AmqpTemporaryDestination destination) {
+        tempDests.remove(destination.getJmsDestination());
     }
 
     void addSession(AmqpSession session) {
@@ -247,7 +199,7 @@ public class AmqpConnection extends AbstractAmqpResource<JmsConnectionInfo, Conn
     }
 
     void removeSession(AmqpSession session) {
-        this.pendingClose.remove(session.getSessionId());
+        this.sessions.remove(session.getSessionId());
     }
 
     public JmsConnectionInfo getConnectionInfo() {

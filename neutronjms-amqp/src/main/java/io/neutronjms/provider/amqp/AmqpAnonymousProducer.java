@@ -75,11 +75,14 @@ public class AmqpAnonymousProducer extends AmqpProducer {
 
     @Override
     public void processStateChange() {
-        // TODO - Handle open / close state change.
     }
 
     @Override
     public void processUpdates() {
+    }
+
+    @Override
+    public void processDeliveryUpdates() {
     }
 
     @Override

@@ -80,6 +80,7 @@ public class AmqpProvider extends AbstractAsyncProvider implements TransportList
 
     private static final Logger TRACE_BYTES = LoggerFactory.getLogger(AmqpConnection.class.getPackage().getName() + ".BYTES");
     private static final Logger TRACE_FRAMES = LoggerFactory.getLogger(AmqpConnection.class.getPackage().getName() + ".FRAMES");
+    private static final int DEFAULT_MAX_FRAME_SIZE = 1024 * 1024 * 1;
 
     private AmqpConnection connection;
     private io.neutronjms.transports.Transport transport;
@@ -209,6 +210,7 @@ public class AmqpProvider extends AbstractAsyncProvider implements TransportList
                             requestTimeout = connectionInfo.getRequestTimeout();
 
                             Connection protonConnection = engineFactory.createConnection();
+                            protonTransport.setMaxFrameSize(DEFAULT_MAX_FRAME_SIZE);
                             protonTransport.bind(protonConnection);
                             protonConnection.collect(protonCollector);
                             Sasl sasl = protonTransport.sasl();
@@ -624,10 +626,20 @@ public class AmqpProvider extends AbstractAsyncProvider implements TransportList
                     session.processStateChange();
                     break;
                 case LINK_REMOTE_STATE:
+                    AmqpResource resource = (AmqpResource) protonEvent.getLink().getContext();
+                    resource.processStateChange();
                     break;
                 case LINK_FLOW:
                     break;
                 case DELIVERY:
+                    Object amqpResource = protonEvent.getLink().getContext();
+                    if (amqpResource instanceof AmqpConsumer) {
+                        AmqpConsumer consumer = (AmqpConsumer) amqpResource;
+                        consumer.processDelivery();
+                    } else if (amqpResource instanceof AmqpProducer) {
+                        AmqpProducer producer = (AmqpProducer) amqpResource;
+                        producer.processDeliveryUpdates();
+                    }
                     break;
                 default:
                     break;

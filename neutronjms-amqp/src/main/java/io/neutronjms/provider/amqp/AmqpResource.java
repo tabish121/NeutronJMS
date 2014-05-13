@@ -41,6 +41,11 @@ public interface AmqpResource {
     boolean isOpen();
 
     /**
+     * @return true if the resource is awaiting the remote end to signal opened.
+     */
+    boolean isAwaitingOpen();
+
+    /**
      * Called to indicate that this resource is now remotely opened.  Once opened a
      * resource can start accepting incoming requests.
      */
@@ -59,6 +64,11 @@ public interface AmqpResource {
      * @return if the resource has moved to the closed state on the remote.
      */
     boolean isClosed();
+
+    /**
+     * @return true if the resource is awaiting the remote end to signal closed.
+     */
+    boolean isAwaitingClose();
 
     /**
      * Called to indicate that this resource is now remotely closed.  Once closed a

@@ -46,6 +46,7 @@ import org.apache.qpid.proton.amqp.transaction.TransactionalState;
 import org.apache.qpid.proton.amqp.transport.ReceiverSettleMode;
 import org.apache.qpid.proton.amqp.transport.SenderSettleMode;
 import org.apache.qpid.proton.engine.Delivery;
+import org.apache.qpid.proton.engine.EndpointState;
 import org.apache.qpid.proton.engine.Link;
 import org.apache.qpid.proton.engine.Receiver;
 import org.apache.qpid.proton.jms.EncodedMessage;
@@ -90,7 +91,28 @@ public class AmqpConsumer extends AbstractAmqpResource<JmsConsumerInfo, Receiver
 
     @Override
     public void processStateChange() {
-        // TODO - Handle open / close state change.
+        EndpointState remoteState = endpoint.getRemoteState();
+
+        if (remoteState == EndpointState.ACTIVE) {
+            if (isAwaitingOpen()) {
+                LOG.debug("Link {} is now open: ", this);
+                opened();
+            }
+
+            // Should not receive an ACTIVE event if not awaiting the open state.
+        } else if (remoteState == EndpointState.CLOSED) {
+            if (isAwaitingClose()) {
+                LOG.debug("Link {} is now closed: ", this);
+                closed();
+            } else if (isAwaitingOpen()) {
+                // Error on Open, create exception and signal failure.
+                LOG.warn("Open of link {} failed: ", this);
+                Exception remoteError = this.getRemoteError();
+                failed(remoteError);
+            } else {
+                // TODO - Handle remote asynchronous close.
+            }
+        }
     }
 
     /**
@@ -98,18 +120,7 @@ public class AmqpConsumer extends AbstractAmqpResource<JmsConsumerInfo, Receiver
      */
     @Override
     public void processUpdates() {
-
-        Delivery incoming = null;
-        do {
-            incoming = endpoint.current();
-            if (incoming != null && incoming.isReadable() && !incoming.isPartial()) {
-                LOG.trace("{} has incoming Message(s).", this);
-                processDelivery(incoming);
-            } else {
-                incoming = null;
-            }
-            endpoint.advance();
-        } while (incoming != null);
+        // TODO - Remove once event processing is complete
     }
 
     @Override
@@ -135,8 +146,18 @@ public class AmqpConsumer extends AbstractAmqpResource<JmsConsumerInfo, Receiver
         endpoint.setTarget(target);
         endpoint.setSenderSettleMode(SenderSettleMode.UNSETTLED);
         endpoint.setReceiverSettleMode(ReceiverSettleMode.FIRST);
+    }
 
-        this.session.addPedingLinkOpen(this);
+    @Override
+    public void opened() {
+        this.session.addResource(this);
+        super.opened();
+    }
+
+    @Override
+    public void closed() {
+        this.session.removeResource(this);
+        super.closed();
     }
 
     protected void configureSource(Source source) {
@@ -274,6 +295,23 @@ public class AmqpConsumer extends AbstractAmqpResource<JmsConsumerInfo, Receiver
         }
     }
 
+    /**
+     * Called when the proton engine fires a delivery event.
+     */
+    public void processDelivery() {
+        Delivery incoming = null;
+        do {
+            incoming = endpoint.current();
+            if (incoming != null && incoming.isReadable() && !incoming.isPartial()) {
+                LOG.trace("{} has incoming Message(s).", this);
+                processDelivery(incoming);
+            } else {
+                incoming = null;
+            }
+            endpoint.advance();
+        } while (incoming != null);
+    }
+
     protected void processDelivery(Delivery incoming) {
         EncodedMessage encoded = readIncomingMessage(incoming);
         JmsMessage message = null;
@@ -313,7 +351,6 @@ public class AmqpConsumer extends AbstractAmqpResource<JmsConsumerInfo, Receiver
 
     @Override
     protected void doClose() {
-        this.session.addPedingLinkClose(this);
     }
 
     @Override

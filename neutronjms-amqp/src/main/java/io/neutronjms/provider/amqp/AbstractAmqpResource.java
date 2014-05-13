@@ -82,6 +82,11 @@ public abstract class AbstractAmqpResource<R extends JmsResource, E extends Endp
     }
 
     @Override
+    public boolean isAwaitingOpen() {
+        return this.openRequest != null;
+    }
+
+    @Override
     public void opened() {
         if (this.openRequest != null) {
             this.openRequest.onSuccess();
@@ -99,6 +104,11 @@ public abstract class AbstractAmqpResource<R extends JmsResource, E extends Endp
     @Override
     public boolean isClosed() {
         return this.endpoint.getRemoteState() == EndpointState.CLOSED;
+    }
+
+    @Override
+    public boolean isAwaitingClose() {
+        return this.closeRequest != null;
     }
 
     @Override

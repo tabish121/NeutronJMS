@@ -129,6 +129,10 @@ public class AmqpFixedProducer extends AmqpProducer {
 
     @Override
     public void processUpdates() {
+    }
+
+    @Override
+    public void processDeliveryUpdates() {
         List<Delivery> toRemove = new ArrayList<Delivery>();
 
         for (Delivery delivery : pending) {
@@ -157,8 +161,6 @@ public class AmqpFixedProducer extends AmqpProducer {
         }
 
         pending.removeAll(toRemove);
-
-        // TODO - Check for and handle endpoint detached state.
     }
 
     @Override

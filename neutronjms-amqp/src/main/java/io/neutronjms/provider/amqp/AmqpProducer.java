@@ -58,6 +58,11 @@ public abstract class AmqpProducer extends AbstractAmqpResource<JmsProducerInfo,
     public abstract boolean isAnonymous();
 
     /**
+     * Process any updates to a pending send that's awaiting the accepted disposition.
+     */
+    public abstract void processDeliveryUpdates();
+
+    /**
      * @return the JmsProducerId that was assigned to this AmqpProducer.
      */
     public JmsProducerId getProducerId() {

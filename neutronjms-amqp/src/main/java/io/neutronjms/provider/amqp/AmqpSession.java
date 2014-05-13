@@ -224,17 +224,7 @@ public class AmqpSession extends AbstractAmqpResource<JmsSessionInfo, Session> {
     @Override
     public void processUpdates() {
         processPendingLinks();
-
         processTransactionState();
-
-        // Settle any pending deliveries.
-        for (AmqpProducer producer : this.producers.values()) {
-            producer.processUpdates();
-        }
-
-        for (AmqpConsumer consumer : this.consumers.values()) {
-            consumer.processUpdates();
-        }
     }
 
     private void processTransactionState() {
@@ -254,10 +244,7 @@ public class AmqpSession extends AbstractAmqpResource<JmsSessionInfo, Session> {
             AmqpLink candidate = linkIterator.next();
             LOG.trace("Checking Link {} for open state: {}", candidate, candidate.isOpen());
             if (candidate.isOpen()) {
-                if (candidate instanceof AmqpConsumer) {
-                    AmqpConsumer consumer = (AmqpConsumer) candidate;
-                    consumers.put(consumer.getConsumerId(), consumer);
-                } else if (candidate instanceof AmqpProducer) {
+                if (candidate instanceof AmqpProducer) {
                     AmqpProducer producer = (AmqpProducer) candidate;
                     producers.put(producer.getProducerId(), producer);
                 }
@@ -284,6 +271,22 @@ public class AmqpSession extends AbstractAmqpResource<JmsSessionInfo, Session> {
                 linkIterator.remove();
             }
         }
+    }
+
+    void addResource(AmqpConsumer consumer) {
+        consumers.put(consumer.getConsumerId(), consumer);
+    }
+
+    void removeResource(AmqpConsumer consumer) {
+        consumers.remove(consumer.getConsumerId());
+    }
+
+    void addResource(AmqpProducer producer) {
+        producers.put(producer.getProducerId(), producer);
+    }
+
+    void removeResource(AmqpProducer producer) {
+        producers.remove(producer.getProducerId());
     }
 
     /**
