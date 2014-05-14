@@ -40,6 +40,10 @@ public class AmqpTestSupport extends NeutronJmsTestSupport {
         return false;
     }
 
+    protected boolean isAlwaysSyncSend() {
+        return false;
+    }
+
     protected String getAmqpTransformer() {
         return "raw";
     }
@@ -99,6 +103,7 @@ public class AmqpTestSupport extends NeutronJmsTestSupport {
     public Connection createAmqpConnection(URI brokerURI, String username, String password) throws Exception {
         JmsConnectionFactory factory = new JmsConnectionFactory(brokerURI);
         factory.setForceAsyncSend(isForceAsyncSends());
+        factory.setAlwaysSyncSend(isAlwaysSyncSend());
         if (username != null) {
             factory.setUsername(username);
         }
