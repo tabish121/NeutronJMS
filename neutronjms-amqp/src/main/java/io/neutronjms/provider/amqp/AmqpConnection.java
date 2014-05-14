@@ -139,11 +139,12 @@ public class AmqpConnection extends AbstractAmqpResource<JmsConnectionInfo, Conn
             });
         }
 
+        EndpointState localState = endpoint.getLocalState();
+        EndpointState remoteState = endpoint.getRemoteState();
+
         // We are still active (connected or not) and something on the remote end has
         // closed us, signal an error if one was sent.
-        if (endpoint.getLocalState() == EndpointState.ACTIVE &&
-            endpoint.getRemoteState() != EndpointState.ACTIVE) {
-
+        if (localState == EndpointState.ACTIVE && remoteState != EndpointState.ACTIVE) {
             if (endpoint.getRemoteCondition().getCondition() != null) {
                 LOG.info("Error condition detected on Connection open {}.", endpoint.getRemoteCondition().getCondition());
                 Exception remoteError = getRemoteError();
@@ -156,7 +157,8 @@ public class AmqpConnection extends AbstractAmqpResource<JmsConnectionInfo, Conn
         }
 
         // Transition cleanly to closed state.
-        if (connected && endpoint.getRemoteState() == EndpointState.CLOSED) {
+        if (localState == EndpointState.CLOSED && remoteState == EndpointState.CLOSED) {
+            LOG.debug("{} has been closed successfully.", this);
             closed();
         }
     }
@@ -268,6 +270,11 @@ public class AmqpConnection extends AbstractAmqpResource<JmsConnectionInfo, Conn
      */
     public MessageFactory getMessageFactory() {
         return this.messageFactory;
+    }
+
+    @Override
+    public String toString() {
+        return "AmqpConnection { " + getConnectionInfo().getConnectionId() + " }";
     }
 }
 
