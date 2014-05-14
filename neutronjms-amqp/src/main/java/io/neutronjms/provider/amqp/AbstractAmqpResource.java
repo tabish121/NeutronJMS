@@ -19,6 +19,8 @@ package io.neutronjms.provider.amqp;
 import io.neutronjms.jms.meta.JmsResource;
 import io.neutronjms.provider.AsyncResult;
 
+import java.io.IOException;
+
 import javax.jms.JMSException;
 import javax.jms.JMSSecurityException;
 
@@ -191,7 +193,7 @@ public abstract class AbstractAmqpResource<R extends JmsResource, E extends Endp
     }
 
     @Override
-    public void processStateChange() {
+    public void processStateChange() throws IOException {
         EndpointState remoteState = endpoint.getRemoteState();
 
         if (remoteState == EndpointState.ACTIVE) {
@@ -217,15 +219,15 @@ public abstract class AbstractAmqpResource<R extends JmsResource, E extends Endp
     }
 
     @Override
-    public void processDeliveryUpdates() {
+    public void processDeliveryUpdates() throws IOException {
     }
 
     @Override
-    public void processFlowUpdates() {
+    public void processFlowUpdates() throws IOException {
     }
 
     @Override
-    public void processUpdates() {
+    public void processUpdates() throws IOException {
     }
 
     protected abstract void doOpen();

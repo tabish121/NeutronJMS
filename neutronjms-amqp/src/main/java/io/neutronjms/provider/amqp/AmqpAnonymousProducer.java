@@ -55,7 +55,7 @@ public class AmqpAnonymousProducer extends AmqpProducer {
     }
 
     @Override
-    public void send(JmsOutboundMessageDispatch envelope, AsyncResult<Void> request) throws IOException {
+    public boolean send(JmsOutboundMessageDispatch envelope, AsyncResult<Void> request) throws IOException {
 
         LOG.trace("Started send chain for anonymous producer: {}", getProducerId());
 
@@ -70,6 +70,8 @@ public class AmqpAnonymousProducer extends AmqpProducer {
         AmqpFixedProducer producer = new AmqpFixedProducer(session, info);
         AnonymousOpenRequest open = new AnonymousOpenRequest(request, producer, envelope);
         producer.open(open);
+
+        return true;
     }
 
     @Override

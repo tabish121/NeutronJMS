@@ -344,8 +344,11 @@ public class AmqpProvider extends AbstractAsyncProvider implements TransportList
                         producer = session.getProducer(producerId);
                     }
 
-                    producer.send(envelope, request);
+                    boolean couldSend = producer.send(envelope, request);
                     pumpToProtonTransport();
+                    if (couldSend && envelope.isSendAsync()) {
+                        request.onSuccess();
+                    }
                 } catch (Exception error) {
                     request.onFailure(error);
                 }

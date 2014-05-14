@@ -20,6 +20,8 @@ import io.neutronjms.jms.message.JmsInboundMessageDispatch;
 import io.neutronjms.jms.meta.JmsConsumerInfo;
 import io.neutronjms.provider.AsyncResult;
 
+import java.io.IOException;
+
 import org.apache.qpid.proton.amqp.messaging.Source;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,7 +73,7 @@ public class AmqpQueueBrowser extends AmqpConsumer {
     }
 
     @Override
-    public void processFlowUpdates() {
+    public void processFlowUpdates() throws IOException {
         if (endpoint.getDrain() && endpoint.getCredit() == endpoint.getRemoteCredit()) {
             JmsInboundMessageDispatch browseDone = new JmsInboundMessageDispatch();
             browseDone.setConsumerId(getConsumerId());
@@ -84,12 +86,21 @@ public class AmqpQueueBrowser extends AmqpConsumer {
     }
 
     @Override
-    public void processDeliveryUpdates() {
+    public void processDeliveryUpdates() throws IOException {
         if (endpoint.getDrain() && endpoint.current() != null) {
             LOG.trace("{} incoming delivery, cancel drain.", getConsumerId());
             endpoint.setDrain(false);
         }
+
         super.processDeliveryUpdates();
+
+        if (endpoint.getDrain() && endpoint.getCredit() == endpoint.getRemoteCredit()) {
+            JmsInboundMessageDispatch browseDone = new JmsInboundMessageDispatch();
+            browseDone.setConsumerId(getConsumerId());
+            deliver(browseDone);
+        } else {
+            endpoint.setDrain(false);
+        }
     }
 
     @Override

@@ -20,6 +20,7 @@ import io.neutronjms.test.support.AmqpTestSupport;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.jms.DeliveryMode;
 import javax.jms.Destination;
@@ -30,14 +31,30 @@ import javax.jms.TextMessage;
 import javax.jms.Topic;
 
 import org.apache.activemq.broker.jmx.QueueViewMBean;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
  * Collect some basic throughput data on message producer.
  */
-@Ignore
 public class MessageProduceBenchTest extends AmqpTestSupport {
+
+    private final int MSG_COUNT = 50 * 1000;
+    private final int NUM_RUNS = 20;
+
+    @Override
+    protected boolean isForceAsyncSends() {
+        return true;
+    }
+
+    @Override
+    protected boolean isAlwaysSyncSend() {
+        return false;
+    }
+
+    @Override
+    protected String getAmqpTransformer() {
+        return "raw";
+    }
 
     @Test
     public void singleSendProfile() throws Exception {
@@ -54,8 +71,6 @@ public class MessageProduceBenchTest extends AmqpTestSupport {
 
     @Test
     public void testProduceRateToTopic() throws Exception {
-        final int MSG_COUNT = 50 * 1000;
-        final int NUM_RUNS = 20;
 
         connection = createAmqpConnection();
         Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
@@ -76,12 +91,11 @@ public class MessageProduceBenchTest extends AmqpTestSupport {
 
         long smoothed = cumulative / NUM_RUNS;
         LOG.info("Smoothed send time for {} messages: {}", MSG_COUNT, smoothed);
+        TimeUnit.SECONDS.sleep(1);
     }
 
     @Test
     public void testProduceRateToQueue() throws Exception {
-        final int MSG_COUNT = 50 * 1000;
-        final int NUM_RUNS = 20;
 
         connection = createAmqpConnection();
         Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
@@ -106,6 +120,7 @@ public class MessageProduceBenchTest extends AmqpTestSupport {
 
         long smoothed = cumulative / NUM_RUNS;
         LOG.info("Smoothed send time for {} messages: {}", MSG_COUNT, smoothed);
+        TimeUnit.SECONDS.sleep(1);
     }
 
     protected long produceMessages(Destination destination, int msgCount) throws Exception {

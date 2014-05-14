@@ -18,6 +18,8 @@ package io.neutronjms.provider.amqp;
 
 import io.neutronjms.provider.AsyncResult;
 
+import java.io.IOException;
+
 /**
  * AmqpResource specification.
  *
@@ -94,27 +96,35 @@ public interface AmqpResource {
     /**
      * Called when the Proton Engine signals that the state of the given resource has
      * changed on the remote side.
+     *
+     * @throws IOException if an error occurs while processing the update.
      */
-    void processStateChange();
+    void processStateChange() throws IOException;
 
     /**
      * Called when the Proton Engine signals an Delivery related event has been triggered
      * for the given endpoint.
+     *
+     * @throws IOException if an error occurs while processing the update.
      */
-    void processDeliveryUpdates();
+    void processDeliveryUpdates() throws IOException;
 
     /**
      * Called when the Proton Engine signals an Flow related event has been triggered
      * for the given endpoint.
+     *
+     * @throws IOException if an error occurs while processing the update.
      */
-    void processFlowUpdates();
+    void processFlowUpdates() throws IOException;
 
     /**
      * Called when data has been read from the remote peer.  The resource should
      * check the status of any pending work and complete or update the state to
      * match the new remote state.
+     *
+     * @throws IOException if an error occurs while processing the update.
      */
-    void processUpdates();
+    void processUpdates() throws IOException;
 
     /**
      * @return an Exception derived from the error state of the endpoint's Remote Condition.

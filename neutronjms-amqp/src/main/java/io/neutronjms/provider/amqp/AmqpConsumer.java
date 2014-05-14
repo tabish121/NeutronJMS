@@ -259,11 +259,8 @@ public class AmqpConsumer extends AbstractAmqpResource<JmsConsumerInfo, Receiver
         }
     }
 
-    /**
-     * Called when the proton engine fires a delivery event.
-     */
     @Override
-    public void processDeliveryUpdates() {
+    public void processDeliveryUpdates() throws IOException {
         Delivery incoming = null;
         do {
             incoming = endpoint.current();
@@ -277,7 +274,7 @@ public class AmqpConsumer extends AbstractAmqpResource<JmsConsumerInfo, Receiver
         } while (incoming != null);
     }
 
-    protected void processDelivery(Delivery incoming) {
+    private void processDelivery(Delivery incoming) {
         EncodedMessage encoded = readIncomingMessage(incoming);
         JmsMessage message = null;
         try {

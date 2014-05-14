@@ -26,6 +26,7 @@ import io.neutronjms.util.IOExceptionSupport;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -58,6 +59,7 @@ public class AmqpFixedProducer extends AmqpProducer {
 
     private final AmqpTransferTagGenerator tagGenerator = new AmqpTransferTagGenerator(true);
     private final Set<Delivery> pending = new LinkedHashSet<Delivery>();
+    private final LinkedList<PendingSend> pendingSends = new LinkedList<PendingSend>();
 
     private final OutboundTransformer outboundTransformer = new AutoOutboundTransformer(AmqpJMSVendor.INSTANCE);
     private final String MESSAGE_FORMAT_KEY = outboundTransformer.getPrefixVendor() + "MESSAGE_FORMAT";
@@ -67,16 +69,32 @@ public class AmqpFixedProducer extends AmqpProducer {
     }
 
     @Override
-    public void send(JmsOutboundMessageDispatch envelope, AsyncResult<Void> request) throws IOException {
-        LOG.trace("Producer sending message: {}", envelope.getMessage().getFacade().getMessageId());
+    public boolean send(JmsOutboundMessageDispatch envelope, AsyncResult<Void> request) throws IOException {
 
         // TODO - Handle the case where remote has no credit which means we can't send to it.
         //        We need to hold the send until remote credit becomes available but we should
         //        also have a send timeout option and filter timed out sends.
+        if (endpoint.getCredit() <= 0) {
+            LOG.trace("Holding Message send until credit is available.");
+            // Once a message goes into a held mode we no longer can send it async, so
+            // we clear the async flag if set to avoid the sender never getting notified.
+            envelope.setSendAsync(false);
+            this.pendingSends.addLast(new PendingSend(envelope, request));
+            return false;
+        } else {
+            doSend(envelope, request);
+            return true;
+        }
+    }
+
+    private void doSend(JmsOutboundMessageDispatch envelope, AsyncResult<Void> request) throws IOException {
+        LOG.trace("Producer sending message: {}", envelope.getMessage().getFacade().getMessageId());
 
         byte[] tag = tagGenerator.getNextTag();
         Delivery delivery = endpoint.delivery(tag);
-        delivery.setContext(request);
+        if (!envelope.isSendAsync()) {
+            delivery.setContext(request);
+        }
         if (session.isTransacted()) {
             Binary amqpTxId = session.getTransactionContext().getAmqpTransactionId();
             TransactionalState state = new TransactionalState();
@@ -121,6 +139,17 @@ public class AmqpFixedProducer extends AmqpProducer {
     }
 
     @Override
+    public void processFlowUpdates() throws IOException {
+        if (!pendingSends.isEmpty() && endpoint.getCredit() > 0) {
+            while (endpoint.getCredit() > 0 && !pendingSends.isEmpty()) {
+                LOG.trace("Dispatching previously held send");
+                PendingSend held = pendingSends.pop();
+                doSend(held.envelope, held.request);
+            }
+        }
+    }
+
+    @Override
     public void processDeliveryUpdates() {
         List<Delivery> toRemove = new ArrayList<Delivery>();
 
@@ -138,12 +167,18 @@ public class AmqpFixedProducer extends AmqpProducer {
             } else if (state instanceof Accepted) {
                 toRemove.add(delivery);
                 tagGenerator.returnTag(delivery.getTag());
-                request.onSuccess(null);
+                if (request != null) {
+                    request.onSuccess();
+                }
             } else if (state instanceof Rejected) {
                 Exception remoteError = getRemoteError();
                 toRemove.add(delivery);
                 tagGenerator.returnTag(delivery.getTag());
-                request.onFailure(remoteError);
+                if (request != null) {
+                    request.onFailure(remoteError);
+                } else {
+                    // TODO - Fire Error to provider listener indicating an error.
+                }
             } else {
                 LOG.warn("Message send updated with unsupported state: {}", state);
             }
@@ -186,5 +221,16 @@ public class AmqpFixedProducer extends AmqpProducer {
     @Override
     public boolean isAnonymous() {
         return false;
+    }
+
+    private class PendingSend {
+
+        public JmsOutboundMessageDispatch envelope;
+        public AsyncResult<Void> request;
+
+        public PendingSend(JmsOutboundMessageDispatch envelope, AsyncResult<Void> request) {
+            this.envelope = envelope;
+            this.request = request;
+        }
     }
 }
