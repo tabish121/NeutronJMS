@@ -223,6 +223,11 @@ public class AmqpFixedProducer extends AmqpProducer {
         return false;
     }
 
+    @Override
+    public String toString() {
+        return "AmqpFixedProducer { " + getProducerId() + " }";
+    }
+
     private class PendingSend {
 
         public JmsOutboundMessageDispatch envelope;

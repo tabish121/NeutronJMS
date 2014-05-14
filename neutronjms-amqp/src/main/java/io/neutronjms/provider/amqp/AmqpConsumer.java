@@ -333,7 +333,7 @@ public class AmqpConsumer extends AbstractAmqpResource<JmsConsumerInfo, Receiver
 
     @Override
     public String toString() {
-        return "AmqpConsumer: " + this.info.getConsumerId();
+        return "AmqpConsumer { " + this.info.getConsumerId() + " }";
     }
 
     protected void deliveryFailed(Delivery incoming, boolean expandCredit) {
