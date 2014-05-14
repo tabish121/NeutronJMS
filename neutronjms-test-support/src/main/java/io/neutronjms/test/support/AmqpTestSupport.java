@@ -45,7 +45,7 @@ public class AmqpTestSupport extends NeutronJmsTestSupport {
     }
 
     protected String getAmqpTransformer() {
-        return "raw";
+        return "jms";
     }
 
     @Override
