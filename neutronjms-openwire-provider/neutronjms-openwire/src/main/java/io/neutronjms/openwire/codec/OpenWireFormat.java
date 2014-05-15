@@ -29,7 +29,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.fusesource.hawtbuf.Buffer;
-import org.fusesource.hawtbuf.BufferEditor;
 import org.fusesource.hawtbuf.DataByteArrayInputStream;
 import org.fusesource.hawtbuf.DataByteArrayOutputStream;
 
@@ -154,10 +153,7 @@ public final class OpenWireFormat implements WireFormat {
                 if (!sizePrefixDisabled) {
                     size = sequence.getLength() - 4;
                     int pos = sequence.offset;
-                    // TODO - HawtBuf should provide a version that doesn't need
-                    //        to allocate but instead take a buffer as an arg.
-                    BufferEditor editor = BufferEditor.big(sequence);
-                    editor.write(size);
+                    sequence.bigEndianEditor().writeInt(size);
                     sequence.offset = pos;
                 }
             }
