@@ -141,16 +141,6 @@ public class AmqpProvider extends AbstractAsyncProvider implements TransportList
                         pumpToProtonTransport();
                     } catch (Exception e) {
                         LOG.debug("Caught exception while closing proton connection");
-                    } finally {
-                        if (transport != null) {
-                            try {
-                                transport.close();
-                            } catch (Exception e) {
-                                LOG.debug("Cuaght exception while closing down Transport: {}", e.getMessage());
-                            }
-                        }
-
-                        request.onSuccess();
                     }
                 }
             });
@@ -164,6 +154,14 @@ public class AmqpProvider extends AbstractAsyncProvider implements TransportList
             } catch (IOException e) {
                 LOG.warn("Error caught while closing Provider: ", e.getMessage());
             } finally {
+                if (transport != null) {
+                    try {
+                        transport.close();
+                    } catch (Exception e) {
+                        LOG.debug("Cuaght exception while closing down Transport: {}", e.getMessage());
+                    }
+                }
+
                 if (serializer != null) {
                     serializer.shutdown();
                 }
@@ -604,7 +602,7 @@ public class AmqpProvider extends AbstractAsyncProvider implements TransportList
             serializer.execute(new Runnable() {
                 @Override
                 public void run() {
-                    LOG.info("Transport connection remotely closed:");
+                    LOG.debug("Transport connection remotely closed:");
                     if (!closed.get()) {
                         fireProviderException(new IOException("Connection remotely closed."));
                     }

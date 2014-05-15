@@ -102,6 +102,12 @@ public abstract class AbstractAmqpResource<R extends JmsResource, E extends Endp
 
     @Override
     public void close(AsyncResult<Void> request) {
+        // If already closed signal success or else the caller might never get notified.
+        if (endpoint.getLocalState() == EndpointState.CLOSED &&
+            endpoint.getRemoteState() == EndpointState.CLOSED) {
+            request.onSuccess();
+        }
+
         this.closeRequest = request;
         doClose();
         this.endpoint.close();
