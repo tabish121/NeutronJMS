@@ -862,12 +862,7 @@ public class OpenWireBytesMessage extends OpenWireMessage {
                 }
 
                 bytes = compressed.toBuffer();
-
-                // TODO - HawtBuf should provide a version that doesn't need
-                //        to allocate but instead take a buffer as an arg.
-                BufferEditor editor = BufferEditor.big(bytes);
-                editor.write(length);
-
+                bytes.bigEndianEditor().writeInt(length);
                 bytes.offset = 0;
                 setContent(bytes);
             } finally {
