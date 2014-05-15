@@ -31,11 +31,13 @@ import javax.jms.TextMessage;
 import javax.jms.Topic;
 
 import org.apache.activemq.broker.jmx.QueueViewMBean;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
  * Collect some basic throughput data on message producer.
  */
+@Ignore
 public class MessageProduceBenchTest extends AmqpTestSupport {
 
     private final int MSG_COUNT = 50 * 1000;
@@ -67,6 +69,7 @@ public class MessageProduceBenchTest extends AmqpTestSupport {
         TextMessage message = session.createTextMessage();
         message.setText("hello");
         producer.send(message);
+        producer.close();
     }
 
     @Test
@@ -114,7 +117,7 @@ public class MessageProduceBenchTest extends AmqpTestSupport {
             long result = produceMessages(queue, MSG_COUNT);
             sendTimes.add(result);
             cumulative += result;
-            LOG.info("Time to send {} topic messages: {} ms", MSG_COUNT, result);
+            LOG.info("Time to send {} queue messages: {} ms", MSG_COUNT, result);
             queueView.purge();
         }
 
@@ -135,7 +138,9 @@ public class MessageProduceBenchTest extends AmqpTestSupport {
         for (int i = 0; i < msgCount; ++i) {
             producer.send(message);
         }
+        long result = (System.currentTimeMillis() - startTime);
 
-        return (System.currentTimeMillis() - startTime);
+        producer.close();
+        return result;
     }
 }
