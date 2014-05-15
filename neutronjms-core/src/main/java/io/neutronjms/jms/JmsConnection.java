@@ -120,7 +120,7 @@ public class JmsConnection implements Connection, TopicConnection, QueueConnecti
         executor = new ThreadPoolExecutor(1, 1, 5, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(), new ThreadFactory() {
             @Override
             public Thread newThread(Runnable r) {
-                Thread thread = new Thread(r, "AmqpJMS Connection Executor: ");
+                Thread thread = new Thread(r, "NeutronJMS Connection Executor: ");
                 return thread;
             }
         });
