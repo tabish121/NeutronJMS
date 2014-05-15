@@ -134,6 +134,13 @@ public class AmqpProvider extends AbstractAsyncProvider implements TransportList
                 @Override
                 public void run() {
                     try {
+
+                        // If we are not connected then there is nothing we can do now
+                        // just signal success.
+                        if (!transport.isConnected()) {
+                            request.onSuccess();
+                        }
+
                         if (connection != null) {
                             connection.close(request);
                         }
