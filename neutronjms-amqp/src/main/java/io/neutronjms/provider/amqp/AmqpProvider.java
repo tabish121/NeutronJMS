@@ -86,6 +86,7 @@ public class AmqpProvider extends AbstractAsyncProvider implements TransportList
     private io.neutronjms.transports.Transport transport;
     private boolean traceFrames;
     private boolean traceBytes;
+    private boolean presettle;
     private long connectTimeout = JmsConnectionInfo.DEFAULT_CONNECT_TIMEOUT;
     private long closeTimeout = JmsConnectionInfo.DEFAULT_CLOSE_TIMEOUT;
     private long requestTimeout = JmsConnectionInfo.DEFAULT_REQUEST_TIMEOUT;
@@ -734,6 +735,14 @@ public class AmqpProvider extends AbstractAsyncProvider implements TransportList
 
     public void setSendTimeout(long sendTimeout) {
         this.sendTimeout = sendTimeout;
+    }
+
+    public boolean isPresettle() {
+        return presettle;
+    }
+
+    public void setPresettle(boolean presettle) {
+        this.presettle = presettle;
     }
 
     @Override
