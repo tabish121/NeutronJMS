@@ -58,6 +58,11 @@ public class MessageProduceBenchTest extends AmqpTestSupport {
         return "raw";
     }
 
+    @Override
+    public String getAmqpConnectionURIOptions() {
+        return "provider.presettle=true";
+    }
+
     @Test
     public void singleSendProfile() throws Exception {
         connection = createAmqpConnection();

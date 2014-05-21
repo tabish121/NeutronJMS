@@ -64,10 +64,20 @@ public class AmqpTestSupport extends NeutronJmsTestSupport {
         LOG.debug("Using amqp port: {}", port);
     }
 
+    public String getAmqpConnectionURIOptions() {
+        return "";
+    }
+
     public URI getBrokerAmqpConnectionURI() {
         try {
-            return new URI("amqp://127.0.0.1:" +
-                brokerService.getTransportConnectorByName("amqp").getPublishableConnectURI().getPort());
+            String uri = "amqp://127.0.0.1:" +
+                brokerService.getTransportConnectorByName("amqp").getPublishableConnectURI().getPort();
+
+            if (!getAmqpConnectionURIOptions().isEmpty()) {
+                uri = uri + "?" + getAmqpConnectionURIOptions();
+            }
+
+            return new URI(uri);
         } catch (Exception e) {
             throw new RuntimeException();
         }
