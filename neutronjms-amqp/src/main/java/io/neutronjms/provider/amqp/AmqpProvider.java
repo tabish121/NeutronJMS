@@ -216,7 +216,7 @@ public class AmqpProvider extends AbstractAsyncProvider implements TransportList
                             requestTimeout = connectionInfo.getRequestTimeout();
 
                             Connection protonConnection = engineFactory.createConnection();
-                            protonTransport.setMaxFrameSize(DEFAULT_MAX_FRAME_SIZE);
+                            protonTransport.setMaxFrameSize(getMaxFrameSize());
                             protonTransport.bind(protonConnection);
                             protonConnection.collect(protonCollector);
                             Sasl sasl = protonTransport.sasl();
@@ -743,6 +743,13 @@ public class AmqpProvider extends AbstractAsyncProvider implements TransportList
 
     public void setPresettle(boolean presettle) {
         this.presettle = presettle;
+    }
+
+    /**
+     * @return the currently set Max Frame Size value.
+     */
+    public int getMaxFrameSize() {
+        return DEFAULT_MAX_FRAME_SIZE;
     }
 
     @Override

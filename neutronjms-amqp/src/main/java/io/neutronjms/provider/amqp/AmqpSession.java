@@ -69,6 +69,7 @@ public class AmqpSession extends AbstractAmqpResource<JmsSessionInfo, Session> {
 
     @Override
     protected void doOpen() {
+        this.endpoint.setIncomingCapacity(Integer.MAX_VALUE);
         this.connection.addSession(this);
     }
 
