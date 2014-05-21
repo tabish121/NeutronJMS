@@ -123,6 +123,10 @@ public class NeutronJmsTestSupport {
         return createBroker(name, deleteAllMessages, Collections.<String, Integer> emptyMap());
     }
 
+    protected void configureBrokerPolicies(BrokerService broker) {
+
+    }
+
     protected BrokerService createBroker(String name, boolean deleteAllMessages, Map<String, Integer> portMap) throws Exception {
         KahaDBStore kaha = new KahaDBStore();
         kaha.setDirectory(new File(KAHADB_DIRECTORY + "/" + name));
@@ -136,6 +140,8 @@ public class NeutronJmsTestSupport {
         brokerService.setDataDirectory("target/" + name);
         brokerService.setPersistenceAdapter(kaha);
         brokerService.setStoreOpenWireVersion(10);
+
+        configureBrokerPolicies(brokerService);
 
         ArrayList<BrokerPlugin> plugins = new ArrayList<BrokerPlugin>();
         BrokerPlugin authenticationPlugin = configureAuthentication();
