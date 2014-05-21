@@ -18,15 +18,19 @@ package io.neutronjms.jms.bench;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import io.neutronjms.test.support.AmqpTestSupport;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import javax.jms.DeliveryMode;
 import javax.jms.Destination;
 import javax.jms.Message;
 import javax.jms.MessageConsumer;
+import javax.jms.MessageListener;
 import javax.jms.MessageProducer;
 import javax.jms.Queue;
 import javax.jms.Session;
@@ -123,6 +127,35 @@ public class ConsumeFromAMQPTest extends AmqpTestSupport {
         LOG.info("Smoothed send time for {} messages: {}", MSG_COUNT, smoothed);
     }
 
+    @Test
+    public void testConsumeRateFromQueueAsync() throws Exception {
+        connection = createAmqpConnection();
+        connection.start();
+
+        Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+        Queue queue = session.createQueue(getDestinationName());
+
+        // Warm Up the broker.
+        produceMessages(queue, MSG_COUNT);
+
+        QueueViewMBean queueView = getProxyToQueue(getDestinationName());
+
+        List<Long> sendTimes = new ArrayList<Long>();
+        long cumulative = 0;
+
+        for (int i = 0; i < NUM_RUNS; ++i) {
+            produceMessages(queue, MSG_COUNT);
+            long result = consumerMessagesAsync(queue, MSG_COUNT);
+            sendTimes.add(result);
+            cumulative += result;
+            LOG.info("Time to send {} topic messages: {} ms", MSG_COUNT, result);
+            queueView.purge();
+        }
+
+        long smoothed = cumulative / NUM_RUNS;
+        LOG.info("Smoothed send time for {} messages: {}", MSG_COUNT, smoothed);
+    }
+
     protected long consumerMessages(Destination destination, int msgCount) throws Exception {
         Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
         MessageConsumer consumer = session.createConsumer(destination);
@@ -132,6 +165,26 @@ public class ConsumeFromAMQPTest extends AmqpTestSupport {
             Message message = consumer.receive(7000);
             assertNotNull("Failed to receive message " + i, message);
         }
+        long result = (System.currentTimeMillis() - startTime);
+
+        consumer.close();
+        return result;
+    }
+
+    protected long consumerMessagesAsync(Destination destination, int msgCount) throws Exception {
+        Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+        MessageConsumer consumer = session.createConsumer(destination);
+
+        final CountDownLatch doneLatch = new CountDownLatch(MSG_COUNT);
+        long startTime = System.currentTimeMillis();
+        consumer.setMessageListener(new MessageListener() {
+
+            @Override
+            public void onMessage(Message message) {
+                doneLatch.countDown();
+            }
+        });
+        assertTrue(doneLatch.await(60, TimeUnit.SECONDS));
         long result = (System.currentTimeMillis() - startTime);
 
         consumer.close();
