@@ -33,17 +33,15 @@ import javax.jms.Session;
 import javax.jms.TextMessage;
 
 import org.apache.activemq.broker.jmx.QueueViewMBean;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
  *
  */
-@Ignore
 public class ConsumeFromAMQPTest extends AmqpTestSupport {
 
     private final int MSG_COUNT = 50 * 1000;
-    private final int NUM_RUNS = 1;
+    private final int NUM_RUNS = 10;
 
     @Override
     protected boolean isForceAsyncSends() {
@@ -58,6 +56,11 @@ public class ConsumeFromAMQPTest extends AmqpTestSupport {
     @Override
     protected String getAmqpTransformer() {
         return "raw";
+    }
+
+    @Override
+    public String getAmqpConnectionURIOptions() {
+        return "provider.presettleProducers=true&presettleConsumers=false";
     }
 
     @Test
