@@ -33,13 +33,11 @@ import javax.jms.Session;
 import javax.jms.TextMessage;
 
 import org.apache.activemq.broker.jmx.QueueViewMBean;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
  *
  */
-@Ignore
 public class ConsumeFromAMQPTest extends AmqpTestSupport {
 
     private final int MSG_COUNT = 50 * 1000;
@@ -58,6 +56,11 @@ public class ConsumeFromAMQPTest extends AmqpTestSupport {
     @Override
     protected String getAmqpTransformer() {
         return "raw";
+    }
+
+    @Override
+    protected boolean isMessagePrioritySupported() {
+        return false;
     }
 
     @Override
