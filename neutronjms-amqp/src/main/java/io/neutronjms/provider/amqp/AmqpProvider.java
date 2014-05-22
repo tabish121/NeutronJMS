@@ -38,10 +38,13 @@ import io.neutronjms.provider.ProviderConstants.ACK_TYPE;
 import io.neutronjms.provider.ProviderRequest;
 import io.neutronjms.transports.TcpTransport;
 import io.neutronjms.transports.TransportListener;
+import io.neutronjms.util.IOExceptionSupport;
+import io.neutronjms.util.PropertyUtil;
 
 import java.io.IOException;
 import java.net.URI;
 import java.nio.ByteBuffer;
+import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -124,6 +127,24 @@ public class AmqpProvider extends AbstractAsyncProvider implements TransportList
         checkClosed();
 
         transport = createTransport(getRemoteURI());
+
+        Map<String, String> map = Collections.emptyMap();
+        try {
+            map = PropertyUtil.parseQuery(remoteURI.getQuery());
+        } catch (Exception e) {
+            IOExceptionSupport.create(e);
+        }
+        Map<String, String> providerOptions = PropertyUtil.filterProperties(map, "transport.");
+
+        if (!PropertyUtil.setProperties(transport, providerOptions)) {
+            String msg = ""
+                + " Not all transport options could be set on the AMQP Provider transport."
+                + " Check the options are spelled correctly."
+                + " Given parameters=[" + providerOptions + "]."
+                + " This provider instance cannot be started.";
+            throw new IOException(msg);
+        }
+
         transport.connect();
     }
 
