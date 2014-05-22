@@ -41,6 +41,14 @@ public class AmqpTestSupport extends NeutronJmsTestSupport {
         return "jms";
     }
 
+    protected int getSocketBufferSize() {
+        return 64 * 1024;
+    }
+
+    protected int getIOBufferSize() {
+        return 8 * 1024;
+    }
+
     @Override
     protected void addAdditionalConnectors(BrokerService brokerService, Map<String, Integer> portMap) throws Exception {
         int port = 0;
@@ -48,7 +56,8 @@ public class AmqpTestSupport extends NeutronJmsTestSupport {
             port = portMap.get("amqp");
         }
         TransportConnector connector = brokerService.addConnector(
-            "amqp://0.0.0.0:" + port + "?transport.transformer=" + getAmqpTransformer());
+            "amqp://0.0.0.0:" + port + "?transport.transformer=" + getAmqpTransformer() +
+            "&transport.socketBufferSize=" + getSocketBufferSize() + "&ioBufferSize=" + getIOBufferSize());
         connector.setName("amqp");
         if (isAmqpDiscovery()) {
             connector.setDiscoveryUri(new URI("multicast://default"));
