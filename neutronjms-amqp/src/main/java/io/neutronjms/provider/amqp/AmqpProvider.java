@@ -54,6 +54,7 @@ import org.apache.qpid.proton.engine.Collector;
 import org.apache.qpid.proton.engine.Connection;
 import org.apache.qpid.proton.engine.EngineFactory;
 import org.apache.qpid.proton.engine.Event;
+import org.apache.qpid.proton.engine.Event.Type;
 import org.apache.qpid.proton.engine.Sasl;
 import org.apache.qpid.proton.engine.Transport;
 import org.apache.qpid.proton.engine.impl.CollectorImpl;
@@ -650,7 +651,9 @@ public class AmqpProvider extends AbstractAsyncProvider implements TransportList
         try {
             Event protonEvent = null;
             while ((protonEvent = protonCollector.peek()) != null) {
-                LOG.trace("New Proton Event: {}", protonEvent.getType());
+                if (!protonEvent.getType().equals(Type.TRANSPORT)) {
+                    LOG.trace("New Proton Event: {}", protonEvent.getType());
+                }
 
                 AmqpResource amqpResource = null;
                 switch (protonEvent.getType()) {
