@@ -22,6 +22,7 @@ import java.net.URI;
 import java.util.Map;
 
 import javax.jms.Connection;
+import javax.jms.ConnectionFactory;
 
 import org.apache.activemq.broker.BrokerService;
 import org.apache.activemq.broker.TransportConnector;
@@ -103,6 +104,23 @@ public class AmqpTestSupport extends NeutronJmsTestSupport {
     }
 
     public Connection createAmqpConnection(URI brokerURI, String username, String password) throws Exception {
+        ConnectionFactory factory = createAmqpConnectionFactory(brokerURI, username, password);
+        return factory.createConnection();
+    }
+
+    public ConnectionFactory createAmqpConnectionFactory() throws Exception {
+        return createAmqpConnectionFactory(getBrokerAmqpConnectionURI(), null, null);
+    }
+
+    public ConnectionFactory createAmqpConnectionFactory(URI brokerURI) throws Exception {
+        return createAmqpConnectionFactory(brokerURI, null, null);
+    }
+
+    public ConnectionFactory createAmqpConnectionFactory(String username, String password) throws Exception {
+        return createAmqpConnectionFactory(getBrokerAmqpConnectionURI(), username, password);
+    }
+
+    public ConnectionFactory createAmqpConnectionFactory(URI brokerURI, String username, String password) throws Exception {
         JmsConnectionFactory factory = new JmsConnectionFactory(brokerURI);
         factory.setForceAsyncSend(isForceAsyncSends());
         factory.setAlwaysSyncSend(isAlwaysSyncSend());
@@ -114,6 +132,6 @@ public class AmqpTestSupport extends NeutronJmsTestSupport {
         if (password != null) {
             factory.setPassword(password);
         }
-        return factory.createConnection();
+        return factory;
     }
 }
