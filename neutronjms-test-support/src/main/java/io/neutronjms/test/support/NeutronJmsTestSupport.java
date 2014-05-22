@@ -428,4 +428,20 @@ public class NeutronJmsTestSupport {
 
         return authorizationPlugin;
     }
+
+    protected boolean isForceAsyncSends() {
+        return false;
+    }
+
+    protected boolean isAlwaysSyncSend() {
+        return false;
+    }
+
+    protected boolean isMessagePrioritySupported() {
+        return true;
+    }
+
+    protected boolean isSendAcksAsync() {
+        return false;
+    }
 }

@@ -36,18 +36,6 @@ public class AmqpTestSupport extends NeutronJmsTestSupport {
         return false;
     }
 
-    protected boolean isForceAsyncSends() {
-        return false;
-    }
-
-    protected boolean isAlwaysSyncSend() {
-        return false;
-    }
-
-    protected boolean isMessagePrioritySupported() {
-        return true;
-    }
-
     protected String getAmqpTransformer() {
         return "jms";
     }
@@ -119,6 +107,7 @@ public class AmqpTestSupport extends NeutronJmsTestSupport {
         factory.setForceAsyncSend(isForceAsyncSends());
         factory.setAlwaysSyncSend(isAlwaysSyncSend());
         factory.setMessagePrioritySupported(isMessagePrioritySupported());
+        factory.setSendAcksAsync(isSendAcksAsync());
         if (username != null) {
             factory.setUsername(username);
         }

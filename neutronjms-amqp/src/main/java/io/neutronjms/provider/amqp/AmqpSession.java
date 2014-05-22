@@ -274,6 +274,10 @@ public class AmqpSession extends AbstractAmqpResource<JmsSessionInfo, Session> {
         return this.info.isTransacted();
     }
 
+    boolean isAsyncAck() {
+        return this.info.isSendAcksAsync() || isTransacted();
+    }
+
     @Override
     public String toString() {
         return "AmqpSession { " + getSessionId() + " }";

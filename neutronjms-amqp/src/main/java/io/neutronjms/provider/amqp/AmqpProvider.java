@@ -405,8 +405,13 @@ public class AmqpProvider extends AbstractAsyncProvider implements TransportList
 
                     consumer.acknowledge(envelope, ackType);
 
-                    pumpToProtonTransport();
-                    request.onSuccess();
+                    if (consumer.getSession().isAsyncAck()) {
+                        request.onSuccess();
+                        pumpToProtonTransport();
+                    } else {
+                        pumpToProtonTransport();
+                        request.onSuccess();
+                    }
                 } catch (Exception error) {
                     request.onFailure(error);
                 }

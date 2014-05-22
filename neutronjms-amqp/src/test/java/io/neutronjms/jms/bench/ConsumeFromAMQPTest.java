@@ -70,6 +70,11 @@ public class ConsumeFromAMQPTest extends AmqpTestSupport {
     }
 
     @Override
+    protected boolean isSendAcksAsync() {
+        return true;
+    }
+
+    @Override
     public String getAmqpConnectionURIOptions() {
         return "provider.presettleProducers=true&presettleConsumers=false";
     }
