@@ -220,6 +220,7 @@ public abstract class AbstractAmqpResource<R extends JmsResource, E extends Endp
                 failed(remoteError);
             } else {
                 // TODO - Handle remote asynchronous close.
+                LOG.warn("Link was closed remotely.");
             }
         }
     }
