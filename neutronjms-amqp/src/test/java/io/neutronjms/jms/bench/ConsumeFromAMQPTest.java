@@ -117,8 +117,9 @@ public class ConsumeFromAMQPTest extends AmqpTestSupport {
 
         // Warm Up the broker.
         produceMessages(queue, MSG_COUNT);
-
+        consumerMessages(queue, MSG_COUNT);
         QueueViewMBean queueView = getProxyToQueue(getDestinationName());
+        queueView.purge();
 
         List<Long> sendTimes = new ArrayList<Long>();
         long cumulative = 0;
@@ -146,6 +147,7 @@ public class ConsumeFromAMQPTest extends AmqpTestSupport {
 
         // Warm Up the broker.
         produceMessages(queue, MSG_COUNT);
+        consumerMessagesAsync(queue, MSG_COUNT);
 
         QueueViewMBean queueView = getProxyToQueue(getDestinationName());
 
