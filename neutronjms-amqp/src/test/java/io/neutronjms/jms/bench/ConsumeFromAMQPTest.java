@@ -80,7 +80,7 @@ public class ConsumeFromAMQPTest extends AmqpTestSupport {
 
     @Override
     public String getAmqpConnectionURIOptions() {
-        return "provider.presettleProducers=true&presettleConsumers=true";
+        return "provider.presettleProducers=true&provider.presettleConsumers=false";
     }
 
     @Test
