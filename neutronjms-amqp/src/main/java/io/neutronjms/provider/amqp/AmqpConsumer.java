@@ -72,6 +72,8 @@ public class AmqpConsumer extends AbstractAmqpResource<JmsConsumerInfo, Receiver
     protected final Map<JmsMessageId, Delivery> delivered = new LinkedHashMap<JmsMessageId, Delivery>();
     protected boolean presettle;
 
+    private final byte incomingBuffer[] = new byte[1024 * 64];
+
     public AmqpConsumer(AmqpSession session, JmsConsumerInfo info) {
         super(info);
         this.session = session;
@@ -286,6 +288,7 @@ public class AmqpConsumer extends AbstractAmqpResource<JmsConsumerInfo, Receiver
                 LOG.trace("{} has incoming Message(s).", this);
                 processDelivery(incoming);
             } else {
+                LOG.trace("{} has a partial incoming Message(s), deferring.", this);
                 incoming = null;
             }
             endpoint.advance();
@@ -393,9 +396,8 @@ public class AmqpConsumer extends AbstractAmqpResource<JmsConsumerInfo, Receiver
 
         try {
             int count;
-            byte data[] = new byte[1024 * 4];
-            while ((count = endpoint.recv(data, 0, data.length)) > 0) {
-                stream.write(data, 0, count);
+            while ((count = endpoint.recv(incomingBuffer, 0, incomingBuffer.length)) > 0) {
+                stream.write(incomingBuffer, 0, count);
             }
 
             buffer = stream.toBuffer();
