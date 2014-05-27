@@ -54,4 +54,22 @@ public interface Transport {
      */
     void send(ByteBuffer output) throws IOException;
 
+    /**
+     * Gets the currently set TransportListener instance
+     *
+     * @returns the current TransportListener or null if none set.
+     */
+    TransportListener getTransportListener();
+
+    /**
+     * Sets the Transport Listener instance that will be notified of incoming data or
+     * error events.
+     *
+     * @param listener
+     *        The new TransportListener instance to use (cannot be null).
+     *
+     * @throws IllegalArgumentException if the given listener is null.
+     */
+    void setTransportListener(TransportListener listener);
+
 }

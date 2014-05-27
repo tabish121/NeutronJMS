@@ -45,7 +45,6 @@ public class TcpTransport implements Transport {
 
     private final Vertx vertx = VertxFactory.newVertx();
     private final NetClient client = vertx.createNetClient();
-    private final TransportListener listener;
     private final URI remoteLocation;
     private final AtomicBoolean connected = new AtomicBoolean();
     private final AtomicBoolean closed = new AtomicBoolean();
@@ -53,6 +52,7 @@ public class TcpTransport implements Transport {
 
     private NetSocket socket;
 
+    private TransportListener listener;
     private int socketBufferSize = 64 * 1024;
     private int soTimeout = -1;
     private int soLinger = Integer.MIN_VALUE;
@@ -75,6 +75,10 @@ public class TcpTransport implements Transport {
     @Override
     public void connect() throws IOException {
         final CountDownLatch connectLatch = new CountDownLatch(1);
+
+        if (listener == null) {
+            throw new IllegalStateException("A transport listener must be set before connection attempts.");
+        }
 
         configureNetClient(client);
 
@@ -184,6 +188,20 @@ public class TcpTransport implements Transport {
         if (!connected.get()) {
             throw new IOException("Cannot send to a non-connected transport.");
         }
+    }
+
+    @Override
+    public TransportListener getTransportListener() {
+        return this.listener;
+    }
+
+    @Override
+    public void setTransportListener(TransportListener listener) {
+        if (listener == null) {
+            throw new IllegalArgumentException("Listener cannot be set to null");
+        }
+
+        this.listener = listener;
     }
 
     public int getSocketBufferSize() {
