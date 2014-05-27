@@ -71,6 +71,17 @@ public class AmqpFixedProducer extends AmqpProducer {
     }
 
     @Override
+    public void close(AsyncResult<Void> request) {
+        // If any sends are held we need to wait for them to complete.
+        if (!pendingSends.isEmpty()) {
+            this.closeRequest = request;
+            return;
+        }
+
+        super.close(request);
+    }
+
+    @Override
     public boolean send(JmsOutboundMessageDispatch envelope, AsyncResult<Void> request) throws IOException {
 
         // TODO - Handle the case where remote has no credit which means we can't send to it.
@@ -161,6 +172,11 @@ public class AmqpFixedProducer extends AmqpProducer {
                 PendingSend held = pendingSends.pop();
                 doSend(held.envelope, held.request);
             }
+        }
+
+        // Once the pending sends queue is drained we can propagate the close request.
+        if (pendingSends.isEmpty() && isAwaitingClose()) {
+            super.close(closeRequest);
         }
     }
 
