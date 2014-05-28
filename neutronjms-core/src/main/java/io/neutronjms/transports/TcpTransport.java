@@ -55,6 +55,7 @@ public class TcpTransport implements Transport {
     private TransportListener listener;
     private int socketBufferSize = 64 * 1024;
     private int soTimeout = -1;
+    private int connectTimeout = -1;
     private int soLinger = Integer.MIN_VALUE;
     private boolean keepAlive;
     private boolean tcpNoDelay = true;
@@ -177,6 +178,9 @@ public class TcpTransport implements Transport {
         client.setSoLinger(soLinger);
         client.setTCPKeepAlive(keepAlive);
         client.setTCPNoDelay(tcpNoDelay);
+        if (connectTimeout >= 0) {
+            client.setConnectTimeout(connectTimeout);
+        }
     }
 
     @Override
@@ -242,5 +246,13 @@ public class TcpTransport implements Transport {
 
     public void setKeepAlive(boolean keepAlive) {
         this.keepAlive = keepAlive;
+    }
+
+    public int getConnectTimeout() {
+        return connectTimeout;
+    }
+
+    public void setConnectTimeout(int connectTimeout) {
+        this.connectTimeout = connectTimeout;
     }
 }
