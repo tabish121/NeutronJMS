@@ -61,7 +61,7 @@ public class ProducerAndConsumerBench extends AmqpTestSupport  {
     private final String payloadString = new String(new byte[payload]);
     private final int parallelProducer = 1;
     private final int parallelConsumer = 1;
-    private final Vector<Exception> exceptions = new Vector<Exception>();
+    private final Vector<Throwable> exceptions = new Vector<Throwable>();
     private ConnectionFactory factory;
 
     private final long NUM_SENDS = 30000;
@@ -73,6 +73,8 @@ public class ProducerAndConsumerBench extends AmqpTestSupport  {
         final AtomicLong sharedSendCount = new AtomicLong(NUM_SENDS);
         final AtomicLong sharedReceiveCount = new AtomicLong(NUM_SENDS);
 
+        Thread.sleep(2000);
+
         long start = System.currentTimeMillis();
         ExecutorService executorService = Executors.newFixedThreadPool(parallelConsumer + parallelProducer);
 
@@ -82,7 +84,7 @@ public class ProducerAndConsumerBench extends AmqpTestSupport  {
                 public void run() {
                     try {
                         consumeMessages(sharedReceiveCount);
-                    } catch (Exception e) {
+                    } catch (Throwable e) {
                         exceptions.add(e);
                     }
                 }
@@ -94,12 +96,13 @@ public class ProducerAndConsumerBench extends AmqpTestSupport  {
                 public void run() {
                     try {
                         publishMessages(sharedSendCount);
-                    } catch (Exception e) {
+                    } catch (Throwable e) {
                         exceptions.add(e);
                     }
                 }
             });
         }
+
         executorService.shutdown();
         executorService.awaitTermination(30, TimeUnit.MINUTES);
         assertTrue("Producers done in time", executorService.isTerminated());
@@ -118,7 +121,7 @@ public class ProducerAndConsumerBench extends AmqpTestSupport  {
         MessageConsumer consumer = session.createConsumer(queue);
         long v;
         while ((v = count.decrementAndGet()) > 0) {
-            assertNotNull("got message " + v, consumer.receive(10000));
+            assertNotNull("got message " + v, consumer.receive(15000));
         }
         consumer.close();
     }
@@ -184,7 +187,7 @@ public class ProducerAndConsumerBench extends AmqpTestSupport  {
 
     @Override
     public String getAmqpConnectionURIOptions() {
-        return "provider.presettleProducers=true&provider.presettleConsumers=false";
+        return "provider.presettleProducers=true&provider.presettleConsumers=true";
     }
 
     @Override
