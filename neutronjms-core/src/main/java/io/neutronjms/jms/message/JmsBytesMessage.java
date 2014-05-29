@@ -99,6 +99,7 @@ public class JmsBytesMessage extends JmsMessage implements BytesMessage {
 
     @Override
     public JmsMessage copy() throws JMSException {
+        storeContent();
         JmsBytesMessage other = new JmsBytesMessage(facade.copy());
         other.copy(this);
         return other;
