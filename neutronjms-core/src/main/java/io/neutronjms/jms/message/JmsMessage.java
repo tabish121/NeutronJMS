@@ -19,6 +19,7 @@ package io.neutronjms.jms.message;
 import io.neutronjms.jms.JmsConnection;
 import io.neutronjms.jms.JmsDestination;
 import io.neutronjms.jms.exceptions.JmsExceptionSupport;
+import io.neutronjms.jms.message.facade.JmsMessageFacade;
 import io.neutronjms.jms.meta.JmsMessageId;
 import io.neutronjms.util.PropertyExpression;
 import io.neutronjms.util.TypeConversionSupport;

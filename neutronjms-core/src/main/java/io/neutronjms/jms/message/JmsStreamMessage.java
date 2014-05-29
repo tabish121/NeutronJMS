@@ -17,6 +17,7 @@
 package io.neutronjms.jms.message;
 
 import io.neutronjms.jms.exceptions.JmsExceptionSupport;
+import io.neutronjms.jms.message.facade.JmsMessageFacade;
 
 import java.util.ArrayList;
 import java.util.List;

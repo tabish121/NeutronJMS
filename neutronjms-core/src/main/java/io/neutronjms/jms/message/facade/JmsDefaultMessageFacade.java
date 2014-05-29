@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.neutronjms.jms.message;
+package io.neutronjms.jms.message.facade;
 
 import static org.fusesource.hawtbuf.Buffer.ascii;
 import io.neutronjms.jms.JmsDestination;

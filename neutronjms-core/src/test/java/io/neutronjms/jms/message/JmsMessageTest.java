@@ -24,10 +24,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import io.neutronjms.jms.JmsDestination;
 import io.neutronjms.jms.JmsTopic;
-import io.neutronjms.jms.message.JmsBytesMessage;
-import io.neutronjms.jms.message.JmsDefaultMessageFactory;
-import io.neutronjms.jms.message.JmsMessage;
-import io.neutronjms.jms.message.JmsMessageFactory;
 
 import java.util.Enumeration;
 import java.util.Map;

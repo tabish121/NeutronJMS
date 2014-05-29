@@ -16,6 +16,9 @@
  */
 package io.neutronjms.jms.message;
 
+import io.neutronjms.jms.message.facade.JmsDefaultBytesMessageFacade;
+import io.neutronjms.jms.message.facade.JmsDefaultMessageFacade;
+
 import java.io.Serializable;
 
 import javax.jms.MessageNotWriteableException;
@@ -51,7 +54,7 @@ public class JmsDefaultMessageFactory implements JmsMessageFactory {
 
     @Override
     public JmsBytesMessage createBytesMessage() throws UnsupportedOperationException {
-        return new JmsBytesMessage(new JmsDefaultMessageFacade());
+        return new JmsBytesMessage(new JmsDefaultBytesMessageFacade());
     }
 
     @Override

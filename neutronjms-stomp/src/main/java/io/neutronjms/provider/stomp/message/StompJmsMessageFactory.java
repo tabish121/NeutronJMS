@@ -102,7 +102,7 @@ public class StompJmsMessageFactory implements JmsMessageFactory {
     public JmsBytesMessage createBytesMessage() throws UnsupportedOperationException {
         StompFrame frame = new StompFrame(SEND);
         frame.setProperty(TRANSFORMATION, JmsMsgType.BYTES.name());
-        return new StompJmsBytesMessage(new StompJmsMessageFacade(frame, connection));
+        return new JmsBytesMessage(new StompJmsBytesMessageFacade(frame, connection));
     }
 
     @Override
@@ -142,8 +142,8 @@ public class StompJmsMessageFactory implements JmsMessageFactory {
     /**
      * Creates a new JmsBytesMessage that wraps the incoming MESSAGE frame.
      */
-    public StompJmsBytesMessage wrapBytesMessage(StompFrame message) {
-        return new StompJmsBytesMessage(new StompJmsMessageFacade(message, connection));
+    public JmsBytesMessage wrapBytesMessage(StompFrame message) {
+        return new JmsBytesMessage(new StompJmsBytesMessageFacade(message, connection));
     }
 
     /**

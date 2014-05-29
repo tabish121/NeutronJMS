@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.neutronjms.jms.message;
+package io.neutronjms.jms.message.facade;
 
 import io.neutronjms.jms.JmsDestination;
 import io.neutronjms.jms.meta.JmsMessageId;
@@ -124,12 +124,32 @@ public interface JmsMessageFacade {
      */
     void setTimestamp(long timestamp);
 
+    /**
+     * Returns the correlation ID set on this message if one exists, null otherwise.
+     *
+     * @return the set correlation ID or null if not set.
+     */
     String getCorrelationId();
 
+    /**
+     * Sets the correlation ID for this message.
+     *
+     * @param correlationId
+     *        The correlation ID to set on this message, or null to clear.
+     */
     void setCorrelationId(String correlationId);
 
+    /**
+     * @return true if this message is tagged as being persistent.
+     */
     boolean isPersistent();
 
+    /**
+     * Sets the persistent flag on this message.
+     *
+     * @param value
+     *        true if the message is to be marked as persistent.
+     */
     void setPersistent(boolean value);
 
     int getRedeliveryCounter();

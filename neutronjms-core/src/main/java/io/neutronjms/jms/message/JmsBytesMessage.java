@@ -17,6 +17,7 @@
 package io.neutronjms.jms.message;
 
 import io.neutronjms.jms.exceptions.JmsExceptionSupport;
+import io.neutronjms.jms.message.facade.JmsBytesMessageFacade;
 
 import java.io.DataInputStream;
 import java.io.EOFException;
@@ -84,14 +85,16 @@ import org.fusesource.hawtbuf.DataByteArrayOutputStream;
  * @see javax.jms.TextMessage
  */
 public class JmsBytesMessage extends JmsMessage implements BytesMessage {
+
     protected transient DataByteArrayOutputStream bytesOut;
     protected transient DataInputStream dataIn;
     protected transient int length;
 
-    protected Buffer content;
+    private final JmsBytesMessageFacade facade;
 
-    public JmsBytesMessage(JmsMessageFacade facade) {
+    public JmsBytesMessage(JmsBytesMessageFacade facade) {
         super(facade);
+        this.facade = facade;
     }
 
     @Override
@@ -102,13 +105,7 @@ public class JmsBytesMessage extends JmsMessage implements BytesMessage {
     }
 
     private void copy(JmsBytesMessage other) throws JMSException {
-        other.storeContent();
         super.copy(other);
-        if (other.getContent() != null) {
-            this.setContent(other.getContent().deepCopy());
-        } else {
-            this.setContent(null);
-        }
         this.bytesOut = null;
         this.dataIn = null;
     }
@@ -117,25 +114,6 @@ public class JmsBytesMessage extends JmsMessage implements BytesMessage {
     public void onSend() throws JMSException {
         super.onSend();
         this.storeContent();
-    }
-
-    /**
-     * Returns the message's byte buffer content.
-     *
-     * @return a Buffer object containing the content of the message.
-     */
-    protected Buffer getContent() {
-        return content;
-    }
-
-    /**
-     * Sets the message content to the pay-load contained in the given Buffer instance.
-     *
-     * @param content
-     *        the new message content.
-     */
-    protected void setContent(Buffer content) {
-        this.content = content;
     }
 
     /**
@@ -783,11 +761,34 @@ public class JmsBytesMessage extends JmsMessage implements BytesMessage {
         setReadOnlyBody(true);
     }
 
-    private void initializeWriting() throws JMSException {
-        checkReadOnlyBody();
-        if (this.bytesOut == null) {
-            this.bytesOut = new DataByteArrayOutputStream();
-        }
+    @Override
+    public void setObjectProperty(String name, Object value) throws JMSException {
+        initializeWriting();
+        super.setObjectProperty(name, value);
+    }
+
+    @Override
+    public String toString() {
+        return super.toString() + " JmsBytesMessage{ " + "bytesOut = " + bytesOut + ", dataIn = " + dataIn + " }";
+    }
+
+    /**
+     * Direct view of the underlying message contents.
+     *
+     * @return a Buffer holding the bytes contained in this message.
+     */
+    public Buffer getContent() {
+        return this.facade.getContent();
+    }
+
+    /**
+     * A direct write method to the underlying message content buffer.
+     *
+     * @param content
+     *        the new content to assign to this message.
+     */
+    public void setContent(Buffer content) {
+        this.facade.setContent(content);
     }
 
     protected void checkWriteOnlyBody() throws MessageNotReadableException {
@@ -796,10 +797,17 @@ public class JmsBytesMessage extends JmsMessage implements BytesMessage {
         }
     }
 
+    private void initializeWriting() throws JMSException {
+        checkReadOnlyBody();
+        if (this.bytesOut == null) {
+            this.bytesOut = new DataByteArrayOutputStream();
+        }
+    }
+
     private void initializeReading() throws JMSException {
         checkWriteOnlyBody();
         if (dataIn == null) {
-            Buffer buffer = getContent();
+            Buffer buffer = facade.getContent();
             if (buffer == null) {
                 buffer = new Buffer(0);
             }
@@ -813,22 +821,11 @@ public class JmsBytesMessage extends JmsMessage implements BytesMessage {
             if (bytesOut != null) {
                 bytesOut.close();
                 Buffer bs = bytesOut.toBuffer();
-                setContent(bs);
+                facade.setContent(bs);
                 bytesOut = null;
             }
         } catch (IOException ioe) {
             throw JmsExceptionSupport.create(ioe);
         }
-    }
-
-    @Override
-    public void setObjectProperty(String name, Object value) throws JMSException {
-        initializeWriting();
-        super.setObjectProperty(name, value);
-    }
-
-    @Override
-    public String toString() {
-        return super.toString() + " JmsBytesMessage{ " + "bytesOut = " + bytesOut + ", dataIn = " + dataIn + " }";
     }
 }

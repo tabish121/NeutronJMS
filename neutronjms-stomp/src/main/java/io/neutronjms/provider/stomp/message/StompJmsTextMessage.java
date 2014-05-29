@@ -16,8 +16,8 @@
  */
 package io.neutronjms.provider.stomp.message;
 
-import io.neutronjms.jms.message.JmsMessageFacade;
 import io.neutronjms.jms.message.JmsTextMessage;
+import io.neutronjms.jms.message.facade.JmsMessageFacade;
 
 import org.fusesource.hawtbuf.UTF8Buffer;
 

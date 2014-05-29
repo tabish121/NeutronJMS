@@ -30,6 +30,7 @@ import static io.neutronjms.provider.stomp.StompConstants.PRIORITY;
 import static io.neutronjms.provider.stomp.StompConstants.RECEIPT_REQUESTED;
 import static io.neutronjms.provider.stomp.StompConstants.REDELIVERED;
 import static io.neutronjms.provider.stomp.StompConstants.REPLY_TO;
+import static io.neutronjms.provider.stomp.StompConstants.SEND;
 import static io.neutronjms.provider.stomp.StompConstants.SUBSCRIPTION;
 import static io.neutronjms.provider.stomp.StompConstants.TIMESTAMP;
 import static io.neutronjms.provider.stomp.StompConstants.TRANSFORMATION;
@@ -37,7 +38,7 @@ import static io.neutronjms.provider.stomp.StompConstants.TRUE;
 import static io.neutronjms.provider.stomp.StompConstants.TYPE;
 import static io.neutronjms.provider.stomp.StompConstants.USERID;
 import io.neutronjms.jms.JmsDestination;
-import io.neutronjms.jms.message.JmsMessageFacade;
+import io.neutronjms.jms.message.facade.JmsMessageFacade;
 import io.neutronjms.jms.meta.JmsMessageId;
 import io.neutronjms.provider.stomp.StompConnection;
 import io.neutronjms.provider.stomp.StompFrame;
@@ -79,8 +80,19 @@ public class StompJmsMessageFacade implements JmsMessageFacade {
         RESERVED_HEADER_NAMES.add(JMSX_GROUP_SEQUENCE);
     }
 
-    private final StompFrame message;
-    private final StompConnection connection;
+    protected final StompFrame message;
+    protected final StompConnection connection;
+
+    /**
+     * Creates a new StompJmsMessageFacade for use in sending a new Message.
+     *
+     * @param connection
+     *        the STOMP connection instance to assign to this Facade.
+     */
+    public StompJmsMessageFacade(StompConnection connection) {
+        this.message = new StompFrame().setCommand(SEND);
+        this.connection = connection;
+    }
 
     /**
      * Creates a new wrapper around the StompFrame Message instance.

@@ -16,6 +16,8 @@
  */
 package io.neutronjms.jms.message;
 
+import io.neutronjms.jms.message.facade.JmsMessageFacade;
+
 import javax.jms.JMSException;
 import javax.jms.MessageNotWriteableException;
 import javax.jms.TextMessage;
