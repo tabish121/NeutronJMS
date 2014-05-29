@@ -80,7 +80,7 @@ public class ConsumeFromAMQPTest extends AmqpTestSupport {
 
     @Override
     public String getAmqpConnectionURIOptions() {
-        return "provider.presettleProducers=true&provider.presettleConsumers=false";
+        return "provider.presettleProducers=true&provider.presettleConsumers=true";
     }
 
     @Test
@@ -102,9 +102,11 @@ public class ConsumeFromAMQPTest extends AmqpTestSupport {
         assertEquals("Queue should have a message", 1, queueView.getQueueSize());
 
         MessageConsumer consumer = session.createConsumer(queue);
-        Message received = consumer.receive(5000);
+        Message received = consumer.receive(7000);
         assertNotNull(received);
         consumer.close();
+
+        assertEquals("Queue should have ano messages", 0, queueView.getQueueSize());
     }
 
     @Test
