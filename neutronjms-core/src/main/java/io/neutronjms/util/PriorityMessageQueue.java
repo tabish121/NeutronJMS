@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.jms.JMSException;
+
 /**
  * Simple Message Priority ordered Queue.  Message envelopes are stored in the
  * Queue based on their priority value.
@@ -127,7 +129,10 @@ public final class PriorityMessageQueue extends AbstractMessageQueue {
     private int getPriority(JmsInboundMessageDispatch envelope) {
         int priority = javax.jms.Message.DEFAULT_PRIORITY;
         if (envelope.getMessage() != null) {
-            priority = Math.max(envelope.getMessage().getJMSPriority(), 0);
+            try {
+                priority = Math.max(envelope.getMessage().getJMSPriority(), 0);
+            } catch (JMSException e) {
+            }
             priority = Math.min(priority, 9);
         }
         return priority;

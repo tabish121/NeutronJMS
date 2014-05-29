@@ -19,6 +19,7 @@ package io.neutronjms.provider.amqp;
 import io.neutronjms.jms.meta.JmsSessionInfo;
 import io.neutronjms.jms.meta.JmsTransactionId;
 import io.neutronjms.provider.AsyncResult;
+import io.neutronjms.util.IOExceptionSupport;
 
 import java.io.IOException;
 import java.nio.BufferOverflowException;
@@ -81,46 +82,50 @@ public class AmqpTransactionContext extends AbstractAmqpResource<JmsSessionInfo,
     }
 
     @Override
-    public void processDeliveryUpdates() {
-        if (pendingDelivery != null && pendingDelivery.remotelySettled()) {
-            DeliveryState state = pendingDelivery.getRemoteState();
-            if (state instanceof Declared) {
-                Declared declared = (Declared) state;
-                current.setProviderHint(declared.getTxnId());
-                pendingDelivery.settle();
-                LOG.info("New TX started: {}", current.getProviderHint());
-                AsyncResult<Void> request = this.pendingRequest;
-                this.pendingRequest = null;
-                this.pendingDelivery = null;
-                request.onSuccess();
-            } else if (state instanceof Rejected) {
-                LOG.info("Last TX request failed: {}", current.getProviderHint());
-                pendingDelivery.settle();
-                Rejected rejected = (Rejected) state;
-                TransactionRolledBackException ex =
-                    new TransactionRolledBackException(rejected.getError().getDescription());
-                AsyncResult<Void> request = this.pendingRequest;
-                this.current = null;
-                this.pendingRequest = null;
-                this.pendingDelivery = null;
-                postRollback();
-                request.onFailure(ex);
-            } else {
-                LOG.info("Last TX request succeeded: {}", current.getProviderHint());
-                pendingDelivery.settle();
-                AsyncResult<Void> request = this.pendingRequest;
-                if (pendingDelivery.getContext() != null) {
-                    if (pendingDelivery.getContext().equals(COMMIT_MARKER)) {
-                        postCommit();
-                    } else {
-                        postRollback();
+    public void processDeliveryUpdates() throws IOException {
+        try {
+            if (pendingDelivery != null && pendingDelivery.remotelySettled()) {
+                DeliveryState state = pendingDelivery.getRemoteState();
+                if (state instanceof Declared) {
+                    Declared declared = (Declared) state;
+                    current.setProviderHint(declared.getTxnId());
+                    pendingDelivery.settle();
+                    LOG.info("New TX started: {}", current.getProviderHint());
+                    AsyncResult<Void> request = this.pendingRequest;
+                    this.pendingRequest = null;
+                    this.pendingDelivery = null;
+                    request.onSuccess();
+                } else if (state instanceof Rejected) {
+                    LOG.info("Last TX request failed: {}", current.getProviderHint());
+                    pendingDelivery.settle();
+                    Rejected rejected = (Rejected) state;
+                    TransactionRolledBackException ex =
+                        new TransactionRolledBackException(rejected.getError().getDescription());
+                    AsyncResult<Void> request = this.pendingRequest;
+                    this.current = null;
+                    this.pendingRequest = null;
+                    this.pendingDelivery = null;
+                    postRollback();
+                    request.onFailure(ex);
+                } else {
+                    LOG.info("Last TX request succeeded: {}", current.getProviderHint());
+                    pendingDelivery.settle();
+                    AsyncResult<Void> request = this.pendingRequest;
+                    if (pendingDelivery.getContext() != null) {
+                        if (pendingDelivery.getContext().equals(COMMIT_MARKER)) {
+                            postCommit();
+                        } else {
+                            postRollback();
+                        }
                     }
+                    this.current = null;
+                    this.pendingRequest = null;
+                    this.pendingDelivery = null;
+                    request.onSuccess();
                 }
-                this.current = null;
-                this.pendingRequest = null;
-                this.pendingDelivery = null;
-                request.onSuccess();
             }
+        } catch (Exception e) {
+            throw IOExceptionSupport.create(e);
         }
     }
 
@@ -223,25 +228,25 @@ public class AmqpTransactionContext extends AbstractAmqpResource<JmsSessionInfo,
         return this.session.getSessionId() + ": txContext";
     }
 
-    private void preCommit() {
+    private void preCommit() throws Exception {
         for (AmqpConsumer consumer : txConsumers) {
             consumer.preCommit();
         }
     }
 
-    private void preRollback() {
+    private void preRollback() throws Exception {
         for (AmqpConsumer consumer : txConsumers) {
             consumer.preRollback();
         }
     }
 
-    private void postCommit() {
+    private void postCommit() throws Exception {
         for (AmqpConsumer consumer : txConsumers) {
             consumer.postCommit();
         }
     }
 
-    private void postRollback() {
+    private void postRollback() throws Exception {
         for (AmqpConsumer consumer : txConsumers) {
             consumer.postRollback();
         }

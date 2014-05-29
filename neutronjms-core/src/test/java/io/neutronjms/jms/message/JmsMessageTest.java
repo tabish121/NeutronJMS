@@ -173,7 +173,7 @@ public class JmsMessageTest {
     }
 
     @Test
-    public void testGetAndSetJMSTimestamp() {
+    public void testGetAndSetJMSTimestamp() throws JMSException {
         JmsMessage msg = factory.createMessage();
         msg.setJMSTimestamp(this.jmsTimestamp);
         assertTrue(msg.getJMSTimestamp() == this.jmsTimestamp);
@@ -199,7 +199,7 @@ public class JmsMessageTest {
     }
 
     @Test
-    public void testGetAndSetJMSCorrelationID() {
+    public void testGetAndSetJMSCorrelationID() throws JMSException {
         JmsMessage msg = factory.createMessage();
         msg.setJMSCorrelationID(this.jmsCorrelationID);
         assertTrue(msg.getJMSCorrelationID().equals(this.jmsCorrelationID));
@@ -220,35 +220,35 @@ public class JmsMessageTest {
     }
 
     @Test
-    public void testGetAndSetJMSDeliveryMode() {
+    public void testGetAndSetJMSDeliveryMode() throws JMSException {
         JmsMessage msg = factory.createMessage();
         msg.setJMSDeliveryMode(this.jmsDeliveryMode);
         assertTrue(msg.getJMSDeliveryMode() == this.jmsDeliveryMode);
     }
 
     @Test
-    public void testGetAndSetMSRedelivered() {
+    public void testGetAndSetMSRedelivered() throws JMSException {
         JmsMessage msg = factory.createMessage();
         msg.setJMSRedelivered(this.jmsRedelivered);
         assertTrue(msg.getJMSRedelivered() == this.jmsRedelivered);
     }
 
     @Test
-    public void testGetAndSetJMSType() {
+    public void testGetAndSetJMSType() throws JMSException {
         JmsMessage msg = factory.createMessage();
         msg.setJMSType(this.jmsType);
         assertTrue(msg.getJMSType().equals(this.jmsType));
     }
 
     @Test
-    public void testGetAndSetJMSExpiration() {
+    public void testGetAndSetJMSExpiration() throws JMSException {
         JmsMessage msg = factory.createMessage();
         msg.setJMSExpiration(this.jmsExpiration);
         assertTrue(msg.getJMSExpiration() == this.jmsExpiration);
     }
 
     @Test
-    public void testGetAndSetJMSPriority() {
+    public void testGetAndSetJMSPriority() throws JMSException {
         JmsMessage msg = factory.createMessage();
         msg.setJMSPriority(this.jmsPriority);
         assertTrue(msg.getJMSPriority() == this.jmsPriority);
@@ -930,7 +930,7 @@ public class JmsMessageTest {
     }
 
     @Test
-    public void testIsExpired() {
+    public void testIsExpired() throws JMSException {
         JmsMessage msg = factory.createMessage();
         msg.setJMSExpiration(System.currentTimeMillis() - 1);
         assertTrue(msg.isExpired());

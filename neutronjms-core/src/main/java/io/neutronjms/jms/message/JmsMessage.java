@@ -71,7 +71,12 @@ public class JmsMessage implements javax.jms.Message {
 
     @Override
     public int hashCode() {
-        String id = getJMSMessageID();
+        String id = null;
+        try {
+            id = getJMSMessageID();
+        } catch (JMSException e) {
+        }
+
         if (id != null) {
             return id.hashCode();
         } else {
@@ -89,8 +94,13 @@ public class JmsMessage implements javax.jms.Message {
         }
 
         JmsMessage msg = (JmsMessage) o;
-        JmsMessageId oMsg = msg.facade.getMessageId();
-        JmsMessageId thisMsg = facade.getMessageId();
+        JmsMessageId oMsg = null;
+        JmsMessageId thisMsg = null;
+        try {
+            thisMsg = facade.getMessageId();
+            oMsg = msg.facade.getMessageId();
+        } catch (JMSException e) {
+        }
         return thisMsg != null && oMsg != null && oMsg.equals(thisMsg);
     }
 
@@ -123,7 +133,7 @@ public class JmsMessage implements javax.jms.Message {
     }
 
     @Override
-    public String getJMSMessageID() {
+    public String getJMSMessageID() throws JMSException {
         if (facade.getMessageId() == null) {
             return null;
         }
@@ -131,7 +141,7 @@ public class JmsMessage implements javax.jms.Message {
     }
 
     @Override
-    public void setJMSMessageID(String value) {
+    public void setJMSMessageID(String value) throws JMSException {
         if (value != null) {
             JmsMessageId id = new JmsMessageId(value);
             facade.setMessageId(id);
@@ -140,27 +150,27 @@ public class JmsMessage implements javax.jms.Message {
         }
     }
 
-    public void setJMSMessageID(JmsMessageId messageId) {
+    public void setJMSMessageID(JmsMessageId messageId) throws JMSException {
         facade.setMessageId(messageId);
     }
 
     @Override
-    public long getJMSTimestamp() {
+    public long getJMSTimestamp() throws JMSException {
         return facade.getTimestamp();
     }
 
     @Override
-    public void setJMSTimestamp(long timestamp) {
+    public void setJMSTimestamp(long timestamp) throws JMSException {
         facade.setTimestamp(timestamp);
     }
 
     @Override
-    public String getJMSCorrelationID() {
+    public String getJMSCorrelationID() throws JMSException {
         return facade.getCorrelationId();
     }
 
     @Override
-    public void setJMSCorrelationID(String correlationId) {
+    public void setJMSCorrelationID(String correlationId) throws JMSException {
         facade.setCorrelationId(correlationId);
     }
 
@@ -195,52 +205,52 @@ public class JmsMessage implements javax.jms.Message {
     }
 
     @Override
-    public int getJMSDeliveryMode() {
+    public int getJMSDeliveryMode() throws JMSException {
         return facade.isPersistent() ? DeliveryMode.PERSISTENT : DeliveryMode.NON_PERSISTENT;
     }
 
     @Override
-    public void setJMSDeliveryMode(int mode) {
+    public void setJMSDeliveryMode(int mode) throws JMSException {
         facade.setPersistent(mode == DeliveryMode.PERSISTENT);
     }
 
     @Override
-    public boolean getJMSRedelivered() {
+    public boolean getJMSRedelivered() throws JMSException {
         return this.isRedelivered();
     }
 
     @Override
-    public void setJMSRedelivered(boolean redelivered) {
+    public void setJMSRedelivered(boolean redelivered) throws JMSException {
         this.setRedelivered(redelivered);
     }
 
     @Override
-    public String getJMSType() {
+    public String getJMSType() throws JMSException {
         return facade.getType();
     }
 
     @Override
-    public void setJMSType(String type) {
+    public void setJMSType(String type) throws JMSException {
         facade.setType(type);
     }
 
     @Override
-    public long getJMSExpiration() {
+    public long getJMSExpiration() throws JMSException {
         return facade.getExpiration();
     }
 
     @Override
-    public void setJMSExpiration(long expiration) {
+    public void setJMSExpiration(long expiration) throws JMSException {
         facade.setExpiration(expiration);
     }
 
     @Override
-    public int getJMSPriority() {
+    public int getJMSPriority() throws JMSException {
         return facade.getPriority();
     }
 
     @Override
-    public void setJMSPriority(int priority) {
+    public void setJMSPriority(int priority) throws JMSException {
         byte scaled = 0;
 
         if (priority < 0) {
@@ -255,7 +265,7 @@ public class JmsMessage implements javax.jms.Message {
     }
 
     @Override
-    public void clearProperties() {
+    public void clearProperties() throws JMSException {
         facade.clearProperties();
     }
 
@@ -352,13 +362,13 @@ public class JmsMessage implements javax.jms.Message {
     }
 
     interface PropertySetter {
-        void set(JmsConnection connection, JmsMessage message, Object value) throws MessageFormatException;
+        void set(JmsConnection connection, JmsMessage message, Object value) throws JMSException;
     }
 
     static {
         JMS_PROPERTY_SETERS.put("JMSXDeliveryCount", new PropertySetter() {
             @Override
-            public void set(JmsConnection connection, JmsMessage message, Object value) throws MessageFormatException {
+            public void set(JmsConnection connection, JmsMessage message, Object value) throws JMSException {
                 Integer rc = (Integer) TypeConversionSupport.convert(connection, value, Integer.class);
                 if (rc == null) {
                     throw new MessageFormatException("Property JMSXDeliveryCount cannot be set from a " + value.getClass().getName() + ".");
@@ -368,7 +378,7 @@ public class JmsMessage implements javax.jms.Message {
         });
         JMS_PROPERTY_SETERS.put("JMSXGroupID", new PropertySetter() {
             @Override
-            public void set(JmsConnection connection, JmsMessage message, Object value) throws MessageFormatException {
+            public void set(JmsConnection connection, JmsMessage message, Object value) throws JMSException {
                 String rc = (String) TypeConversionSupport.convert(connection, value, String.class);
                 if (rc == null) {
                     throw new MessageFormatException("Property JMSXGroupID cannot be set from a " + value.getClass().getName() + ".");
@@ -378,7 +388,7 @@ public class JmsMessage implements javax.jms.Message {
         });
         JMS_PROPERTY_SETERS.put("JMSXGroupSeq", new PropertySetter() {
             @Override
-            public void set(JmsConnection connection, JmsMessage message, Object value) throws MessageFormatException {
+            public void set(JmsConnection connection, JmsMessage message, Object value) throws JMSException {
                 Integer rc = (Integer) TypeConversionSupport.convert(connection, value, Integer.class);
                 if (rc == null) {
                     throw new MessageFormatException("Property JMSXGroupSeq cannot be set from a " + value.getClass().getName() + ".");
@@ -388,7 +398,7 @@ public class JmsMessage implements javax.jms.Message {
         });
         JMS_PROPERTY_SETERS.put("JMSCorrelationID", new PropertySetter() {
             @Override
-            public void set(JmsConnection connection, JmsMessage message, Object value) throws MessageFormatException {
+            public void set(JmsConnection connection, JmsMessage message, Object value) throws JMSException {
                 String rc = (String) TypeConversionSupport.convert(connection, value, String.class);
                 if (rc == null) {
                     throw new MessageFormatException("Property JMSCorrelationID cannot be set from a " + value.getClass().getName() + ".");
@@ -398,7 +408,7 @@ public class JmsMessage implements javax.jms.Message {
         });
         JMS_PROPERTY_SETERS.put("JMSDeliveryMode", new PropertySetter() {
             @Override
-            public void set(JmsConnection connection, JmsMessage message, Object value) throws MessageFormatException {
+            public void set(JmsConnection connection, JmsMessage message, Object value) throws JMSException {
                 Integer rc = (Integer) TypeConversionSupport.convert(connection, value, Integer.class);
                 if (rc == null) {
                     Boolean bool = (Boolean) TypeConversionSupport.convert(connection, value, Boolean.class);
@@ -413,7 +423,7 @@ public class JmsMessage implements javax.jms.Message {
         });
         JMS_PROPERTY_SETERS.put("JMSExpiration", new PropertySetter() {
             @Override
-            public void set(JmsConnection connection, JmsMessage message, Object value) throws MessageFormatException {
+            public void set(JmsConnection connection, JmsMessage message, Object value) throws JMSException {
                 Long rc = (Long) TypeConversionSupport.convert(connection, value, Long.class);
                 if (rc == null) {
                     throw new MessageFormatException("Property JMSExpiration cannot be set from a " + value.getClass().getName() + ".");
@@ -423,7 +433,7 @@ public class JmsMessage implements javax.jms.Message {
         });
         JMS_PROPERTY_SETERS.put("JMSPriority", new PropertySetter() {
             @Override
-            public void set(JmsConnection connection, JmsMessage message, Object value) throws MessageFormatException {
+            public void set(JmsConnection connection, JmsMessage message, Object value) throws JMSException {
                 Integer rc = (Integer) TypeConversionSupport.convert(connection, value, Integer.class);
                 if (rc == null) {
                     throw new MessageFormatException("Property JMSPriority cannot be set from a " + value.getClass().getName() + ".");
@@ -433,7 +443,7 @@ public class JmsMessage implements javax.jms.Message {
         });
         JMS_PROPERTY_SETERS.put("JMSRedelivered", new PropertySetter() {
             @Override
-            public void set(JmsConnection connection, JmsMessage message, Object value) throws MessageFormatException {
+            public void set(JmsConnection connection, JmsMessage message, Object value) throws JMSException {
                 Boolean rc = (Boolean) TypeConversionSupport.convert(connection, value, Boolean.class);
                 if (rc == null) {
                     throw new MessageFormatException("Property JMSRedelivered cannot be set from a " + value.getClass().getName() + ".");
@@ -443,7 +453,7 @@ public class JmsMessage implements javax.jms.Message {
         });
         JMS_PROPERTY_SETERS.put("JMSReplyTo", new PropertySetter() {
             @Override
-            public void set(JmsConnection connection, JmsMessage message, Object value) throws MessageFormatException {
+            public void set(JmsConnection connection, JmsMessage message, Object value) throws JMSException {
                 JmsDestination rc = (JmsDestination) TypeConversionSupport.convert(connection, value, JmsDestination.class);
                 if (rc == null) {
                     throw new MessageFormatException("Property JMSReplyTo cannot be set from a " + value.getClass().getName() + ".");
@@ -453,7 +463,7 @@ public class JmsMessage implements javax.jms.Message {
         });
         JMS_PROPERTY_SETERS.put("JMSTimestamp", new PropertySetter() {
             @Override
-            public void set(JmsConnection connection, JmsMessage message, Object value) throws MessageFormatException {
+            public void set(JmsConnection connection, JmsMessage message, Object value) throws JMSException {
                 Long rc = (Long) TypeConversionSupport.convert(connection, value, Long.class);
                 if (rc == null) {
                     throw new MessageFormatException("Property JMSTimestamp cannot be set from a " + value.getClass().getName() + ".");
@@ -463,7 +473,7 @@ public class JmsMessage implements javax.jms.Message {
         });
         JMS_PROPERTY_SETERS.put("JMSType", new PropertySetter() {
             @Override
-            public void set(JmsConnection connection, JmsMessage message, Object value) throws MessageFormatException {
+            public void set(JmsConnection connection, JmsMessage message, Object value) throws JMSException {
                 String rc = (String) TypeConversionSupport.convert(connection, value, String.class);
                 if (rc == null) {
                     throw new MessageFormatException("Property JMSType cannot be set from a " + value.getClass().getName() + ".");
@@ -703,24 +713,27 @@ public class JmsMessage implements javax.jms.Message {
         this.connection = connection;
     }
 
-    public boolean isExpired() {
+    public boolean isExpired() throws JMSException {
         long expireTime = facade.getExpiration();
         return expireTime > 0 && System.currentTimeMillis() > expireTime;
     }
 
     public void incrementRedeliveryCount() {
-         facade.setRedeliveryCounter(facade.getRedeliveryCounter() + 1);
+         try {
+            facade.setRedeliveryCounter(facade.getRedeliveryCounter() + 1);
+        } catch (JMSException e) {
+        }
     }
 
     public JmsMessageFacade getFacade() {
         return this.facade;
     }
 
-    public boolean isRedelivered() {
+    public boolean isRedelivered() throws JMSException {
         return facade.getRedeliveryCounter() > 0;
     }
 
-    public void setRedelivered(boolean redelivered) {
+    public void setRedelivered(boolean redelivered) throws JMSException {
         if (redelivered) {
             if (!isRedelivered()) {
                 facade.setRedeliveryCounter(1);

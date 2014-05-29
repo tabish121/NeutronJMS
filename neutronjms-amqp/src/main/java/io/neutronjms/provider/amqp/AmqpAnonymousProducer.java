@@ -24,6 +24,8 @@ import io.neutronjms.util.IdGenerator;
 
 import java.io.IOException;
 
+import javax.jms.JMSException;
+
 import org.apache.qpid.proton.engine.EndpointState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,7 +57,7 @@ public class AmqpAnonymousProducer extends AmqpProducer {
     }
 
     @Override
-    public boolean send(JmsOutboundMessageDispatch envelope, AsyncResult<Void> request) throws IOException {
+    public boolean send(JmsOutboundMessageDispatch envelope, AsyncResult<Void> request) throws IOException, JMSException {
 
         LOG.trace("Started send chain for anonymous producer: {}", getProducerId());
 
@@ -161,7 +163,7 @@ public class AmqpAnonymousProducer extends AmqpProducer {
             AnonymousSendRequest send = new AnonymousSendRequest(this);
             try {
                 producer.send(envelope, send);
-            } catch (IOException e) {
+            } catch (Exception e) {
                 sendResult.onFailure(e);
             }
         }

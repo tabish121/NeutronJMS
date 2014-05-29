@@ -25,6 +25,7 @@ import io.neutronjms.jms.meta.JmsMessageId;
 import io.neutronjms.provider.AsyncResult;
 import io.neutronjms.provider.ProviderConstants.ACK_TYPE;
 import io.neutronjms.provider.ProviderListener;
+import io.neutronjms.util.IOExceptionSupport;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -184,8 +185,10 @@ public class AmqpConsumer extends AbstractAmqpResource<JmsConsumerInfo, Receiver
      *        the delivery that is to be acknowledged.
      * @param ackType
      *        the type of acknowledgment to perform.
+     *
+     * @throws JMSException if an error occurs accessing the Message properties.
      */
-    public void acknowledge(JmsInboundMessageDispatch envelope, ACK_TYPE ackType) {
+    public void acknowledge(JmsInboundMessageDispatch envelope, ACK_TYPE ackType) throws JMSException {
         JmsMessageId messageId = envelope.getMessage().getFacade().getMessageId();
         Delivery delivery = null;
 
@@ -256,8 +259,10 @@ public class AmqpConsumer extends AbstractAmqpResource<JmsConsumerInfo, Receiver
 
     /**
      * Recovers all previously delivered but not acknowledged messages.
+     *
+     * @throws Exception if an error occurs while performing the recover.
      */
-    public void recover() {
+    public void recover() throws Exception {
         LOG.debug("Session Recover for consumer: {}", info.getConsumerId());
         for (Delivery delivery : delivered.values()) {
             // TODO - increment redelivery counter and apply connection redelivery policy
@@ -289,7 +294,11 @@ public class AmqpConsumer extends AbstractAmqpResource<JmsConsumerInfo, Receiver
             incoming = endpoint.current();
             if (incoming != null && incoming.isReadable() && !incoming.isPartial()) {
                 LOG.trace("{} has incoming Message(s).", this);
-                processDelivery(incoming);
+                try {
+                    processDelivery(incoming);
+                } catch (Exception e) {
+                    throw IOExceptionSupport.create(e);
+                }
                 endpoint.advance();
             } else {
                 LOG.trace("{} has a partial incoming Message(s), deferring.", this);
@@ -298,7 +307,7 @@ public class AmqpConsumer extends AbstractAmqpResource<JmsConsumerInfo, Receiver
         } while (incoming != null);
     }
 
-    private void processDelivery(Delivery incoming) {
+    private void processDelivery(Delivery incoming) throws Exception {
         EncodedMessage encoded = readIncomingMessage(incoming);
         JmsMessage message = null;
         try {
@@ -322,7 +331,16 @@ public class AmqpConsumer extends AbstractAmqpResource<JmsConsumerInfo, Receiver
         }
 
         // Store link to delivery in the hint for use in acknowledge requests.
-        message.getFacade().getMessageId().setProviderHint(incoming);
+        try {
+            message.getFacade().getMessageId().setProviderHint(incoming);
+        } catch (JMSException e) {
+            throw IOExceptionSupport.create(e);
+        }
+
+        // We need to signal to the create message that it's being dispatched and for now
+        // the transformer creates the message in write mode, onSend will reset it to read
+        // mode and the consumer will see it as a normal received message.
+        message.onSend();
 
         JmsInboundMessageDispatch envelope = new JmsInboundMessageDispatch();
         envelope.setMessage(message);
@@ -379,7 +397,7 @@ public class AmqpConsumer extends AbstractAmqpResource<JmsConsumerInfo, Receiver
         }
     }
 
-    protected void deliver(JmsInboundMessageDispatch envelope) {
+    protected void deliver(JmsInboundMessageDispatch envelope) throws Exception {
         ProviderListener listener = session.getProvider().getProviderListener();
         if (listener != null) {
             if (envelope.getMessage() != null) {
@@ -419,8 +437,10 @@ public class AmqpConsumer extends AbstractAmqpResource<JmsConsumerInfo, Receiver
     /**
      * Ensures that all delivered messages are marked as settled locally before the TX state
      * is cleared and the next TX started.
+     *
+     * @throws Exception if an error occurs while performing this action.
      */
-    public void postCommit() {
+    public void postCommit() throws Exception {
         for (Delivery delivery : delivered.values()) {
             delivery.settle();
         }
@@ -430,8 +450,10 @@ public class AmqpConsumer extends AbstractAmqpResource<JmsConsumerInfo, Receiver
     /**
      * Redeliver Acknowledge all previously delivered messages and clear state to prepare for
      * the next TX to start.
+     *
+     * @throws Exception if an error occurs while performing this action.
      */
-    public void postRollback() {
+    public void postRollback() throws Exception {
         for (Delivery delivery : delivered.values()) {
             JmsInboundMessageDispatch envelope = (JmsInboundMessageDispatch) delivery.getContext();
             acknowledge(envelope, ACK_TYPE.REDELIVERED);

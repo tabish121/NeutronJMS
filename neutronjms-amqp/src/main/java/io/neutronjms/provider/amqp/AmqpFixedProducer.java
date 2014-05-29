@@ -30,6 +30,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import javax.jms.JMSException;
+
 import org.apache.qpid.proton.amqp.Binary;
 import org.apache.qpid.proton.amqp.messaging.Accepted;
 import org.apache.qpid.proton.amqp.messaging.Rejected;
@@ -82,7 +84,7 @@ public class AmqpFixedProducer extends AmqpProducer {
     }
 
     @Override
-    public boolean send(JmsOutboundMessageDispatch envelope, AsyncResult<Void> request) throws IOException {
+    public boolean send(JmsOutboundMessageDispatch envelope, AsyncResult<Void> request) throws IOException, JMSException {
 
         // TODO - Handle the case where remote has no credit which means we can't send to it.
         //        We need to hold the send until remote credit becomes available but we should
@@ -100,7 +102,7 @@ public class AmqpFixedProducer extends AmqpProducer {
         }
     }
 
-    private void doSend(JmsOutboundMessageDispatch envelope, AsyncResult<Void> request) throws IOException {
+    private void doSend(JmsOutboundMessageDispatch envelope, AsyncResult<Void> request) throws IOException, JMSException {
         LOG.trace("Producer sending message: {}", envelope.getMessage().getFacade().getMessageId());
 
         byte[] tag = tagGenerator.getNextTag();
@@ -170,7 +172,11 @@ public class AmqpFixedProducer extends AmqpProducer {
             while (endpoint.getCredit() > 0 && !pendingSends.isEmpty()) {
                 LOG.trace("Dispatching previously held send");
                 PendingSend held = pendingSends.pop();
-                doSend(held.envelope, held.request);
+                try {
+                    doSend(held.envelope, held.request);
+                } catch (JMSException e) {
+                    throw IOExceptionSupport.create(e);
+                }
             }
         }
 

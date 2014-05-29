@@ -36,6 +36,7 @@ import io.neutronjms.provider.AsyncResult;
 import io.neutronjms.provider.ProviderConstants.ACK_TYPE;
 import io.neutronjms.provider.ProviderListener;
 import io.neutronjms.provider.stomp.adapters.StompServerAdapter;
+import io.neutronjms.util.IOExceptionSupport;
 
 import java.io.IOException;
 import java.util.LinkedList;
@@ -190,7 +191,12 @@ public class StompConsumer {
      */
     public void acknowledge(JmsInboundMessageDispatch envelope, ACK_TYPE ackType, AsyncResult<Void> request) throws IOException {
         StompFrame messageFrame = (StompFrame) envelope.getProviderHint();
-        JmsMessageId messageId = envelope.getMessage().getFacade().getMessageId();
+        JmsMessageId messageId;
+        try {
+            messageId = envelope.getMessage().getFacade().getMessageId();
+        } catch (JMSException e) {
+            throw IOExceptionSupport.create(e);
+        }
 
         if (ackType.equals(ACK_TYPE.DELIVERED)) {
             LOG.debug("Delivered Ack of message: {}", messageId);
@@ -250,7 +256,7 @@ public class StompConsumer {
 
     //---------- Internal helper methods -------------------------------------//
 
-    protected void deliver(JmsInboundMessageDispatch envelope) {
+    protected void deliver(JmsInboundMessageDispatch envelope) throws JMSException {
         ProviderListener listener = connection.getProvider().getProviderListener();
         if (listener != null) {
             if (envelope.getMessage() != null) {

@@ -91,8 +91,10 @@ public class AmqpSession extends AbstractAmqpResource<JmsSessionInfo, Session> {
     /**
      * Perform re-send of all delivered but not yet acknowledged messages for all consumers
      * active in this Session.
+     *
+     * @throws Exception if an error occurs while performing the recover.
      */
-    public void recover() {
+    public void recover() throws Exception {
         for (AmqpConsumer consumer : consumers.values()) {
             consumer.recover();
         }

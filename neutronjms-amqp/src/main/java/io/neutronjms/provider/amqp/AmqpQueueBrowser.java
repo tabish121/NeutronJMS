@@ -19,6 +19,7 @@ package io.neutronjms.provider.amqp;
 import io.neutronjms.jms.message.JmsInboundMessageDispatch;
 import io.neutronjms.jms.meta.JmsConsumerInfo;
 import io.neutronjms.provider.AsyncResult;
+import io.neutronjms.util.IOExceptionSupport;
 
 import java.io.IOException;
 
@@ -77,7 +78,11 @@ public class AmqpQueueBrowser extends AmqpConsumer {
         if (endpoint.getDrain() && endpoint.getCredit() == endpoint.getRemoteCredit()) {
             JmsInboundMessageDispatch browseDone = new JmsInboundMessageDispatch();
             browseDone.setConsumerId(getConsumerId());
-            deliver(browseDone);
+            try {
+                deliver(browseDone);
+            } catch (Exception e) {
+                throw IOExceptionSupport.create(e);
+            }
         } else {
             endpoint.setDrain(false);
         }
@@ -97,7 +102,11 @@ public class AmqpQueueBrowser extends AmqpConsumer {
         if (endpoint.getDrain() && endpoint.getCredit() == endpoint.getRemoteCredit()) {
             JmsInboundMessageDispatch browseDone = new JmsInboundMessageDispatch();
             browseDone.setConsumerId(getConsumerId());
-            deliver(browseDone);
+            try {
+                deliver(browseDone);
+            } catch (Exception e) {
+                throw IOExceptionSupport.create(e);
+            }
         } else {
             endpoint.setDrain(false);
         }

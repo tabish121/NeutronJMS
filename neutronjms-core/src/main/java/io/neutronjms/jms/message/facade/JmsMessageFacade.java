@@ -81,25 +81,25 @@ public interface JmsMessageFacade {
     /**
      * Clears the contents of this Message.
      */
-    void clearBody();
+    void clearBody() throws JMSException;
 
     /**
      * Clears any Message properties that exist for this Message instance.
      */
-    void clearProperties();
+    void clearProperties() throws JMSException;
 
     /**
      * Create a new instance and perform a deep copy of this object's
      * contents.
      */
-    JmsMessageFacade copy();
+    JmsMessageFacade copy() throws JMSException;
 
     /**
      * Return the internal message Id as a JmsMessageId wrapped value.
      *
      * @return a JmsMessageId that wraps the internal message Id.
      */
-    JmsMessageId getMessageId();
+    JmsMessageId getMessageId() throws JMSException;
 
     /**
      * Updates the message Id using the value of the given JmsMessageId.
@@ -107,14 +107,14 @@ public interface JmsMessageFacade {
      * @param messageId
      *        the new JmsMessageId value to assign as the message Id.
      */
-    void setMessageId(JmsMessageId messageId);
+    void setMessageId(JmsMessageId messageId) throws JMSException;
 
     /**
      * Gets the timestamp assigned to the message when it was sent.
      *
      * @return the message timestamp value.
      */
-    long getTimestamp();
+    long getTimestamp() throws JMSException;
 
     /**
      * Sets the timestamp value of this message.
@@ -122,14 +122,14 @@ public interface JmsMessageFacade {
      * @param timestamp
      *        the time that the message was sent by the provider.
      */
-    void setTimestamp(long timestamp);
+    void setTimestamp(long timestamp) throws JMSException;
 
     /**
      * Returns the correlation ID set on this message if one exists, null otherwise.
      *
      * @return the set correlation ID or null if not set.
      */
-    String getCorrelationId();
+    String getCorrelationId() throws JMSException;
 
     /**
      * Sets the correlation ID for this message.
@@ -137,12 +137,12 @@ public interface JmsMessageFacade {
      * @param correlationId
      *        The correlation ID to set on this message, or null to clear.
      */
-    void setCorrelationId(String correlationId);
+    void setCorrelationId(String correlationId) throws JMSException;
 
     /**
      * @return true if this message is tagged as being persistent.
      */
-    boolean isPersistent();
+    boolean isPersistent() throws JMSException;
 
     /**
      * Sets the persistent flag on this message.
@@ -150,42 +150,42 @@ public interface JmsMessageFacade {
      * @param value
      *        true if the message is to be marked as persistent.
      */
-    void setPersistent(boolean value);
+    void setPersistent(boolean value) throws JMSException;
 
-    int getRedeliveryCounter();
+    int getRedeliveryCounter() throws JMSException;
 
-    void setRedeliveryCounter(int redeliveryCount);
+    void setRedeliveryCounter(int redeliveryCount) throws JMSException;
 
-    String getType();
+    String getType() throws JMSException;
 
-    void setType(String type);
+    void setType(String type) throws JMSException;
 
-    byte getPriority();
+    byte getPriority() throws JMSException;
 
-    void setPriority(byte priority);
+    void setPriority(byte priority) throws JMSException;
 
-    long getExpiration();
+    long getExpiration() throws JMSException;
 
-    void setExpiration(long expiration);
+    void setExpiration(long expiration) throws JMSException;
 
     JmsDestination getDestination() throws JMSException;
 
-    void setDestination(JmsDestination destination);
+    void setDestination(JmsDestination destination) throws JMSException;
 
     JmsDestination getReplyTo() throws JMSException;
 
-    void setReplyTo(JmsDestination replyTo);
+    void setReplyTo(JmsDestination replyTo) throws JMSException;
 
-    String getUserId();
+    String getUserId() throws JMSException;
 
-    void setUserId(String userId);
+    void setUserId(String userId) throws JMSException;
 
-    String getGroupId();
+    String getGroupId() throws JMSException;
 
-    void setGroupId(String groupId);
+    void setGroupId(String groupId) throws JMSException;
 
-    int getGroupSequence();
+    int getGroupSequence() throws JMSException;
 
-    void setGroupSequence(int groupSequence);
+    void setGroupSequence(int groupSequence) throws JMSException;
 
 }

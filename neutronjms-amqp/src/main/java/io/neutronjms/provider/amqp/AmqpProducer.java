@@ -23,6 +23,8 @@ import io.neutronjms.provider.AsyncResult;
 
 import java.io.IOException;
 
+import javax.jms.JMSException;
+
 import org.apache.qpid.proton.engine.Sender;
 
 /**
@@ -54,9 +56,10 @@ public abstract class AmqpProducer extends AbstractAmqpResource<JmsProducerInfo,
      * @returns true if the producer had credit to send or false if there was no available
      *          credit and the send needed to be deferred.
      *
-     * @throws IOException
+     * @throws IOException if an error occurs sending the message
+     * @throws JMSException if an error occurs while preparing the message for send.
      */
-    public abstract boolean send(JmsOutboundMessageDispatch envelope, AsyncResult<Void> request) throws IOException;
+    public abstract boolean send(JmsOutboundMessageDispatch envelope, AsyncResult<Void> request) throws IOException, JMSException;
 
     /**
      * @return true if this is an anonymous producer or false if fixed to a given destination.

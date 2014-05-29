@@ -27,6 +27,7 @@ import io.neutronjms.jms.message.JmsMessageFactory;
 
 import javax.jms.BytesMessage;
 import javax.jms.Destination;
+import javax.jms.JMSException;
 import javax.jms.MapMessage;
 import javax.jms.Message;
 import javax.jms.ObjectMessage;
@@ -103,24 +104,40 @@ public class AmqpJMSVendor extends JMSVendor {
 
     @Override
     public void setJMSXUserID(Message msg, String value) {
-        ((JmsMessage) msg).getFacade().setUserId(value);
+        try {
+            ((JmsMessage) msg).getFacade().setUserId(value);
+        } catch (JMSException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public void setJMSXGroupID(Message msg, String value) {
-        ((JmsMessage) msg).getFacade().setGroupId(value);
+        try {
+            ((JmsMessage) msg).getFacade().setGroupId(value);
+        } catch (JMSException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public void setJMSXGroupSequence(Message msg, int value) {
-        ((JmsMessage) msg).getFacade().setGroupSequence(value);
+        try {
+            ((JmsMessage) msg).getFacade().setGroupSequence(value);
+        } catch (JMSException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public void setJMSXDeliveryCount(Message msg, long value) {
         // Delivery count tracks total deliveries which is always one higher than
         // re-delivery count since first delivery counts to.
-        ((JmsMessage) msg).getFacade().setRedeliveryCounter((int) (value == 0 ? value : value - 1));
+        try {
+            ((JmsMessage) msg).getFacade().setRedeliveryCounter((int) (value == 0 ? value : value - 1));
+        } catch (JMSException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

@@ -34,7 +34,7 @@ public class PropertyExpression {
     private static final Map<String, SubExpression> JMS_PROPERTY_EXPRESSIONS = new HashMap<String, SubExpression>();
 
     interface SubExpression {
-        Object evaluate(JmsMessage message);
+        Object evaluate(JmsMessage message) throws JMSException;
     }
 
     static {
@@ -56,7 +56,7 @@ public class PropertyExpression {
         JMS_PROPERTY_EXPRESSIONS.put("JMSReplyTo", new SubExpression() {
 
             @Override
-            public Object evaluate(JmsMessage message) {
+            public Object evaluate(JmsMessage message) throws JMSException {
                 try {
                     JmsDestination dest = (JmsDestination) message.getJMSReplyTo();
                     if (dest == null) {
@@ -71,28 +71,28 @@ public class PropertyExpression {
         JMS_PROPERTY_EXPRESSIONS.put("JMSType", new SubExpression() {
 
             @Override
-            public Object evaluate(JmsMessage message) {
+            public Object evaluate(JmsMessage message) throws JMSException {
                 return message.getJMSType();
             }
         });
         JMS_PROPERTY_EXPRESSIONS.put("JMSDeliveryMode", new SubExpression() {
 
             @Override
-            public Object evaluate(JmsMessage message) {
+            public Object evaluate(JmsMessage message) throws JMSException {
                 return Integer.valueOf(message.getFacade().isPersistent() ? DeliveryMode.PERSISTENT : DeliveryMode.NON_PERSISTENT);
             }
         });
         JMS_PROPERTY_EXPRESSIONS.put("JMSPriority", new SubExpression() {
 
             @Override
-            public Object evaluate(JmsMessage message) {
+            public Object evaluate(JmsMessage message) throws JMSException {
                 return Integer.valueOf(message.getJMSPriority());
             }
         });
         JMS_PROPERTY_EXPRESSIONS.put("JMSJmsMessageID", new SubExpression() {
 
             @Override
-            public Object evaluate(JmsMessage message) {
+            public Object evaluate(JmsMessage message) throws JMSException {
                 if (message.getJMSMessageID() == null) {
                     return null;
                 }
@@ -102,56 +102,56 @@ public class PropertyExpression {
         JMS_PROPERTY_EXPRESSIONS.put("JMSTimestamp", new SubExpression() {
 
             @Override
-            public Object evaluate(JmsMessage message) {
+            public Object evaluate(JmsMessage message) throws JMSException {
                 return Long.valueOf(message.getJMSTimestamp());
             }
         });
         JMS_PROPERTY_EXPRESSIONS.put("JMSCorrelationID", new SubExpression() {
 
             @Override
-            public Object evaluate(JmsMessage message) {
+            public Object evaluate(JmsMessage message) throws JMSException {
                 return message.getJMSCorrelationID();
             }
         });
         JMS_PROPERTY_EXPRESSIONS.put("JMSExpiration", new SubExpression() {
 
             @Override
-            public Object evaluate(JmsMessage message) {
+            public Object evaluate(JmsMessage message) throws JMSException {
                 return Long.valueOf(message.getJMSExpiration());
             }
         });
         JMS_PROPERTY_EXPRESSIONS.put("JMSRedelivered", new SubExpression() {
 
             @Override
-            public Object evaluate(JmsMessage message) {
+            public Object evaluate(JmsMessage message) throws JMSException {
                 return Boolean.valueOf(message.isRedelivered());
             }
         });
         JMS_PROPERTY_EXPRESSIONS.put("JMSXDeliveryCount", new SubExpression() {
 
             @Override
-            public Object evaluate(JmsMessage message) {
+            public Object evaluate(JmsMessage message) throws JMSException {
                 return Integer.valueOf(message.getFacade().getRedeliveryCounter() + 1);
             }
         });
         JMS_PROPERTY_EXPRESSIONS.put("JMSXGroupID", new SubExpression() {
 
             @Override
-            public Object evaluate(JmsMessage message) {
+            public Object evaluate(JmsMessage message) throws JMSException {
                 return message.getFacade().getGroupId();
             }
         });
         JMS_PROPERTY_EXPRESSIONS.put("JMSXGroupSeq", new SubExpression() {
 
             @Override
-            public Object evaluate(JmsMessage message) {
+            public Object evaluate(JmsMessage message) throws JMSException {
                 return new Integer(message.getFacade().getGroupSequence());
             }
         });
         JMS_PROPERTY_EXPRESSIONS.put("JMSXUserID", new SubExpression() {
 
             @Override
-            public Object evaluate(JmsMessage message) {
+            public Object evaluate(JmsMessage message) throws JMSException {
                 Object userId = message.getFacade().getUserId();
                 if (userId == null) {
                     try {
