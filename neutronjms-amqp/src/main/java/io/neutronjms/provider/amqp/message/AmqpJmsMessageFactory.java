@@ -23,8 +23,13 @@ import io.neutronjms.jms.message.JmsMessageFactory;
 import io.neutronjms.jms.message.JmsObjectMessage;
 import io.neutronjms.jms.message.JmsStreamMessage;
 import io.neutronjms.jms.message.JmsTextMessage;
+import io.neutronjms.jms.message.facade.JmsDefaultBytesMessageFacade;
+import io.neutronjms.jms.message.facade.JmsDefaultMessageFacade;
+import io.neutronjms.provider.amqp.AmqpConnection;
 
 import java.io.Serializable;
+
+import javax.jms.MessageNotWriteableException;
 
 /**
  * AMQP Message Factory instance used to create new JmsMessage types that wrap an
@@ -32,52 +37,75 @@ import java.io.Serializable;
  */
 public class AmqpJmsMessageFactory implements JmsMessageFactory {
 
-    @Override
-    public JmsMessage createMessage() throws UnsupportedOperationException {
-        // TODO Auto-generated method stub
-        return null;
+    private AmqpConnection connection;
+
+    public AmqpJmsMessageFactory() {
+    }
+
+    public AmqpJmsMessageFactory(AmqpConnection connection) {
+        this.connection = connection;
+    }
+
+    public AmqpConnection getAmqpConnection() {
+        return this.connection;
+    }
+
+    public void setAmqpConnection(AmqpConnection connection) {
+        this.connection = connection;
     }
 
     @Override
-    public JmsTextMessage createTextMessage(String payload) throws UnsupportedOperationException {
-        // TODO Auto-generated method stub
-        return null;
+    public JmsMessage createMessage() throws UnsupportedOperationException {
+        return new JmsMessage(new JmsDefaultMessageFacade());
     }
 
     @Override
     public JmsTextMessage createTextMessage() throws UnsupportedOperationException {
-        // TODO Auto-generated method stub
-        return null;
+        return createTextMessage(null);
+    }
+
+    @Override
+    public JmsTextMessage createTextMessage(String payload) throws UnsupportedOperationException {
+        JmsTextMessage result = new JmsTextMessage(new JmsDefaultMessageFacade());
+        if (payload != null) {
+            try {
+                result.setText(payload);
+            } catch (MessageNotWriteableException e) {
+                // Won't happen in this case.
+            }
+        }
+        return result;
     }
 
     @Override
     public JmsBytesMessage createBytesMessage() throws UnsupportedOperationException {
-        // TODO Auto-generated method stub
-        return null;
+        return new JmsBytesMessage(new JmsDefaultBytesMessageFacade());
     }
 
     @Override
     public JmsMapMessage createMapMessage() throws UnsupportedOperationException {
-        // TODO Auto-generated method stub
-        return null;
+        return new JmsMapMessage(new JmsDefaultMessageFacade());
     }
 
     @Override
     public JmsStreamMessage createStreamMessage() throws UnsupportedOperationException {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public JmsObjectMessage createObjectMessage(Serializable payload) throws UnsupportedOperationException {
-        // TODO Auto-generated method stub
-        return null;
+        return new JmsStreamMessage(new JmsDefaultMessageFacade());
     }
 
     @Override
     public JmsObjectMessage createObjectMessage() throws UnsupportedOperationException {
-        // TODO Auto-generated method stub
-        return null;
+        return createObjectMessage(null);
     }
 
+    @Override
+    public JmsObjectMessage createObjectMessage(Serializable payload) throws UnsupportedOperationException {
+        JmsObjectMessage result = new JmsObjectMessage(new JmsDefaultMessageFacade());
+        if (payload != null) {
+            try {
+                result.setObject(payload);
+            } catch (Exception e) {
+            }
+        }
+        return result;
+    }
 }

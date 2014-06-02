@@ -716,7 +716,10 @@ public class AmqpProvider extends AbstractAsyncProvider implements TransportList
 
     @Override
     public JmsMessageFactory getMessageFactory() {
-        return this.messageFactory;
+        if (connection == null) {
+            throw new RuntimeException("Message Factory is not accessible when not connected.");
+        }
+        return connection.getAmqpMessageFactory();
     }
 
     public void setTraceFrames(boolean trace) {

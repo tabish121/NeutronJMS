@@ -21,6 +21,7 @@ import io.neutronjms.jms.meta.JmsConnectionInfo;
 import io.neutronjms.jms.meta.JmsSessionId;
 import io.neutronjms.jms.meta.JmsSessionInfo;
 import io.neutronjms.provider.AsyncResult;
+import io.neutronjms.provider.amqp.message.AmqpJmsMessageFactory;
 import io.neutronjms.util.IOExceptionSupport;
 
 import java.net.URI;
@@ -45,6 +46,8 @@ public class AmqpConnection extends AbstractAmqpResource<JmsConnectionInfo, Conn
     private static final ProtonFactoryLoader<MessageFactory> protonFactoryLoader =
         new ProtonFactoryLoader<MessageFactory>(MessageFactory.class);
 
+    private final AmqpJmsMessageFactory amqpMessageFactory;
+
     private final URI remoteURI;
     private final Map<JmsSessionId, AmqpSession> sessions = new HashMap<JmsSessionId, AmqpSession>();
     private final Map<JmsDestination, AmqpTemporaryDestination> tempDests = new HashMap<JmsDestination, AmqpTemporaryDestination>();
@@ -64,6 +67,7 @@ public class AmqpConnection extends AbstractAmqpResource<JmsConnectionInfo, Conn
 
         this.provider = provider;
         this.remoteURI = provider.getRemoteURI();
+        this.amqpMessageFactory = new AmqpJmsMessageFactory(this);
 
         if (sasl != null) {
             this.authenticator = new AmqpSaslAuthenticator(sasl, info);
@@ -284,6 +288,13 @@ public class AmqpConnection extends AbstractAmqpResource<JmsConnectionInfo, Conn
      */
     public boolean isPresettleProducers() {
         return provider.isPresettleProducers();
+    }
+
+    /**
+     * @return the AMQP based JmsMessageFactory for this Connection.
+     */
+    public AmqpJmsMessageFactory getAmqpMessageFactory() {
+        return this.amqpMessageFactory;
     }
 
     @Override

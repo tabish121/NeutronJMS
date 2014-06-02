@@ -19,8 +19,10 @@ package io.neutronjms.provider.amqp;
 import io.neutronjms.jms.JmsDestination;
 import io.neutronjms.jms.message.JmsMessage;
 import io.neutronjms.jms.message.JmsOutboundMessageDispatch;
+import io.neutronjms.jms.message.facade.JmsMessageFacade;
 import io.neutronjms.jms.meta.JmsProducerInfo;
 import io.neutronjms.provider.AsyncResult;
+import io.neutronjms.provider.amqp.message.AmqpJmsMessageFacade;
 import io.neutronjms.util.IOExceptionSupport;
 
 import java.io.IOException;
@@ -46,6 +48,7 @@ import org.apache.qpid.proton.engine.Sender;
 import org.apache.qpid.proton.jms.AutoOutboundTransformer;
 import org.apache.qpid.proton.jms.EncodedMessage;
 import org.apache.qpid.proton.jms.OutboundTransformer;
+import org.apache.qpid.proton.message.Message;
 import org.fusesource.hawtbuf.Buffer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -103,6 +106,8 @@ public class AmqpFixedProducer extends AmqpProducer {
     }
 
     private void doSend(JmsOutboundMessageDispatch envelope, AsyncResult<Void> request) throws IOException, JMSException {
+        JmsMessageFacade facade = envelope.getMessage().getFacade();
+
         LOG.trace("Producer sending message: {}", envelope.getMessage().getFacade().getMessageId());
 
         byte[] tag = tagGenerator.getNextTag();
@@ -130,6 +135,32 @@ public class AmqpFixedProducer extends AmqpProducer {
             message.setProperty(MESSAGE_FORMAT_KEY, 0);
         }
 
+        if (facade instanceof AmqpJmsMessageFacade) {
+            AmqpJmsMessageFacade amqpMessage = (AmqpJmsMessageFacade) facade;
+            encodeAndSend(amqpMessage.getAmqpMessage(), delivery);
+            throw new JMSException("Not yet supported");
+        } else {
+            encodeAndSend(envelope.getMessage(), delivery);
+        }
+
+        if (presettle) {
+            delivery.settle();
+        } else {
+            pending.add(delivery);
+            endpoint.advance();
+        }
+
+        if (envelope.isSendAsync() || presettle) {
+            request.onSuccess();
+        }
+    }
+
+    private void encodeAndSend(Message message, Delivery delivery) throws IOException {
+
+    }
+
+    private void encodeAndSend(JmsMessage message, Delivery delivery) throws IOException {
+
         Buffer sendBuffer = null;
         EncodedMessage amqp = null;
 
@@ -143,22 +174,12 @@ public class AmqpFixedProducer extends AmqpProducer {
             sendBuffer = new Buffer(amqp.getArray(), amqp.getArrayOffset(), amqp.getLength());
         }
 
-        while (sendBuffer != null) {
+        while (true) {
             int sent = endpoint.send(sendBuffer.data, sendBuffer.offset, sendBuffer.length);
             if (sent > 0) {
                 sendBuffer.moveHead(sent);
                 if (sendBuffer.length == 0) {
-                    if (presettle) {
-                        delivery.settle();
-                    } else {
-                        pending.add(delivery);
-                        endpoint.advance();
-                    }
-                    sendBuffer = null;
-
-                    if (envelope.isSendAsync() || presettle) {
-                        request.onSuccess();
-                    }
+                    break;
                 }
             } else {
                 LOG.warn("{} failed to send any data from current Message.", this);

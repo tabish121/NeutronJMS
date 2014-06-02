@@ -16,6 +16,8 @@
  */
 package io.neutronjms.provider.amqp.message;
 
+import static io.neutronjms.provider.amqp.message.AmqpMessageSupport.JMS_MESSAGE;
+import static io.neutronjms.provider.amqp.message.AmqpMessageSupport.JMS_MSG_TYPE;
 import io.neutronjms.jms.JmsDestination;
 import io.neutronjms.jms.message.facade.JmsMessageFacade;
 import io.neutronjms.jms.meta.JmsMessageId;
@@ -23,13 +25,19 @@ import io.neutronjms.provider.amqp.AmqpConnection;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import javax.jms.JMSException;
 
 import org.apache.qpid.proton.Proton;
 import org.apache.qpid.proton.amqp.UnsignedByte;
 import org.apache.qpid.proton.amqp.UnsignedInteger;
+import org.apache.qpid.proton.amqp.messaging.ApplicationProperties;
+import org.apache.qpid.proton.amqp.messaging.MessageAnnotations;
 import org.apache.qpid.proton.message.Message;
 
 /**
@@ -40,8 +48,17 @@ public class AmqpJmsMessageFacade implements JmsMessageFacade {
     private static final int DEFAULT_PRIORITY = javax.jms.Message.DEFAULT_PRIORITY;
     private static final Charset UTF8 = Charset.forName("UTF-8");
 
-    private final Message message;
-    private final AmqpConnection connection;
+    protected final Message message;
+    protected final AmqpConnection connection;
+
+    private MessageAnnotations annotations;
+    private Map<Object,Object> annotationsMap;
+    private Map<String,Object> propertiesMap;
+
+    private JmsDestination replyTo;
+    private JmsDestination destination;
+
+    private Long syntheticTTL;
 
     /**
      * Create a new AMQP Message Facade with an empty message instance.
@@ -51,76 +68,183 @@ public class AmqpJmsMessageFacade implements JmsMessageFacade {
         this.connection = connection;
     }
 
-    @Override
-    public Map<String, Object> getProperties() throws IOException {
-        // TODO Auto-generated method stub
+    /**
+     * Creates a new Facade around an incoming AMQP Message for dispatch to the
+     * JMS Consumer instance.
+     *
+     * @param connection
+     *        the connection that created this Facade.
+     * @param message
+     *        the incoming Message instance that is being wrapped.
+     */
+    @SuppressWarnings("unchecked")
+    public AmqpJmsMessageFacade(AmqpConnection connection, Message message) {
+        this.message = message;
+        this.connection = connection;
+
+        annotations = message.getMessageAnnotations();
+        if (annotations != null) {
+            annotationsMap = annotations.getValue();
+        }
+
+        if (message.getApplicationProperties() != null) {
+            propertiesMap = message.getApplicationProperties().getValue();
+        }
+
+        Long ttl = message.getTtl();
+        Long absoluteExpiryTime = getAbsoluteExpiryTime();
+        if (absoluteExpiryTime == null && ttl != null) {
+            syntheticTTL = System.currentTimeMillis() + ttl;
+        }
+
+        // TODO - Set destination
+        // TODO - Set replyTo
+    }
+
+    /**
+     * @return the appropriate byte value that indicates the type of message this is.
+     */
+    public byte getJmsMsgType() {
+        return JMS_MESSAGE;
+    }
+
+    /**
+     * The annotation value for the JMS Message content type.  For a generic JMS message this
+     * value is omitted so we return null here, subclasses should override this to return the
+     * correct content type value for their payload.
+     *
+     * @return a String value indicating the message content type.
+     */
+    public String getContentType() {
         return null;
     }
 
     @Override
+    public Map<String, Object> getProperties() throws IOException {
+        lazyCreateProperties();
+        return Collections.unmodifiableMap(new HashMap<String, Object>(propertiesMap));
+    }
+
+    @Override
     public boolean propertyExists(String key) throws IOException {
-        // TODO Auto-generated method stub
+        if (propertiesMap != null) {
+            return propertiesMap.containsKey(key);
+        }
+
+        // TODO - Examine message annotations for other message properties.
+
         return false;
     }
 
     @Override
     public Object getProperty(String key) throws IOException {
-        // TODO Auto-generated method stub
+        if (propertiesMap != null) {
+            return propertiesMap.get(key);
+        }
+
+        // TODO - Should other message annotations be included here?
+
         return null;
     }
 
     @Override
     public void setProperty(String key, Object value) throws IOException {
-        // TODO Auto-generated method stub
+        if (key == null) {
+            throw new IllegalArgumentException("Property key must not be null");
+        }
 
+        if (propertiesMap == null) {
+            lazyCreateProperties();
+        }
+
+        // TODO - intercept annotations or message level values by name \
+
+        propertiesMap.put(key, value);
     }
 
     @Override
     public void onSend() throws JMSException {
-        // TODO Auto-generated method stub
+        String contentType = getContentType();
+        byte jmsMsgType = getJmsMsgType();
 
+        if (contentType != null) {
+            message.setContentType(contentType);
+        }
+        setAnnotation(JMS_MSG_TYPE, jmsMsgType);
     }
 
     @Override
     public void clearBody() throws JMSException {
-        // TODO Auto-generated method stub
-
+        message.setBody(null);
     }
 
     @Override
     public void clearProperties() throws JMSException {
-        // TODO Auto-generated method stub
+        clearProperties();
+        //_propJMS_AMQP_TTL = null;
+        message.setReplyToGroupId(null);
+        message.setUserId(null);
+        message.setGroupId(null);
+        setGroupSequence(0);
 
+        // TODO - Clear others as needed.
     }
 
     @Override
     public JmsMessageFacade copy() throws JMSException {
-        // TODO Auto-generated method stub
-        return null;
+        AmqpJmsMessageFacade copy = new AmqpJmsMessageFacade(connection, message);
+        copyInto(copy);
+        return copy;
+    }
+
+    protected void copyInto(AmqpJmsMessageFacade target) {
+        // TODO - Copy message.
     }
 
     @Override
     public JmsMessageId getMessageId() throws JMSException {
-        // TODO Auto-generated method stub
+        Object result = message.getMessageId();
+        if (result != null) {
+            if (result instanceof String) {
+                return new JmsMessageId((String) result);
+            } else {
+                throw new JMSException("No support for non-String IDs yet.");
+            }
+        }
+
         return null;
     }
 
     @Override
     public void setMessageId(JmsMessageId messageId) throws JMSException {
-        // TODO Auto-generated method stub
-
+        if (messageId != null) {
+            message.setMessageId(messageId.toString());
+        } else {
+            message.setMessageId(null);
+        }
     }
 
     @Override
     public long getTimestamp() throws JMSException {
-        // TODO Auto-generated method stub
-        return 0;
+        if (message.getProperties() != null) {
+            Date timestamp = message.getProperties().getCreationTime();
+            if (timestamp != null) {
+                return timestamp.getTime();
+            }
+        }
+
+        return 0L;
     }
 
     @Override
     public void setTimestamp(long timestamp) throws JMSException {
-        // TODO Auto-generated method stub
-
+        if (message.getProperties() != null) {
+            if (timestamp != 0) {
+                message.setCreationTime(timestamp);
+            } else {
+                message.getProperties().setCreationTime(null);
+            }
+        }
     }
 
     @Override
@@ -131,6 +255,18 @@ public class AmqpJmsMessageFacade implements JmsMessageFacade {
 
     @Override
     public void setCorrelationId(String correlationId) throws JMSException {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public byte[] getCorrelationIdBytes() throws JMSException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void setCorrelationIdBytes(byte[] correlationId) throws JMSException {
         // TODO Auto-generated method stub
 
     }
@@ -147,40 +283,47 @@ public class AmqpJmsMessageFacade implements JmsMessageFacade {
 
     @Override
     public int getRedeliveryCounter() throws JMSException {
-        // TODO Auto-generated method stub
+        if (message.getHeader() != null) {
+            UnsignedInteger count = message.getHeader().getDeliveryCount();
+            if (count != null) {
+                return count.intValue();
+            }
+        }
+
         return 0;
     }
 
     @Override
     public void setRedeliveryCounter(int redeliveryCount) throws JMSException {
-        // TODO Auto-generated method stub
-
+        if (redeliveryCount == 0) {
+            if (message.getHeader() != null) {
+                message.getHeader().setDeliveryCount(null);
+            }
+        } else {
+            message.setDeliveryCount(redeliveryCount);
+        }
     }
 
     @Override
     public String getType() throws JMSException {
-        // TODO Auto-generated method stub
-        return null;
+        return (String) getAnnotation(JMS_MSG_TYPE);
     }
 
     @Override
     public void setType(String type) throws JMSException {
-        // TODO Auto-generated method stub
-
+        setAnnotation(JMS_MSG_TYPE, type);
     }
 
     @Override
     public byte getPriority() throws JMSException {
-        if (message.getHeader() == null) {
-            return DEFAULT_PRIORITY;
-        } else {
+        if (message.getHeader() != null) {
             UnsignedByte priority = message.getHeader().getPriority();
-            if (priority == null) {
-                return DEFAULT_PRIORITY;
-            } else {
+            if (priority != null) {
                 return priority.byteValue();
             }
         }
+
+        return DEFAULT_PRIORITY;
     }
 
     @Override
@@ -198,38 +341,50 @@ public class AmqpJmsMessageFacade implements JmsMessageFacade {
 
     @Override
     public long getExpiration() throws JMSException {
-        // TODO Auto-generated method stub
+        Long absoluteExpiry = getAbsoluteExpiryTime();
+        if (absoluteExpiry != null) {
+            return absoluteExpiry;
+        }
+
+        if (syntheticTTL != null) {
+            return syntheticTTL;
+        }
+
         return 0;
     }
 
     @Override
     public void setExpiration(long expiration) throws JMSException {
-        // TODO Auto-generated method stub
+        syntheticTTL = null;
 
+        if (expiration != 0) {
+            setAbsoluteExpiryTime(expiration);
+        } else {
+            setAbsoluteExpiryTime(null);
+        }
     }
 
     @Override
     public JmsDestination getDestination() throws JMSException {
-        // TODO Auto-generated method stub
-        return null;
+        return destination;
     }
 
     @Override
     public void setDestination(JmsDestination destination) throws JMSException {
-        // TODO Auto-generated method stub
+        this.destination = destination;
 
+        // TODO
     }
 
     @Override
     public JmsDestination getReplyTo() throws JMSException {
-        // TODO Auto-generated method stub
-        return null;
+        return replyTo;
     }
 
     @Override
     public void setReplyTo(JmsDestination replyTo) throws JMSException {
+        this.replyTo = replyTo;
         // TODO Auto-generated method stub
-
     }
 
     @Override
@@ -261,23 +416,21 @@ public class AmqpJmsMessageFacade implements JmsMessageFacade {
 
     @Override
     public int getGroupSequence() throws JMSException {
-        if (message.getProperties() == null) {
-            return 0;
-        } else {
+        if (message.getProperties() != null) {
             UnsignedInteger sequence = message.getProperties().getGroupSequence();
-            if (sequence == null) {
-                return 0;
-            } else {
+            if (sequence != null) {
                 return sequence.intValue();
             }
         }
+
+        return 0;
     }
 
     @Override
     public void setGroupSequence(int groupSequence) throws JMSException {
         if (groupSequence < 0 && message.getProperties() != null) {
             message.getProperties().setGroupSequence(null);
-        } else {
+        } else if (groupSequence > 0) {
             message.setGroupSequence(groupSequence);
         }
     }
@@ -285,7 +438,7 @@ public class AmqpJmsMessageFacade implements JmsMessageFacade {
     /**
      * @return the true AMQP Message instance wrapped by this Facade.
      */
-    Message getAmqpMessage() {
+    public Message getAmqpMessage() {
         return this.message;
     }
 
@@ -293,7 +446,138 @@ public class AmqpJmsMessageFacade implements JmsMessageFacade {
      * The AmqpConnection instance that is associated with this Message.
      * @return
      */
-    AmqpConnection getConnection() {
+    public AmqpConnection getConnection() {
         return connection;
+    }
+
+    /**
+     * Checks for the presence of a given message annotation and returns true
+     * if it is contained in the current annotations.  If the annotations have
+     * not yet been initialized then this method always returns false.
+     *
+     * @param key
+     *        the name of the annotation to query for.
+     *
+     * @return true if the annotation is present, false in not or annotations not initialized.
+     */
+    boolean annotationExists(String key) {
+        if (annotationsMap == null) {
+            return false;
+        }
+
+        return annotationsMap.containsKey(AmqpMessageSupport.getSymbol(key));
+    }
+
+    /**
+     * Given an annotation name, lookup and return the value associated with that
+     * annotation name.  If the message annotations have not been created yet then
+     * this method will always return null.
+     *
+     * @param key
+     *        the Symbol name that should be looked up in the message annotations.
+     *
+     * @return the value of the annotation if it exists, or null if not set or not accessible.
+     */
+    Object getAnnotation(String key) {
+        if (annotationsMap == null) {
+            return null;
+        }
+
+        return annotationsMap.get(AmqpMessageSupport.getSymbol(key));
+    }
+
+    /**
+     * Removes a message annotation if the message contains it.  Will not do
+     * a lazy create on the message annotations so caller cannot count on the
+     * existence of the message annotations after a call to this method.
+     *
+     * @param key
+     *        the annotation key that is to be removed from the current set.
+     */
+    void removeAnnotation(String key) {
+        if (annotationsMap == null) {
+            return;
+        }
+
+        annotationsMap.remove(AmqpMessageSupport.getSymbol(key));
+    }
+
+    /**
+     * Perform a proper annotation set on the AMQP Message based on a Symbol key and
+     * the target value to append to the current annotations.
+     *
+     * @param key
+     *        The name of the Symbol whose value is being set.
+     * @param value
+     *        The new value to set in the annotations of this message.
+     */
+    void setAnnotation(String key, Object value) {
+        lazyCreateAnnotations();
+        annotationsMap.put(AmqpMessageSupport.getSymbol(key), value);
+    }
+
+    /**
+     * Removes all message annotations from this message.
+     */
+    void clearAnnotations() {
+        annotationsMap = null;
+        annotations = null;
+        message.setMessageAnnotations(null);
+    }
+
+    /**
+     * Removes all application level properties from the Message.
+     */
+    void clearAllApplicationProperties() {
+        propertiesMap = null;
+        message.setApplicationProperties(null);
+    }
+
+    /**
+     * Returns a set of all the property names that have been set in this message.
+     *
+     * @return a set of property names in the message or an empty set if none are set.
+     */
+    public Set<String> getPropertyNames() {
+        if (propertiesMap != null) {
+            return propertiesMap.keySet();
+        } else {
+            return Collections.emptySet();
+        }
+    }
+
+    private Long getAbsoluteExpiryTime() {
+        Long result = null;
+        if (message.getProperties() != null) {
+            Date date = message.getProperties().getAbsoluteExpiryTime();
+            if (date != null) {
+                result = date.getTime();
+            }
+        }
+
+        return result;
+    }
+
+    private void setAbsoluteExpiryTime(Long expiration) {
+        if (expiration == null) {
+            if (message.getProperties() != null) {
+                message.getProperties().setAbsoluteExpiryTime(null);
+            }
+        } else {
+            message.setExpiryTime(expiration);
+        }
+    }
+
+    private void lazyCreateAnnotations() {
+        if (annotationsMap == null) {
+            annotationsMap = new HashMap<Object,Object>();
+            annotations = new MessageAnnotations(annotationsMap);
+            message.setMessageAnnotations(annotations);
+        }
+    }
+
+    private void lazyCreateProperties() {
+        propertiesMap = new HashMap<String,Object>();
+        message.setApplicationProperties(new ApplicationProperties(propertiesMap));
     }
 }

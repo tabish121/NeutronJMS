@@ -16,9 +16,14 @@
  */
 package io.neutronjms.provider.amqp.message;
 
+import static io.neutronjms.provider.amqp.message.AmqpMessageSupport.JMS_BYTES_MESSAGE;
 import io.neutronjms.jms.message.facade.JmsBytesMessageFacade;
 import io.neutronjms.provider.amqp.AmqpConnection;
 
+import org.apache.qpid.proton.amqp.Binary;
+import org.apache.qpid.proton.amqp.messaging.AmqpValue;
+import org.apache.qpid.proton.amqp.messaging.Data;
+import org.apache.qpid.proton.amqp.messaging.Section;
 import org.fusesource.hawtbuf.Buffer;
 
 /**
@@ -26,6 +31,9 @@ import org.fusesource.hawtbuf.Buffer;
  * access to the underlying bytes contained in the message.
  */
 public class AmqpJmsBytesMessageFacade extends AmqpJmsMessageFacade implements JmsBytesMessageFacade {
+
+    private static final String CONTENT_TYPE = "application/octet-stream";
+    private static final Buffer EMPTY_BUFFER = new Buffer(new byte[0]);
 
     /**
      * Creates a new facade instance
@@ -38,25 +46,90 @@ public class AmqpJmsBytesMessageFacade extends AmqpJmsMessageFacade implements J
 
     @Override
     public JmsBytesMessageFacade copy() {
-        return null;
+        JmsBytesMessageFacade copy = new AmqpJmsBytesMessageFacade(connection);
+        return copy;
+    }
+
+    /**
+     * Copies the Buffer contained in this message to the target message.
+     *
+     * @param target
+     *        the target message that will receive a copy of this message's content.
+     */
+    protected void copyInto(AmqpJmsBytesMessageFacade target) {
+        super.copyInto(target);
+        target.setContent(getContent().deepCopy());
+    }
+
+    @Override
+    public byte getJmsMsgType() {
+        return JMS_BYTES_MESSAGE;
+    }
+
+    @Override
+    public String getContentType() {
+        return CONTENT_TYPE;
     }
 
     @Override
     public boolean isEmpty() {
-        // TODO Auto-generated method stub
-        return false;
+        Binary payload = getBinaryFromBody();
+        return payload != null && payload.getLength() > 0;
     }
 
     @Override
     public Buffer getContent() {
-        // TODO Auto-generated method stub
-        return null;
+        Buffer result = EMPTY_BUFFER;
+
+        Binary payload = getBinaryFromBody();
+        if (payload != null && payload.getLength() > 0) {
+            result = new Buffer(payload.getArray(), payload.getArrayOffset(), payload.getLength());
+        }
+
+        return result;
     }
 
     @Override
     public void setContent(Buffer content) {
-        // TODO Auto-generated method stub
+        Data body = null;
+        if (content != null) {
+            body = new Data(new Binary(content.data, content.offset, content.length));
+        }
 
+        getAmqpMessage().setBody(body);
     }
 
+    private Binary getBinaryFromBody() {
+        Section body = getAmqpMessage().getBody();
+        Binary result = null;
+
+        if (body == null) {
+            return result;
+        }
+
+        if (body instanceof Data) {
+            Binary payload = ((Data) body).getValue();
+            if (payload != null && payload.getLength() != 0) {
+                result = payload;
+            }
+        } else if(body instanceof AmqpValue) {
+            Object value = ((AmqpValue) body).getValue();
+            if (value == null) {
+                return result;
+            }
+
+            if (value instanceof Binary) {
+                Binary payload = (Binary)value;
+                if (payload != null && payload.getLength() != 0) {
+                    result = payload;
+                }
+            } else {
+                throw new IllegalStateException("Unexpected amqp-value body content type: " + value.getClass().getSimpleName());
+            }
+        } else {
+            throw new IllegalStateException("Unexpected body content type: " + body.getClass().getSimpleName());
+        }
+
+        return result;
+    }
 }
