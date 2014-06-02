@@ -41,6 +41,7 @@ import io.neutronjms.jms.JmsDestination;
 import io.neutronjms.jms.message.facade.JmsMessageFacade;
 import io.neutronjms.jms.meta.JmsMessageId;
 import io.neutronjms.provider.stomp.StompConnection;
+import io.neutronjms.provider.stomp.StompConstants;
 import io.neutronjms.provider.stomp.StompFrame;
 
 import java.io.IOException;
@@ -197,6 +198,27 @@ public class StompJmsMessageFacade implements JmsMessageFacade {
     @Override
     public void setCorrelationId(String correlationId) {
         setStringProperty(CORRELATION_ID, correlationId);
+    }
+
+    @Override
+    public byte[] getCorrelationIdBytes() throws JMSException {
+        String correlationId = getCorrelationId();
+        if (correlationId != null) {
+            return correlationId.getBytes(StompConstants.UTF8);
+        }
+
+        return null;
+    }
+
+    @Override
+    public void setCorrelationIdBytes(byte[] correlationId) throws JMSException {
+        String newValue = null;
+
+        if (correlationId != null && correlationId.length > 0) {
+            newValue = new String(correlationId, StompConstants.UTF8);
+        }
+
+        setStringProperty(CORRELATION_ID, newValue);
     }
 
     @Override

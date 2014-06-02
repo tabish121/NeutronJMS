@@ -21,6 +21,7 @@ import io.neutronjms.jms.JmsDestination;
 import io.neutronjms.jms.meta.JmsMessageId;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,6 +35,8 @@ import org.fusesource.hawtbuf.AsciiBuffer;
  * version that maps to a Provider message object.
  */
 public class JmsDefaultMessageFacade implements JmsMessageFacade {
+
+    private static final Charset UTF8 = Charset.forName("UTF-8");
 
     public static enum JmsMsgType {
         MESSAGE("jms/message"),
@@ -164,6 +167,20 @@ public class JmsDefaultMessageFacade implements JmsMessageFacade {
     @Override
     public void setCorrelationId(String correlationId) {
         this.correlationId = correlationId;
+    }
+
+    @Override
+    public byte[] getCorrelationIdBytes() {
+        return correlationId.getBytes(UTF8);
+    }
+
+    @Override
+    public void setCorrelationIdBytes(byte[] correlationId) {
+        if (correlationId != null && correlationId.length > 0) {
+            this.correlationId = new String(correlationId, UTF8);
+        } else {
+            this.correlationId = null;
+        }
     }
 
     @Override

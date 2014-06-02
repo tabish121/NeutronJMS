@@ -25,7 +25,6 @@ import io.neutronjms.util.PropertyExpression;
 import io.neutronjms.util.TypeConversionSupport;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -176,12 +175,12 @@ public class JmsMessage implements javax.jms.Message {
 
     @Override
     public byte[] getJMSCorrelationIDAsBytes() throws JMSException {
-        return encodeString(facade.getCorrelationId());
+        return facade.getCorrelationIdBytes();
     }
 
     @Override
     public void setJMSCorrelationIDAsBytes(byte[] correlationId) throws JMSException {
-        facade.setCorrelationId(decodeString(correlationId));
+        facade.setCorrelationIdBytes(correlationId);
     }
 
     @Override
@@ -742,28 +741,6 @@ public class JmsMessage implements javax.jms.Message {
             if (isRedelivered()) {
                 facade.setRedeliveryCounter(0);
             }
-        }
-    }
-
-    protected static String decodeString(byte[] data) throws JMSException {
-        try {
-            if (data == null) {
-                return null;
-            }
-            return new String(data, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            throw new JMSException("Invalid UTF-8 encoding: " + e.getMessage());
-        }
-    }
-
-    protected static byte[] encodeString(String data) throws JMSException {
-        try {
-            if (data == null) {
-                return null;
-            }
-            return data.getBytes("UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            throw new JMSException("Invalid UTF-8 encoding: " + e.getMessage());
         }
     }
 
