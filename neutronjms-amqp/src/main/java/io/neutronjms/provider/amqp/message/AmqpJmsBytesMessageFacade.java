@@ -34,6 +34,7 @@ public class AmqpJmsBytesMessageFacade extends AmqpJmsMessageFacade implements J
 
     private static final String CONTENT_TYPE = "application/octet-stream";
     private static final Buffer EMPTY_BUFFER = new Buffer(new byte[0]);
+    private static final Data EMPTY_DATA = new Data(new Binary(new byte[0]));
 
     /**
      * Creates a new facade instance
@@ -80,7 +81,6 @@ public class AmqpJmsBytesMessageFacade extends AmqpJmsMessageFacade implements J
     @Override
     public Buffer getContent() {
         Buffer result = EMPTY_BUFFER;
-
         Binary payload = getBinaryFromBody();
         if (payload != null && payload.getLength() > 0) {
             result = new Buffer(payload.getArray(), payload.getArrayOffset(), payload.getLength());
@@ -91,7 +91,7 @@ public class AmqpJmsBytesMessageFacade extends AmqpJmsMessageFacade implements J
 
     @Override
     public void setContent(Buffer content) {
-        Data body = null;
+        Data body = EMPTY_DATA;
         if (content != null) {
             body = new Data(new Binary(content.data, content.offset, content.length));
         }
