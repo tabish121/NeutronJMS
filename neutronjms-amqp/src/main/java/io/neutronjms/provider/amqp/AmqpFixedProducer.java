@@ -66,6 +66,7 @@ public class AmqpFixedProducer extends AmqpProducer {
     private final AmqpTransferTagGenerator tagGenerator = new AmqpTransferTagGenerator(true);
     private final Set<Delivery> pending = new LinkedHashSet<Delivery>();
     private final LinkedList<PendingSend> pendingSends = new LinkedList<PendingSend>();
+    private byte[] encodeBuffer = new byte[1024 * 8];
 
     private final OutboundTransformer outboundTransformer = new AutoOutboundTransformer(AmqpJMSVendor.INSTANCE);
     private final String MESSAGE_FORMAT_KEY = outboundTransformer.getPrefixVendor() + "MESSAGE_FORMAT";
@@ -138,7 +139,6 @@ public class AmqpFixedProducer extends AmqpProducer {
         if (facade instanceof AmqpJmsMessageFacade) {
             AmqpJmsMessageFacade amqpMessage = (AmqpJmsMessageFacade) facade;
             encodeAndSend(amqpMessage.getAmqpMessage(), delivery);
-            throw new JMSException("Not yet supported");
         } else {
             encodeAndSend(envelope.getMessage(), delivery);
         }
@@ -157,6 +157,29 @@ public class AmqpFixedProducer extends AmqpProducer {
 
     private void encodeAndSend(Message message, Delivery delivery) throws IOException {
 
+        int encodedSize;
+        while (true) {
+            try {
+                encodedSize = message.encode(encodeBuffer, 0, encodeBuffer.length);
+                break;
+            } catch (java.nio.BufferOverflowException e) {
+                encodeBuffer = new byte[encodeBuffer.length * 2];
+            }
+        }
+
+        Buffer sendBuffer = new Buffer(encodeBuffer, 0, encodedSize);
+
+        while (true) {
+            int sent = endpoint.send(sendBuffer.data, sendBuffer.offset, sendBuffer.length);
+            if (sent > 0) {
+                sendBuffer.moveHead(sent);
+                if (sendBuffer.length == 0) {
+                    break;
+                }
+            } else {
+                LOG.warn("{} failed to send any data from current Message.", this);
+            }
+        }
     }
 
     private void encodeAndSend(JmsMessage message, Delivery delivery) throws IOException {

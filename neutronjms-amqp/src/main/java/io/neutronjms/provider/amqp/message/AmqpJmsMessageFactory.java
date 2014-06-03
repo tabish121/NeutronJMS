@@ -23,7 +23,6 @@ import io.neutronjms.jms.message.JmsMessageFactory;
 import io.neutronjms.jms.message.JmsObjectMessage;
 import io.neutronjms.jms.message.JmsStreamMessage;
 import io.neutronjms.jms.message.JmsTextMessage;
-import io.neutronjms.jms.message.facade.JmsDefaultBytesMessageFacade;
 import io.neutronjms.jms.message.facade.JmsDefaultMessageFacade;
 import io.neutronjms.provider.amqp.AmqpConnection;
 
@@ -79,7 +78,7 @@ public class AmqpJmsMessageFactory implements JmsMessageFactory {
 
     @Override
     public JmsBytesMessage createBytesMessage() throws UnsupportedOperationException {
-        return new JmsBytesMessage(new JmsDefaultBytesMessageFacade());
+        return new JmsBytesMessage(new AmqpJmsBytesMessageFacade(connection));
     }
 
     @Override
