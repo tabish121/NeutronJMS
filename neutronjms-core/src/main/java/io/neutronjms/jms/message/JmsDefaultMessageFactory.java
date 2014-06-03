@@ -18,10 +18,11 @@ package io.neutronjms.jms.message;
 
 import io.neutronjms.jms.message.facade.JmsDefaultBytesMessageFacade;
 import io.neutronjms.jms.message.facade.JmsDefaultMessageFacade;
+import io.neutronjms.jms.message.facade.JmsDefaultTextMessageFacade;
 
 import java.io.Serializable;
 
-import javax.jms.MessageNotWriteableException;
+import javax.jms.JMSException;
 
 /**
  * Default implementation of the ProviderMessageFactory that create simple
@@ -41,12 +42,11 @@ public class JmsDefaultMessageFactory implements JmsMessageFactory {
 
     @Override
     public JmsTextMessage createTextMessage(String payload) throws UnsupportedOperationException {
-        JmsTextMessage result = new JmsTextMessage(new JmsDefaultMessageFacade());
+        JmsTextMessage result = new JmsTextMessage(new JmsDefaultTextMessageFacade());
         if (payload != null) {
             try {
                 result.setText(payload);
-            } catch (MessageNotWriteableException e) {
-                // Won't happen in this case.
+            } catch (JMSException e) {
             }
         }
         return result;

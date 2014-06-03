@@ -16,7 +16,7 @@
  */
 package io.neutronjms.jms.message;
 
-import io.neutronjms.jms.message.facade.JmsMessageFacade;
+import io.neutronjms.jms.message.facade.JmsTextMessageFacade;
 
 import javax.jms.JMSException;
 import javax.jms.MessageNotWriteableException;
@@ -24,10 +24,11 @@ import javax.jms.TextMessage;
 
 public class JmsTextMessage extends JmsMessage implements TextMessage {
 
-    protected String text;
+    private final JmsTextMessageFacade facade;
 
-    public JmsTextMessage(JmsMessageFacade facade) {
+    public JmsTextMessage(JmsTextMessageFacade facade) {
         super(facade);
+        this.facade = facade;
     }
 
     @Override
@@ -39,18 +40,17 @@ public class JmsTextMessage extends JmsMessage implements TextMessage {
 
     private void copy(JmsTextMessage other) throws JMSException {
         super.copy(other);
-        this.internalSetText(other.internalGetText());
     }
 
     @Override
-    public void setText(String text) throws MessageNotWriteableException {
+    public void setText(String text) throws JMSException, MessageNotWriteableException {
         checkReadOnlyBody();
-        this.text = text;
+        this.facade.setText(text);
     }
 
     @Override
     public String getText() throws JMSException {
-        return text;
+        return facade.getText();
     }
 
     /**
@@ -69,33 +69,15 @@ public class JmsTextMessage extends JmsMessage implements TextMessage {
     @Override
     public void clearBody() throws JMSException {
         super.clearBody();
-        this.internalSetText(null);
+        this.facade.setText(null);
     }
 
     @Override
     public String toString() {
-        return super.toString() + ":text=" + internalGetText();
-    }
-
-    /**
-     * Internal version of the setText method that will not throw even if the message
-     * is in read-only mode.  The method allows a sub-class to provide it's own set
-     * method for the text payload of the message.
-     *
-     * @param text
-     *        the new value to store in this text message.
-     */
-    protected void internalSetText(String text) {
-        this.text = text;
-    }
-
-    /**
-     * Internal version of the getText method that can be overridden by a subclass to
-     * allow for accessing the text directly from a protocols own Message type.
-     *
-     * @return the text content of the message.
-     */
-    protected String internalGetText() {
-        return this.text;
+        try {
+            return super.toString() + ":text=" + facade.getText();
+        } catch (JMSException e) {
+            return super.toString();
+        }
     }
 }

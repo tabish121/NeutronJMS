@@ -45,14 +45,8 @@ public class StompJmsBytesMessageFacade extends StompJmsMessageFacade implements
 
     @Override
     public JmsBytesMessageFacade copy() {
-        StompJmsBytesMessageFacade copy = new StompJmsBytesMessageFacade(connection);
-        copy.setContent(this.getContent().deepCopy());
-        return null;
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return message.getContent().length() != 0;
+        StompJmsBytesMessageFacade copy = new StompJmsBytesMessageFacade(message.clone(), connection);
+        return copy;
     }
 
     @Override

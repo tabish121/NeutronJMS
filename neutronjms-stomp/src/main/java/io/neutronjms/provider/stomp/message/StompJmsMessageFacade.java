@@ -156,6 +156,11 @@ public class StompJmsMessageFacade implements JmsMessageFacade {
     }
 
     @Override
+    public boolean isEmpty() {
+        return message.getContent() != null && !message.getContent().isEmpty();
+    }
+
+    @Override
     public void clearBody() {
         message.setContent(null);
     }

@@ -30,7 +30,7 @@ import io.neutronjms.provider.stomp.StompFrame;
 
 import java.io.Serializable;
 
-import javax.jms.MessageNotWriteableException;
+import javax.jms.JMSException;
 
 /**
  * STOMP based Message Factory.
@@ -80,12 +80,12 @@ public class StompJmsMessageFactory implements JmsMessageFactory {
     @Override
     public JmsTextMessage createTextMessage(String payload) throws UnsupportedOperationException {
         StompFrame frame = new StompFrame(SEND);
-        StompJmsTextMessage message = new StompJmsTextMessage(new StompJmsMessageFacade(frame, connection));
+        JmsTextMessage message = new JmsTextMessage(new StompJmsTextMessageFacade(frame, connection));
         if (payload != null) {
             try {
                 frame.setProperty(TRANSFORMATION, JmsMsgType.TEXT.name());
                 message.setText(payload);
-            } catch (MessageNotWriteableException e) {
+            } catch (JMSException e) {
             }
         } else {
             frame.setProperty(TRANSFORMATION, JmsMsgType.TEXT_NULL.name());
@@ -135,8 +135,8 @@ public class StompJmsMessageFactory implements JmsMessageFactory {
     /**
      * Creates a new JmsTextMessage that wraps the incoming MESSAGE frame.
      */
-    public StompJmsTextMessage wrapTextMessage(StompFrame message) {
-        return new StompJmsTextMessage(new StompJmsMessageFacade(message, connection));
+    public JmsTextMessage wrapTextMessage(StompFrame message) {
+        return new JmsTextMessage(new StompJmsTextMessageFacade(message, connection));
     }
 
     /**

@@ -120,6 +120,11 @@ public class AmqpJmsMessageFacade implements JmsMessageFacade {
     }
 
     @Override
+    public boolean isEmpty() {
+        return true;
+    }
+
+    @Override
     public Map<String, Object> getProperties() throws IOException {
         lazyCreateProperties();
         return Collections.unmodifiableMap(new HashMap<String, Object>(propertiesMap));

@@ -76,32 +76,35 @@ public class JmsDefaultMessageFacade implements JmsMessageFacade {
     }
 
     @Override
-    public JmsDefaultMessageFacade copy() {
+    public JmsDefaultMessageFacade copy() throws JMSException {
         JmsDefaultMessageFacade copy = new JmsDefaultMessageFacade();
-        copy.priority = this.priority;
-        copy.groupSequence = this.groupSequence;
-        copy.groupId = this.groupId;
-        copy.expiration = this.expiration;
-        copy.timestamp = this.timestamp;
-        copy.correlationId = this.correlationId;
-        copy.persistent = this.persistent;
-        copy.redeliveryCount = this.redeliveryCount;
-        copy.type = this.type;
-        copy.destination = this.destination;
-        copy.replyTo = this.replyTo;
-        copy.userId = this.userId;
+        copyInto(copy);
+        return copy;
+    }
+
+    protected void copyInto(JmsDefaultMessageFacade target) throws JMSException {
+        target.priority = this.priority;
+        target.groupSequence = this.groupSequence;
+        target.groupId = this.groupId;
+        target.expiration = this.expiration;
+        target.timestamp = this.timestamp;
+        target.correlationId = this.correlationId;
+        target.persistent = this.persistent;
+        target.redeliveryCount = this.redeliveryCount;
+        target.type = this.type;
+        target.destination = this.destination;
+        target.replyTo = this.replyTo;
+        target.userId = this.userId;
 
         if (this.messageId != null) {
-            copy.messageId = this.messageId.copy();
+            target.messageId = this.messageId.copy();
         }
 
         if (this.properties != null) {
-            copy.properties = new HashMap<String, Object>(this.properties);
+            target.properties = new HashMap<String, Object>(this.properties);
         } else {
-            copy.properties = null;
+            target.properties = null;
         }
-
-        return copy;
     }
 
     @Override
@@ -127,6 +130,11 @@ public class JmsDefaultMessageFacade implements JmsMessageFacade {
 
     @Override
     public void onSend() throws JMSException {
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return true;
     }
 
     @Override

@@ -16,8 +16,11 @@
  */
 package io.neutronjms.provider.stomp.message;
 
-import io.neutronjms.jms.message.JmsTextMessage;
-import io.neutronjms.jms.message.facade.JmsMessageFacade;
+import io.neutronjms.jms.message.facade.JmsTextMessageFacade;
+import io.neutronjms.provider.stomp.StompConnection;
+import io.neutronjms.provider.stomp.StompFrame;
+
+import javax.jms.JMSException;
 
 import org.fusesource.hawtbuf.UTF8Buffer;
 
@@ -25,26 +28,37 @@ import org.fusesource.hawtbuf.UTF8Buffer;
  * STOMP JmsTextMessage extension that reads and writes the message String
  * value to the underlying STOMP frame.
  */
-public class StompJmsTextMessage extends JmsTextMessage {
-
-    private final StompJmsMessageFacade facade;
+public class StompJmsTextMessageFacade extends StompJmsMessageFacade implements JmsTextMessageFacade {
 
     /**
-     * @param facade
+     * @param connection
      */
-    public StompJmsTextMessage(JmsMessageFacade facade) {
-        super(facade);
-        this.facade = (StompJmsMessageFacade) facade;
+    public StompJmsTextMessageFacade(StompConnection connection) {
+        super(connection);
+    }
+
+    /**
+     * @param message
+     * @param connection
+     */
+    public StompJmsTextMessageFacade(StompFrame message, StompConnection connection) {
+        super(message, connection);
     }
 
     @Override
-    protected void internalSetText(String text) {
+    public StompJmsTextMessageFacade copy() {
+        StompJmsTextMessageFacade copy = new StompJmsTextMessageFacade(message.clone(), connection);
+        return copy;
+    }
+
+    @Override
+    public String getText() throws JMSException {
+        return message.getContentAsString();
+    }
+
+    @Override
+    public void setText(String text) throws JMSException {
         UTF8Buffer buffer = new UTF8Buffer(text);
-        facade.getStompMessage().setContent(buffer);
-    }
-
-    @Override
-    protected String internalGetText() {
-        return facade.getStompMessage().getContentAsString();
+        message.setContent(buffer);
     }
 }

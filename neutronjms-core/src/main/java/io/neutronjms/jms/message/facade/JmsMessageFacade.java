@@ -251,4 +251,12 @@ public interface JmsMessageFacade {
 
     void setGroupSequence(int groupSequence) throws JMSException;
 
+    /**
+     * This method should provide a quick check on the message to determine if
+     * there is any content actually contained within.
+     *
+     * @return true if the message content is non-empty.
+     */
+    boolean isEmpty();
+
 }

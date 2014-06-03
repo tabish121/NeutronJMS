@@ -26,13 +26,14 @@ import io.neutronjms.jms.JmsQueue;
 import io.neutronjms.jms.JmsTopic;
 import io.neutronjms.jms.message.JmsBytesMessage;
 import io.neutronjms.jms.message.JmsMessage;
+import io.neutronjms.jms.message.JmsTextMessage;
 import io.neutronjms.jms.meta.JmsConsumerInfo;
 import io.neutronjms.provider.stomp.StompConnection;
 import io.neutronjms.provider.stomp.StompFrame;
 import io.neutronjms.provider.stomp.message.StompJmsBytesMessageFacade;
 import io.neutronjms.provider.stomp.message.StompJmsMessageFacade;
 import io.neutronjms.provider.stomp.message.StompJmsMessageFactory;
-import io.neutronjms.provider.stomp.message.StompJmsTextMessage;
+import io.neutronjms.provider.stomp.message.StompJmsTextMessageFacade;
 
 import javax.jms.JMSException;
 
@@ -221,8 +222,8 @@ public class GenericStompServerAdaptor implements StompServerAdapter {
     /**
      * Creates a new JmsTextMessage that wraps the incoming MESSAGE frame.
      */
-    public StompJmsTextMessage wrapTextMessage(StompFrame message) {
-        return new StompJmsTextMessage(new StompJmsMessageFacade(message, connection));
+    public JmsTextMessage wrapTextMessage(StompFrame message) {
+        return new JmsTextMessage(new StompJmsTextMessageFacade(message, connection));
     }
 
     /**

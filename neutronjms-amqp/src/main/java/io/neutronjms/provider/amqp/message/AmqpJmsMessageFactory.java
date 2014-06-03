@@ -24,11 +24,12 @@ import io.neutronjms.jms.message.JmsObjectMessage;
 import io.neutronjms.jms.message.JmsStreamMessage;
 import io.neutronjms.jms.message.JmsTextMessage;
 import io.neutronjms.jms.message.facade.JmsDefaultMessageFacade;
+import io.neutronjms.jms.message.facade.JmsDefaultTextMessageFacade;
 import io.neutronjms.provider.amqp.AmqpConnection;
 
 import java.io.Serializable;
 
-import javax.jms.MessageNotWriteableException;
+import javax.jms.JMSException;
 
 /**
  * AMQP Message Factory instance used to create new JmsMessage types that wrap an
@@ -65,12 +66,11 @@ public class AmqpJmsMessageFactory implements JmsMessageFactory {
 
     @Override
     public JmsTextMessage createTextMessage(String payload) throws UnsupportedOperationException {
-        JmsTextMessage result = new JmsTextMessage(new JmsDefaultMessageFacade());
+        JmsTextMessage result = new JmsTextMessage(new JmsDefaultTextMessageFacade());
         if (payload != null) {
             try {
                 result.setText(payload);
-            } catch (MessageNotWriteableException e) {
-                // Won't happen in this case.
+            } catch (JMSException e) {
             }
         }
         return result;
