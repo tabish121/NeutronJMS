@@ -34,6 +34,9 @@ public abstract class OpenWireGenerator {
     protected String filePostFix = ".java";
     protected JamService jam;
 
+    protected String commandsPackage = "io.neutronjms.openwire.commands";
+    protected String codecPackageRoot = "io.neutronjms.openwire.codec";
+
     public boolean isValidProperty(JProperty it) {
         JMethod getter = it.getGetter();
         JMethod setter = it.getSetter();
@@ -115,6 +118,22 @@ public abstract class OpenWireGenerator {
 
     public void setOpenwireVersion(int openwireVersion) {
         this.openwireVersion = openwireVersion;
+    }
+
+    public String getCommandsPackage() {
+        return commandsPackage;
+    }
+
+    public void setCommandsPackage(String commandsPacakge) {
+        this.commandsPackage = commandsPacakge;
+    }
+
+    public String getCodecPackageRoot() {
+        return codecPackageRoot;
+    }
+
+    public void setCodecPackageRoot(String codecPackageRoot) {
+        this.codecPackageRoot = codecPackageRoot;
     }
 
     public String getOpenWireOpCode(JClass element) {

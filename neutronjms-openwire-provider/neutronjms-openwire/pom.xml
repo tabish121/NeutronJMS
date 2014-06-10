@@ -29,7 +29,7 @@
   <packaging>jar</packaging>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <openwire-src>${basedir}/src/main/java/io/neurtronjms/openwire</openwire-src>
+    <openwire-src>${basedir}/src/main/java/io/neutronjms/openwire/commands</openwire-src>
     <openwire-oldest>10</openwire-oldest>
     <openwire-newest>10</openwire-newest>
   </properties>

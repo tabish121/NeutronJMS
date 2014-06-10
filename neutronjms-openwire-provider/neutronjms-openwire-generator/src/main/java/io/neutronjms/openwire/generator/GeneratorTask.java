@@ -32,6 +32,7 @@ public class GeneratorTask extends Task {
 
     protected int fromVersion = 1;
     protected int toVersion = 1;
+    protected boolean rangedGenerate = true;
     protected File sourceDir = new File("./src/main/java");
     protected File targetDir = new File("./src/main/java");
     protected boolean generateMarshalers = true;
@@ -88,48 +89,63 @@ public class GeneratorTask extends Task {
             JamService jam = jamServiceFactory.createService(params);
 
             if (generateMarshalers) {
-                for (int i = fromVersion; i <= toVersion; ++i) {
-                    System.out.println("======================================================");
-                    System.out.println(" Generating Marshallers for OpenWire version: " + i);
-                    System.out.println("======================================================");
-
-                    MarshallingGenerator script = new MarshallingGenerator();
-                    script.setJam(jam);
-                    script.setTargetDir(targetDir.getCanonicalPath());
-                    script.setOpenwireVersion(i);
-                    if (commandsPackage != null) {
-                        script.setCommandsPackage(commandsPackage);
+                if (!isRangedGenerate()) {
+                    runMarshalerGenerateScript(jam, fromVersion);
+                    if (toVersion != fromVersion) {
+                        runMarshalerGenerateScript(jam, toVersion);
                     }
-                    if (codecPackageRoot != null) {
-                        script.setCodecPackageRoot(codecPackageRoot);
+                } else {
+                    for (int i = fromVersion; i <= toVersion; ++i) {
+                        runMarshalerGenerateScript(jam, i);
                     }
-                    script.run();
                 }
             }
 
             if (generateTests) {
-                for (int i = fromVersion; i <= toVersion; ++i) {
-                    System.out.println("======================================================");
-                    System.out.println(" Generating Test Cases for OpenWire version: " + i);
-                    System.out.println("======================================================");
-
-                    TestsGenerator script = new TestsGenerator();
-                    script.setJam(jam);
-                    script.setTargetDir(targetDir.getCanonicalPath());
-                    script.setOpenwireVersion(i);
-                    if (commandsPackage != null) {
-                        script.setCommandsPackage(commandsPackage);
+                if (!isRangedGenerate()) {
+                    runTestGenerateScript(jam, fromVersion);
+                    if (toVersion != fromVersion) {
+                        runTestGenerateScript(jam, toVersion);
                     }
-                    if (codecPackageRoot != null) {
-                        script.setCodecPackageRoot(codecPackageRoot);
+                } else {
+                    for (int i = fromVersion; i <= toVersion; ++i) {
+                        runTestGenerateScript(jam, i);
                     }
-                    script.run();
                 }
             }
 
         } catch (Exception e) {
             throw new BuildException(e);
         }
+    }
+
+    protected void runMarshalerGenerateScript(JamService jam, int version) throws Exception {
+        System.out.println("======================================================");
+        System.out.println(" Generating Marshallers for OpenWire version: " + version);
+        System.out.println("======================================================");
+        MarshallingGenerator script = new MarshallingGenerator();
+        runScript(script, jam, version);
+    }
+
+    protected void runTestGenerateScript(JamService jam, int version) throws Exception {
+        System.out.println("======================================================");
+        System.out.println(" Generating Test Cases for OpenWire version: " + version);
+        System.out.println("======================================================");
+        TestsGenerator script = new TestsGenerator();
+        runScript(script, jam, version);
+    }
+
+    protected void runScript(MultiSourceGenerator script, JamService jam, int version) throws Exception {
+        script.setJam(jam);
+        script.setTargetDir(targetDir.getCanonicalPath());
+        script.setOpenwireVersion(version);
+        if (commandsPackage != null) {
+            script.setCommandsPackage(commandsPackage);
+        }
+        if (codecPackageRoot != null) {
+            script.setCodecPackageRoot(codecPackageRoot);
+        }
+        script.run();
     }
 
     public int getFromVersion() {
@@ -178,5 +194,13 @@ public class GeneratorTask extends Task {
 
     public void setGenerateTests(boolean generateTests) {
         this.generateTests = generateTests;
+    }
+
+    public boolean isRangedGenerate() {
+        return this.rangedGenerate;
+    }
+
+    public void setRangedGenerate(boolean rangedGenerate) {
+        this.rangedGenerate = rangedGenerate;
     }
 }

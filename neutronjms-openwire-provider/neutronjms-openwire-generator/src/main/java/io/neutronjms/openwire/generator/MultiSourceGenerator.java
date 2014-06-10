@@ -47,6 +47,8 @@ public abstract class MultiSourceGenerator extends OpenWireGenerator {
     protected String baseClass;
     protected StringBuffer buffer;
 
+    protected String targetDir;
+
     public MultiSourceGenerator() {
         initialiseManuallyMaintainedClasses();
     }
@@ -251,5 +253,13 @@ public abstract class MultiSourceGenerator extends OpenWireGenerator {
 
     public void setSuperclass(JClass superclass) {
         this.superclass = superclass;
+    }
+
+    public String getTargetDir() {
+        return targetDir;
+    }
+
+    public void setTargetDir(String sourceDir) {
+        this.targetDir = sourceDir;
     }
 }

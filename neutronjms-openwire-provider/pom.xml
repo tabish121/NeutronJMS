@@ -37,4 +37,24 @@
     <module>neutronjms-openwire-legacy</module>
   </modules>
 
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>io.neutronjms</groupId>
+        <artifactId>neutronjms-openwire</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.neutronjms</groupId>
+        <artifactId>neutronjms-openwire-legacy</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.neutronjms</groupId>
+        <artifactId>neutronjms-openwire-generator</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
 </project>

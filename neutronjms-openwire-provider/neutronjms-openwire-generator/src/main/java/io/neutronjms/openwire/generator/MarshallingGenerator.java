@@ -40,16 +40,17 @@ public class MarshallingGenerator extends MultiSourceGenerator {
     protected File factoryFile;
     protected String factoryFileName = "MarshallerFactory";
     protected String indent = "    ";
-    protected String targetDir = "src/main/java";
-    protected String commandsPackage = "io.neutronjms.openwire.commands";
-    protected String codecPackageRoot = "io.neutronjms.openwire.codec";
 
     private final String packagePrefixPath = codecPackageRoot.replace('.', '/');
+
+    public MarshallingGenerator() {
+        this.targetDir = "src/main/java";
+    }
 
     @Override
     public Object run() {
         if (destDir == null) {
-            destDir = new File(targetDir + "/" + packagePrefixPath + "/v" + getOpenwireVersion());
+            destDir = new File(getTargetDir() + "/" + packagePrefixPath + "/v" + getOpenwireVersion());
         }
         Object answer = super.run();
         //processFactory();
@@ -707,29 +708,5 @@ public class MarshallingGenerator extends MultiSourceGenerator {
 
     public void setIndent(String indent) {
         this.indent = indent;
-    }
-
-    public String getTargetDir() {
-        return targetDir;
-    }
-
-    public void setTargetDir(String sourceDir) {
-        this.targetDir = sourceDir;
-    }
-
-    public String getCommandsPackage() {
-        return commandsPackage;
-    }
-
-    public void setCommandsPackage(String commandsPacakge) {
-        this.commandsPackage = commandsPacakge;
-    }
-
-    public String getCodecPackageRoot() {
-        return codecPackageRoot;
-    }
-
-    public void setCodecPackageRoot(String codecPackageRoot) {
-        this.codecPackageRoot = codecPackageRoot;
     }
 }

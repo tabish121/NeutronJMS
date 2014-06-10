@@ -30,10 +30,9 @@ import org.codehaus.jam.JProperty;
  */
 public class TestsGenerator extends MultiSourceGenerator {
 
-    protected String targetDir = "src/test/java";
-
-    protected String commandsPackage = "io.neurtonjms.openwire.commands";
-    protected String codecPackageRoot = "io.neutronjms.openwire.codec";
+    public TestsGenerator() {
+        this.targetDir = "src/test/java";
+    }
 
     @Override
     public Object run() {
@@ -195,29 +194,5 @@ public class TestsGenerator extends MultiSourceGenerator {
 
         out.println("    }");
         out.println("}");
-    }
-
-    public String getTargetDir() {
-        return targetDir;
-    }
-
-    public void setTargetDir(String targetDir) {
-        this.targetDir = targetDir;
-    }
-
-    public String getCommandsPackage() {
-        return commandsPackage;
-    }
-
-    public void setCommandsPackage(String commandsPackage) {
-        this.commandsPackage = commandsPackage;
-    }
-
-    public String getCodecPackageRoot() {
-        return codecPackageRoot;
-    }
-
-    public void setCodecPackageRoot(String codecPackageRoot) {
-        this.codecPackageRoot = codecPackageRoot;
     }
 }
