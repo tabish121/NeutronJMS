@@ -51,8 +51,8 @@
     <apollo-version>1.7</apollo-version>
     <proton-version>0.7</proton-version>
     <fuse-joram-tests-version>1.0</fuse-joram-tests-version>
-    <jetty-version>8.1.14.v20131031</jetty-version>
-    <vertex-version>2.0.2-final</vertex-version>
+    <jetty-version>8.1.15.v20140411</jetty-version>
+    <vertex-version>2.1</vertex-version>
     <mockito-version>1.9.5</mockito-version>
 
     <!-- Maven Plugin Version for this Project -->
