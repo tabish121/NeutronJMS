@@ -44,6 +44,7 @@ public class ConsumerInfo extends BaseCommand {
     protected BrokerId[] brokerPath;
     protected boolean optimizedAcknowledge;
     protected boolean noRangeAcks;
+    protected boolean networkSubscription;
 
     protected Object additionalPredicate;
 
@@ -80,6 +81,7 @@ public class ConsumerInfo extends BaseCommand {
         info.retroactive = retroactive;
         info.priority = priority;
         info.brokerPath = brokerPath;
+        info.networkSubscription = networkSubscription;
     }
 
     public boolean isDurable() {
@@ -318,6 +320,21 @@ public class ConsumerInfo extends BaseCommand {
     @Override
     public Response visit(CommandVisitor visitor) throws Exception {
         return visitor.processAddConsumer(this);
+    }
+
+    /**
+     * @openwire:property version=1
+     * @return Returns the networkSubscription.
+     */
+    public boolean isNetworkSubscription() {
+        return networkSubscription;
+    }
+
+    /**
+     * @param networkSubscription The networkSubscription to set.
+     */
+    public void setNetworkSubscription(boolean networkSubscription) {
+        this.networkSubscription = networkSubscription;
     }
 
     /**
