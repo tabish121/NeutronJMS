@@ -24,7 +24,7 @@ public interface CommandTypes {
     // What is the latest version of the openwire protocol
     byte PROTOCOL_VERSION = 10;
 
-    // What is the latest version of the openwire protocol used in the stores
+    // What is the latest version of the message store
     byte PROTOCOL_STORE_VERSION = 6;
 
     // A marshaling layer can use this type to specify a null object.
@@ -60,13 +60,13 @@ public interface CommandTypes {
     byte MESSAGE_DISPATCH = 21;
     byte MESSAGE_ACK = 22;
 
-    byte ACTIVEMQ_MESSAGE = 23;
-    byte ACTIVEMQ_BYTES_MESSAGE = 24;
-    byte ACTIVEMQ_MAP_MESSAGE = 25;
-    byte ACTIVEMQ_OBJECT_MESSAGE = 26;
-    byte ACTIVEMQ_STREAM_MESSAGE = 27;
-    byte ACTIVEMQ_TEXT_MESSAGE = 28;
-    byte ACTIVEMQ_BLOB_MESSAGE = 29;
+    byte OPENWIRE_MESSAGE = 23;
+    byte OPENWIRE_BYTES_MESSAGE = 24;
+    byte OPENWIRE_MAP_MESSAGE = 25;
+    byte OPENWIRE_OBJECT_MESSAGE = 26;
+    byte OPENWIRE_STREAM_MESSAGE = 27;
+    byte OPENWIRE_TEXT_MESSAGE = 28;
+    byte OPENWIRE_BLOB_MESSAGE = 29;
 
     ////////////////////////////////////////////////////////////////////////////
     // Command Response messages
@@ -125,19 +125,18 @@ public interface CommandTypes {
     // Data structures contained in the command objects.
     ////////////////////////////////////////////////////////////////////////////
 
-    byte ACTIVEMQ_QUEUE = 100;
-    byte ACTIVEMQ_TOPIC = 101;
-    byte ACTIVEMQ_TEMP_QUEUE = 102;
-    byte ACTIVEMQ_TEMP_TOPIC = 103;
+    byte OPENWIRE_QUEUE = 100;
+    byte OPENWIRE_TOPIC = 101;
+    byte OPENWIRE_TEMP_QUEUE = 102;
+    byte OPENWIRE_TEMP_TOPIC = 103;
 
     byte MESSAGE_ID = 110;
-    byte ACTIVEMQ_LOCAL_TRANSACTION_ID = 111;
-    byte ACTIVEMQ_XA_TRANSACTION_ID = 112;
+    byte OPENWIRE_LOCAL_TRANSACTION_ID = 111;
+    byte OPENWIRE_XA_TRANSACTION_ID = 112;
 
     byte CONNECTION_ID = 120;
     byte SESSION_ID = 121;
     byte CONSUMER_ID = 122;
     byte PRODUCER_ID = 123;
     byte BROKER_ID = 124;
-
 }

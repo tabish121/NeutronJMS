@@ -29,7 +29,7 @@ import org.fusesource.hawtbuf.DataByteArrayOutputStream;
  */
 public class XATransactionId extends TransactionId implements Xid, Comparable<XATransactionId> {
 
-    public static final byte DATA_STRUCTURE_TYPE = CommandTypes.ACTIVEMQ_XA_TRANSACTION_ID;
+    public static final byte DATA_STRUCTURE_TYPE = CommandTypes.OPENWIRE_XA_TRANSACTION_ID;
 
     private int formatId;
     private byte[] branchQualifier;

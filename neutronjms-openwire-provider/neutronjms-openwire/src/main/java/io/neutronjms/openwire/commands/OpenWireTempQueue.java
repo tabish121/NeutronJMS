@@ -24,7 +24,7 @@ package io.neutronjms.openwire.commands;
  */
 public class OpenWireTempQueue extends OpenWireTempDestination {
 
-    public static final byte DATA_STRUCTURE_TYPE = CommandTypes.ACTIVEMQ_TEMP_QUEUE;
+    public static final byte DATA_STRUCTURE_TYPE = CommandTypes.OPENWIRE_TEMP_QUEUE;
 
     public OpenWireTempQueue() {
     }

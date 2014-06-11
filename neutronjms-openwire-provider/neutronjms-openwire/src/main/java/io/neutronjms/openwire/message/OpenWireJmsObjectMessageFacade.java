@@ -14,40 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.neutronjms.openwire.commands;
-
+package io.neutronjms.openwire.message;
 
 /**
- * @openwire:marshaller code="100"
+ * 
  */
-public class OpenWireQueue extends OpenWireDestination {
+public class OpenWireJmsObjectMessageFacade extends OpenWireJmsMessageFacade {
 
-    public static final byte DATA_STRUCTURE_TYPE = CommandTypes.OPENWIRE_QUEUE;
-
-    public OpenWireQueue() {
-    }
-
-    public OpenWireQueue(String name) {
-        super(name);
-    }
-
-    @Override
-    public byte getDataStructureType() {
-        return DATA_STRUCTURE_TYPE;
-    }
-
-    @Override
-    public boolean isQueue() {
-        return true;
-    }
-
-    @Override
-    public byte getDestinationType() {
-        return QUEUE_TYPE;
-    }
-
-    @Override
-    protected String getQualifiedPrefix() {
-        return QUEUE_QUALIFIED_PREFIX;
-    }
 }

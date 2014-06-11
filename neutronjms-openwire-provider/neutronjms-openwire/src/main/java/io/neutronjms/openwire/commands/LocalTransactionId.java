@@ -22,7 +22,7 @@ package io.neutronjms.openwire.commands;
  */
 public class LocalTransactionId extends TransactionId implements Comparable<LocalTransactionId> {
 
-    public static final byte DATA_STRUCTURE_TYPE = CommandTypes.ACTIVEMQ_LOCAL_TRANSACTION_ID;
+    public static final byte DATA_STRUCTURE_TYPE = CommandTypes.OPENWIRE_LOCAL_TRANSACTION_ID;
 
     protected ConnectionId connectionId;
     protected long value;

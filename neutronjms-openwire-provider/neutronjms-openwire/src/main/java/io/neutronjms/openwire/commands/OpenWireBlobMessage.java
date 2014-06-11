@@ -30,7 +30,7 @@ import javax.jms.JMSException;
  */
 public class OpenWireBlobMessage extends OpenWireMessage {
 
-    public static final byte DATA_STRUCTURE_TYPE = CommandTypes.ACTIVEMQ_BLOB_MESSAGE;
+    public static final byte DATA_STRUCTURE_TYPE = CommandTypes.OPENWIRE_BLOB_MESSAGE;
 
     public static final String BINARY_MIME_TYPE = "application/octet-stream";
 

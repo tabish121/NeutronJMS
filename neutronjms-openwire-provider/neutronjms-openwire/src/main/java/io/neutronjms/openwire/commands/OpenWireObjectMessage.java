@@ -42,7 +42,7 @@ import org.fusesource.hawtbuf.ByteArrayOutputStream;
  */
 public class OpenWireObjectMessage extends OpenWireMessage {
 
-    public static final byte DATA_STRUCTURE_TYPE = CommandTypes.ACTIVEMQ_OBJECT_MESSAGE;
+    public static final byte DATA_STRUCTURE_TYPE = CommandTypes.OPENWIRE_OBJECT_MESSAGE;
     static final ClassLoader ACTIVEMQ_CLASSLOADER = OpenWireObjectMessage.class.getClassLoader();
 
     protected transient Serializable object;

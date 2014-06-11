@@ -45,7 +45,7 @@ import org.fusesource.hawtbuf.ByteArrayOutputStream;
  */
 public class OpenWireStreamMessage extends OpenWireMessage {
 
-    public static final byte DATA_STRUCTURE_TYPE = CommandTypes.ACTIVEMQ_STREAM_MESSAGE;
+    public static final byte DATA_STRUCTURE_TYPE = CommandTypes.OPENWIRE_STREAM_MESSAGE;
 
     protected transient DataOutputStream dataOut;
     protected transient ByteArrayOutputStream bytesOut;

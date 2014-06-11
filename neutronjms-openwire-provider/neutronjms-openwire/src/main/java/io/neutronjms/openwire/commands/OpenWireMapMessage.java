@@ -47,7 +47,7 @@ import org.fusesource.hawtbuf.UTF8Buffer;
  */
 public class OpenWireMapMessage extends OpenWireMessage {
 
-    public static final byte DATA_STRUCTURE_TYPE = CommandTypes.ACTIVEMQ_MAP_MESSAGE;
+    public static final byte DATA_STRUCTURE_TYPE = CommandTypes.OPENWIRE_MAP_MESSAGE;
 
     protected transient Map<String, Object> map = new HashMap<String, Object>();
 

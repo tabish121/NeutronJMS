@@ -40,7 +40,7 @@ import org.fusesource.hawtbuf.UTF8Buffer;
  */
 public class OpenWireMessage extends Message {
 
-    public static final byte DATA_STRUCTURE_TYPE = CommandTypes.ACTIVEMQ_MESSAGE;
+    public static final byte DATA_STRUCTURE_TYPE = CommandTypes.OPENWIRE_MESSAGE;
     public static final String DLQ_DELIVERY_FAILURE_CAUSE_PROPERTY = "dlqDeliveryFailureCause";
     public static final String BROKER_PATH_PROPERTY = "JMSActiveMQBrokerPath";
 
