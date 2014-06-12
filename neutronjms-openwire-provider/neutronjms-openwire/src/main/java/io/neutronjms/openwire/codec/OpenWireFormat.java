@@ -297,19 +297,19 @@ public final class OpenWireFormat implements WireFormat {
      */
     @Override
     public void setVersion(int version) {
-        String mfName = "org.apache.activemq.openwire.v" + version + ".MarshallerFactory";
+        String mfName = "io.neutronjms.openwire.codec.v" + version + ".MarshallerFactory";
         Class<?> mfClass;
         try {
             mfClass = Class.forName(mfName, false, getClass().getClassLoader());
         } catch (ClassNotFoundException e) {
-            throw (IllegalArgumentException) new IllegalArgumentException("Invalid version: " + version + ", could not load " + mfName).initCause(e);
+            throw new IllegalArgumentException("Invalid version: " + version + ", could not load " + mfName, e);
         }
         try {
             Method method = mfClass.getMethod("createMarshallerMap", new Class[] { OpenWireFormat.class });
             dataMarshallers = (DataStreamMarshaller[]) method.invoke(null, new Object[] { this });
         } catch (Throwable e) {
-            throw (IllegalArgumentException) new IllegalArgumentException("Invalid version: " + version + ", " + mfName
-                + " does not properly implement the createMarshallerMap method.").initCause(e);
+            throw new IllegalArgumentException("Invalid version: " + version + ", " + mfName
+                + " does not properly implement the createMarshallerMap method.", e);
         }
         this.version = version;
     }
