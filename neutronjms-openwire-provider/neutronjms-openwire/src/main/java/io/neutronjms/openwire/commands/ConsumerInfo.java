@@ -16,6 +16,9 @@
  */
 package io.neutronjms.openwire.commands;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @openwire:marshaller code="5"
  */
@@ -44,7 +47,10 @@ public class ConsumerInfo extends BaseCommand {
     protected BrokerId[] brokerPath;
     protected boolean optimizedAcknowledge;
     protected boolean noRangeAcks;
-    protected boolean networkSubscription;
+
+    // Network connector values should not be serialized.
+    protected transient boolean networkSubscription;
+    protected transient List<ConsumerId> networkConsumerIds;
 
     protected Object additionalPredicate;
 
@@ -367,6 +373,30 @@ public class ConsumerInfo extends BaseCommand {
         this.noRangeAcks = noRangeAcks;
     }
 
+    /**
+     * Tracks the original subscription id that causes a subscription to
+     * percolate through a network when networkTTL > 1. Tracking the original
+     * subscription allows duplicate suppression.
+     *
+     * @return array of the current subscription path
+     * @openwire:property version=4
+     */
+    public ConsumerId[] getNetworkConsumerPath() {
+        ConsumerId[] result = null;
+        if (networkConsumerIds != null) {
+            result = networkConsumerIds.toArray(new ConsumerId[0]);
+        }
+        return result;
+    }
+
+    public void setNetworkConsumerPath(ConsumerId[] consumerPath) {
+        if (consumerPath != null) {
+            for (int i=0; i<consumerPath.length; i++) {
+                addNetworkConsumerId(consumerPath[i]);
+            }
+        }
+    }
+
     @Override
     public int hashCode() {
         return (consumerId == null) ? 0 : consumerId.hashCode();
@@ -392,5 +422,21 @@ public class ConsumerInfo extends BaseCommand {
             return false;
         }
         return true;
+    }
+
+    public synchronized void addNetworkConsumerId(ConsumerId networkConsumerId) {
+        if (networkConsumerIds == null) {
+            networkConsumerIds = new ArrayList<ConsumerId>();
+        }
+        networkConsumerIds.add(networkConsumerId);
+    }
+
+    public synchronized void removeNetworkConsumerId(ConsumerId networkConsumerId) {
+        if (networkConsumerIds != null) {
+            networkConsumerIds.remove(networkConsumerId);
+            if (networkConsumerIds.isEmpty()) {
+                networkConsumerIds=null;
+            }
+        }
     }
 }
