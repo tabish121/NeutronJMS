@@ -25,8 +25,8 @@ import java.util.Map;
 import javax.jms.JMSException;
 
 /**
- * The Message Proxy interface defines the required mapping between a Provider's
- * own Message type and the JMS Message types.  A Provider can implement the Proxy
+ * The Message Facade interface defines the required mapping between a Provider's
+ * own Message type and the JMS Message types.  A Provider can implement the Facade
  * interface and offer direct access to its message types without the need to
  * copy to / from a more generic JMS message instance.
  */
@@ -219,36 +219,165 @@ public interface JmsMessageFacade {
      */
     void setRedeliveryCounter(int redeliveryCount) throws JMSException;
 
+    /**
+     * Returns the Type values as defined by the provider or set by the sending client.
+     *
+     * @return a String value that defines the message type.
+     *
+     * @throws JMSException if an error occurs while accessing the property.
+     */
     String getType() throws JMSException;
 
+    /**
+     * Sets the String value used to define the Message type by the client.
+     *
+     * @param type
+     *        the type value the client assigns to this message.
+     *
+     * @throws JMSException if an error occurs while accessing the property.
+     */
     void setType(String type) throws JMSException;
 
+    /**
+     * Returns the assigned priority value of this message in JMS ranged scoping.
+     *
+     * If the provider does not define a message priority value in its message objects
+     * or the value is not set in the message this method should return the JMS default
+     * value of 4.
+     *
+     * @return the priority value assigned to this message.
+     *
+     * @throws JMSException if an error occurs while accessing the property.
+     */
     byte getPriority() throws JMSException;
 
+    /**
+     * Sets the message priority for this message using a JMS priority scoped value.
+     *
+     * @param priority
+     *        the new priority value to set on this message.
+     *
+     * @throws JMSException if an error occurs while accessing the property.
+     */
     void setPriority(byte priority) throws JMSException;
 
+    /**
+     * Returns the set expiration time for this message.
+     *
+     * The value should be returned as an absolute time given in GMT time.
+     *
+     * @return the time that this message expires or zero if it never expires.
+     *
+     * @throws JMSException if an error occurs while accessing the property.
+     */
     long getExpiration() throws JMSException;
 
+    /**
+     * Sets an expiration time on this message.
+     *
+     * The expiration time will be given as an absolute time in GMT time.
+     *
+     * @param expiration
+     *        the time that this message should be considered as expired.
+     *
+     * @throws JMSException if an error occurs while accessing the property.
+     */
     void setExpiration(long expiration) throws JMSException;
 
+    /**
+     * Gets the Destination value that was assigned to this message at the time it was
+     * sent.
+     *
+     * @return the destination to which this message was originally sent.
+     *
+     * @throws JMSException if an error occurs while accessing the property.
+     */
     JmsDestination getDestination() throws JMSException;
 
+    /**
+     * Sets the Destination that this message is being sent to.
+     *
+     * @param destination
+     *        the destination that this message is being sent to.
+     *
+     * @throws JMSException if an error occurs while accessing the property.
+     */
     void setDestination(JmsDestination destination) throws JMSException;
 
+    /**
+     * Gets the Destination where replies for this Message are to be sent to.
+     *
+     * @return the reply to destination for this message or null if none set.
+     *
+     * @throws JMSException if an error occurs while accessing the property.
+     */
     JmsDestination getReplyTo() throws JMSException;
 
+    /**
+     * Sets the Destination where replies to this Message are to be sent.
+     *
+     * @param replyTo
+     *        the Destination where replies should be sent, or null to clear.
+     *
+     * @throws JMSException if an error occurs while accessing the property.
+     */
     void setReplyTo(JmsDestination replyTo) throws JMSException;
 
+    /**
+     * Returns the ID of the user that sent this message if available.
+     *
+     * @return the user ID that was in use when this message was sent or null if not set.
+     *
+     * @throws JMSException if an error occurs while accessing the property.
+     */
     String getUserId() throws JMSException;
 
+    /**
+     * Sets the User ID for the connection that is being used to send this message.
+     *
+     * @param userId
+     *        the user ID that sent this message or null to clear.
+     *
+     * @throws JMSException if an error occurs while accessing the property.
+     */
     void setUserId(String userId) throws JMSException;
 
+    /**
+     * Gets the Group ID that this message is assigned to.
+     *
+     * @return the Group ID this message was sent in.
+     *
+     * @throws JMSException if an error occurs while accessing the property.
+     */
     String getGroupId() throws JMSException;
 
+    /**
+     * Sets the Group ID to use for this message.
+     *
+     * @param groupId
+     *        the Group ID that this message is assigned to.
+     *
+     * @throws JMSException if an error occurs while accessing the property.
+     */
     void setGroupId(String groupId) throws JMSException;
 
+    /**
+     * Gets the assigned group sequence of this message.
+     *
+     * @return the assigned group sequence of this message.
+     *
+     * @throws JMSException if an error occurs while accessing the property.
+     */
     int getGroupSequence() throws JMSException;
 
+    /**
+     * Sets the group sequence value for this message.
+     *
+     * @param groupSequence
+     *        the group sequence value to assign this message.
+     *
+     * @throws JMSException if an error occurs while accessing the property.
+     */
     void setGroupSequence(int groupSequence) throws JMSException;
 
     /**
