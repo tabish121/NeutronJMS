@@ -18,7 +18,7 @@
 package io.neutronjms.openwire.commands;
 
 import io.neutronjms.jms.exceptions.JmsExceptionSupport;
-import io.neutronjms.util.MarshallingSupport;
+import io.neutronjms.openwire.utils.MarshallingSupport;
 
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
