@@ -16,9 +16,9 @@
  */
 package io.neutronjms.jms.message;
 
-import io.neutronjms.jms.message.facade.JmsDefaultBytesMessageFacade;
-import io.neutronjms.jms.message.facade.JmsDefaultMessageFacade;
-import io.neutronjms.jms.message.facade.JmsDefaultTextMessageFacade;
+import io.neutronjms.jms.message.facade.defaults.JmsDefaultBytesMessageFacade;
+import io.neutronjms.jms.message.facade.defaults.JmsDefaultMessageFacade;
+import io.neutronjms.jms.message.facade.defaults.JmsDefaultTextMessageFacade;
 
 import java.io.Serializable;
 

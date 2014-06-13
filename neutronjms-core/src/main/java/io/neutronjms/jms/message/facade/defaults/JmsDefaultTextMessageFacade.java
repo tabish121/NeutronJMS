@@ -14,46 +14,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.neutronjms.jms.message.facade;
+package io.neutronjms.jms.message.facade.defaults;
+
+import io.neutronjms.jms.message.facade.JmsTextMessageFacade;
 
 import javax.jms.JMSException;
 
-import org.fusesource.hawtbuf.Buffer;
-
 /**
- * A default implementation of the JmsBytesMessageFacade that simply holds a raw Buffer
+ * Default implementation of the JmsTextMessageFacade.
  */
-public final class JmsDefaultBytesMessageFacade extends JmsDefaultMessageFacade implements JmsBytesMessageFacade {
+public final class JmsDefaultTextMessageFacade extends JmsDefaultMessageFacade implements JmsTextMessageFacade {
 
-    private Buffer content;
-
-    @Override
-    public JmsDefaultBytesMessageFacade copy() throws JMSException {
-        JmsDefaultBytesMessageFacade copy = new JmsDefaultBytesMessageFacade();
-        copyInto(copy);
-        if (this.content != null) {
-            copy.setContent(this.content.deepCopy());
-        }
-
-        return copy;
-    }
+    private String text;
 
     @Override
     public boolean isEmpty() {
-        if (content == null || content.length() == 0) {
-            return true;
-        }
-
-        return false;
+        return text != null && !text.isEmpty();
     }
 
     @Override
-    public Buffer getContent() {
-        return content;
+    public JmsDefaultTextMessageFacade copy() throws JMSException {
+        JmsDefaultTextMessageFacade copy = new JmsDefaultTextMessageFacade();
+        copyInto(copy);
+        return copy;
+    }
+
+    protected void copyInto(JmsDefaultTextMessageFacade target) throws JMSException {
+        target.setText(text);
     }
 
     @Override
-    public void setContent(Buffer content) {
-        this.content = content;
+    public String getText() throws JMSException {
+        return text;
+    }
+
+    @Override
+    public void setText(String text) throws JMSException {
+        this.text = text;
     }
 }

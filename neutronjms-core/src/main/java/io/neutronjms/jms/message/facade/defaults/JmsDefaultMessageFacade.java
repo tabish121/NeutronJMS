@@ -14,10 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.neutronjms.jms.message.facade;
+package io.neutronjms.jms.message.facade.defaults;
 
 import static org.fusesource.hawtbuf.Buffer.ascii;
 import io.neutronjms.jms.JmsDestination;
+import io.neutronjms.jms.message.facade.JmsMessageFacade;
 import io.neutronjms.jms.meta.JmsMessageId;
 
 import java.io.IOException;

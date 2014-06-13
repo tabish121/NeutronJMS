@@ -14,7 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.neutronjms.jms.message.facade;
+package io.neutronjms.jms.message.facade.defaults;
+
+import io.neutronjms.jms.message.facade.JmsObjectMessageFacade;
 
 import java.io.Serializable;
 

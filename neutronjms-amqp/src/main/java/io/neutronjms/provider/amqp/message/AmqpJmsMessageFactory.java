@@ -23,8 +23,8 @@ import io.neutronjms.jms.message.JmsMessageFactory;
 import io.neutronjms.jms.message.JmsObjectMessage;
 import io.neutronjms.jms.message.JmsStreamMessage;
 import io.neutronjms.jms.message.JmsTextMessage;
-import io.neutronjms.jms.message.facade.JmsDefaultMessageFacade;
-import io.neutronjms.jms.message.facade.JmsDefaultTextMessageFacade;
+import io.neutronjms.jms.message.facade.defaults.JmsDefaultMessageFacade;
+import io.neutronjms.jms.message.facade.defaults.JmsDefaultTextMessageFacade;
 import io.neutronjms.provider.amqp.AmqpConnection;
 
 import java.io.Serializable;
