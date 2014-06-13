@@ -28,6 +28,15 @@ import javax.jms.MessageNotWriteableException;
 public interface JmsObjectMessageFacade extends JmsMessageFacade {
 
     /**
+     * @returns a deep copy of this Message Facade including a complete copy
+     * of the byte contents of the wrapped message.
+     *
+     * @throws JMSException if an error occurs while copying this message.
+     */
+    @Override
+    JmsObjectMessageFacade copy() throws JMSException;
+
+    /**
      * Gets the Object value that is contained in the provider message.
      *
      * If the Object is stored in some serialized form then the Provider must
@@ -38,7 +47,7 @@ public interface JmsObjectMessageFacade extends JmsMessageFacade {
      * @throws JMSException if the provider fails to get the object due to some internal error.
      * @throws MessageFormatException if object de-serialization fails.
      */
-    Object getObject() throws JMSException;
+    Serializable getObject() throws JMSException;
 
     /**
      * Stores the given object into the provider Message.

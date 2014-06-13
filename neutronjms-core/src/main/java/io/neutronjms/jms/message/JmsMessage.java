@@ -117,6 +117,7 @@ public class JmsMessage implements javax.jms.Message {
     @Override
     public void clearBody() throws JMSException {
         readOnlyBody = false;
+        facade.clearBody();
     }
 
     public boolean isReadOnlyBody() {

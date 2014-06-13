@@ -16,7 +16,7 @@
  */
 package io.neutronjms.jms.message;
 
-import io.neutronjms.jms.message.facade.JmsMessageFacade;
+import io.neutronjms.jms.message.facade.JmsObjectMessageFacade;
 
 import java.io.Serializable;
 
@@ -49,10 +49,11 @@ import javax.jms.ObjectMessage;
  */
 public class JmsObjectMessage extends JmsMessage implements ObjectMessage {
 
-    protected Serializable object;
+    private final JmsObjectMessageFacade facade;
 
-    public JmsObjectMessage(JmsMessageFacade facade) {
+    public JmsObjectMessage(JmsObjectMessageFacade facade) {
         super(facade);
+        this.facade = facade;
     }
 
     @Override
@@ -60,28 +61,6 @@ public class JmsObjectMessage extends JmsMessage implements ObjectMessage {
         JmsObjectMessage other = new JmsObjectMessage(facade.copy());
         other.copy(this);
         return other;
-    }
-
-    private void copy(JmsObjectMessage other) throws JMSException {
-        super.copy(other);
-        this.object = other.object;
-    }
-
-    /**
-     * Clears out the message body. Clearing a message's body does not clear its header values
-     * or property entries.
-     * <p/>
-     * <p/>
-     * If this message body was read-only, calling this method leaves the message body in the
-     * same state as an empty body in a newly created message.
-     *
-     * @throws JMSException
-     *         if the JMS provider fails to clear the message body due to some internal error.
-     */
-    @Override
-    public void clearBody() throws JMSException {
-        super.clearBody();
-        this.object = null;
     }
 
     /**
@@ -102,7 +81,7 @@ public class JmsObjectMessage extends JmsMessage implements ObjectMessage {
     @Override
     public void setObject(Serializable newObject) throws JMSException {
         checkReadOnlyBody();
-        this.object = newObject;
+        this.facade.setObject(newObject);
     }
 
     /**
@@ -113,7 +92,7 @@ public class JmsObjectMessage extends JmsMessage implements ObjectMessage {
      */
     @Override
     public Serializable getObject() throws JMSException {
-        return this.object;
+        return this.facade.getObject();
     }
 
     @Override

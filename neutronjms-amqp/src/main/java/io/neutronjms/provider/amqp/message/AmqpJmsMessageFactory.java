@@ -24,6 +24,7 @@ import io.neutronjms.jms.message.JmsObjectMessage;
 import io.neutronjms.jms.message.JmsStreamMessage;
 import io.neutronjms.jms.message.JmsTextMessage;
 import io.neutronjms.jms.message.facade.defaults.JmsDefaultMessageFacade;
+import io.neutronjms.jms.message.facade.defaults.JmsDefaultObjectMessageFacade;
 import io.neutronjms.jms.message.facade.defaults.JmsDefaultTextMessageFacade;
 import io.neutronjms.provider.amqp.AmqpConnection;
 
@@ -98,7 +99,7 @@ public class AmqpJmsMessageFactory implements JmsMessageFactory {
 
     @Override
     public JmsObjectMessage createObjectMessage(Serializable payload) throws UnsupportedOperationException {
-        JmsObjectMessage result = new JmsObjectMessage(new JmsDefaultMessageFacade());
+        JmsObjectMessage result = new JmsObjectMessage(new JmsDefaultObjectMessageFacade());
         if (payload != null) {
             try {
                 result.setObject(payload);

@@ -50,6 +50,11 @@ public final class JmsDefaultBytesMessageFacade extends JmsDefaultMessageFacade 
     }
 
     @Override
+    public void clearBody() {
+        this.content = null;
+    }
+
+    @Override
     public Buffer getContent() {
         return content;
     }

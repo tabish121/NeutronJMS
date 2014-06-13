@@ -58,7 +58,7 @@ public class JmsDefaultObjectMessageFacade extends JmsDefaultMessageFacade imple
     }
 
     @Override
-    public Object getObject() throws JMSException {
+    public Serializable getObject() throws JMSException {
         return this.object;
     }
 
