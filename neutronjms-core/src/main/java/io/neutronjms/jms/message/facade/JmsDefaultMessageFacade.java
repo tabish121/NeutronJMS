@@ -139,7 +139,6 @@ public class JmsDefaultMessageFacade implements JmsMessageFacade {
 
     @Override
     public void clearBody() {
-        // TODO
     }
 
     @Override

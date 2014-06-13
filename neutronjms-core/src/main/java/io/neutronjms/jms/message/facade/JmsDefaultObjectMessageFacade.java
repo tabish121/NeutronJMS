@@ -16,38 +16,52 @@
  */
 package io.neutronjms.jms.message.facade;
 
+import java.io.Serializable;
+
 import javax.jms.JMSException;
 
 /**
- * Default implementation of the JmsTextMessageFacade.
+ * Default implementation for a JMS Object Message Facade.
  */
-public final class JmsDefaultTextMessageFacade extends JmsDefaultMessageFacade implements JmsTextMessageFacade {
+public class JmsDefaultObjectMessageFacade extends JmsDefaultMessageFacade implements JmsObjectMessageFacade {
 
-    private String text;
+    // TODO - Immediate Serialization to comply with JMS Spec.
+
+    // private Buffer object;
+    private Serializable object;
 
     @Override
     public boolean isEmpty() {
-        return text != null && !text.isEmpty();
+        // return object != null && !object.isEmpty();
+        return object != null;
     }
 
     @Override
-    public JmsDefaultTextMessageFacade copy() throws JMSException {
-        JmsDefaultTextMessageFacade copy = new JmsDefaultTextMessageFacade();
+    public JmsDefaultObjectMessageFacade copy() throws JMSException {
+        JmsDefaultObjectMessageFacade copy = new JmsDefaultObjectMessageFacade();
         copyInto(copy);
         return copy;
     }
 
-    protected void copyInto(JmsDefaultTextMessageFacade target) throws JMSException {
-        target.setText(text);
+    protected void copyInto(JmsDefaultObjectMessageFacade target) throws JMSException {
+//        if (!isEmpty()) {
+//            target.object = object.deepCopy();
+//        }
+        target.object = object;
     }
 
     @Override
-    public String getText() throws JMSException {
-        return text;
+    public void clearBody() {
+        this.object = null;
     }
 
     @Override
-    public void setText(String text) throws JMSException {
-        this.text = text;
+    public Object getObject() throws JMSException {
+        return this.object;
+    }
+
+    @Override
+    public void setObject(Serializable value) throws JMSException {
+        this.object = value;
     }
 }

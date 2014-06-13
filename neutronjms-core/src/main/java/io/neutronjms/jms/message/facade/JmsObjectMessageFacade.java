@@ -16,6 +16,8 @@
  */
 package io.neutronjms.jms.message.facade;
 
+import java.io.Serializable;
+
 import javax.jms.JMSException;
 import javax.jms.MessageNotWriteableException;
 
@@ -52,6 +54,6 @@ public interface JmsObjectMessageFacade extends JmsMessageFacade {
      * @throws MessageFormatException if object serialization fails.
      * @throws MessageNotWriteableException if the message is in read-only mode.
      */
-    void setObject(Object value) throws JMSException;
+    void setObject(Serializable value) throws JMSException;
 
 }
