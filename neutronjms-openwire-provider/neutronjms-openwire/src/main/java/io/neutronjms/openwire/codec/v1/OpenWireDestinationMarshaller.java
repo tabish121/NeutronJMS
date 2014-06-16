@@ -16,10 +16,10 @@
  */
 package io.neutronjms.openwire.codec.v1;
 
-import io.neutronjms.jms.JmsDestination;
 import io.neutronjms.openwire.codec.BaseDataStreamMarshaller;
 import io.neutronjms.openwire.codec.BooleanStream;
 import io.neutronjms.openwire.codec.OpenWireFormat;
+import io.neutronjms.openwire.commands.OpenWireDestination;
 
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -40,8 +40,8 @@ public abstract class OpenWireDestinationMarshaller extends BaseDataStreamMarsha
     public void tightUnmarshal(OpenWireFormat wireFormat, Object o, DataInput dataIn, BooleanStream bs) throws IOException {
         super.tightUnmarshal(wireFormat, o, dataIn, bs);
 
-        JmsDestination info = (JmsDestination) o;
-        info.setName(tightUnmarshalString(dataIn, bs));
+        OpenWireDestination info = (OpenWireDestination) o;
+        info.setPhysicalName(tightUnmarshalString(dataIn, bs));
     }
 
     /**
@@ -50,10 +50,10 @@ public abstract class OpenWireDestinationMarshaller extends BaseDataStreamMarsha
     @Override
     public int tightMarshal1(OpenWireFormat wireFormat, Object o, BooleanStream bs) throws IOException {
 
-        JmsDestination info = (JmsDestination) o;
+        OpenWireDestination info = (OpenWireDestination) o;
 
         int rc = super.tightMarshal1(wireFormat, o, bs);
-        rc += tightMarshalString1(info.getName(), bs);
+        rc += tightMarshalString1(info.getPhysicalName(), bs);
 
         return rc + 0;
     }
@@ -72,8 +72,8 @@ public abstract class OpenWireDestinationMarshaller extends BaseDataStreamMarsha
     public void tightMarshal2(OpenWireFormat wireFormat, Object o, DataOutput dataOut, BooleanStream bs) throws IOException {
         super.tightMarshal2(wireFormat, o, dataOut, bs);
 
-        JmsDestination info = (JmsDestination) o;
-        tightMarshalString2(info.getName(), dataOut, bs);
+        OpenWireDestination info = (OpenWireDestination) o;
+        tightMarshalString2(info.getPhysicalName(), dataOut, bs);
     }
 
     /**
@@ -89,8 +89,8 @@ public abstract class OpenWireDestinationMarshaller extends BaseDataStreamMarsha
     public void looseUnmarshal(OpenWireFormat wireFormat, Object o, DataInput dataIn) throws IOException {
         super.looseUnmarshal(wireFormat, o, dataIn);
 
-        JmsDestination info = (JmsDestination) o;
-        info.setName(looseUnmarshalString(dataIn));
+        OpenWireDestination info = (OpenWireDestination) o;
+        info.setPhysicalName(looseUnmarshalString(dataIn));
     }
 
     /**
@@ -99,9 +99,9 @@ public abstract class OpenWireDestinationMarshaller extends BaseDataStreamMarsha
     @Override
     public void looseMarshal(OpenWireFormat wireFormat, Object o, DataOutput dataOut) throws IOException {
 
-        JmsDestination info = (JmsDestination) o;
+        OpenWireDestination info = (OpenWireDestination) o;
 
         super.looseMarshal(wireFormat, o, dataOut);
-        looseMarshalString(info.getName(), dataOut);
+        looseMarshalString(info.getPhysicalName(), dataOut);
     }
 }
