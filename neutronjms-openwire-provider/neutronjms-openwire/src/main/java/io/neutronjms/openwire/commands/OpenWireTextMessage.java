@@ -17,7 +17,7 @@
 package io.neutronjms.openwire.commands;
 
 import io.neutronjms.jms.exceptions.JmsExceptionSupport;
-import io.neutronjms.openwire.WireFormat;
+import io.neutronjms.openwire.codec.OpenWireFormat;
 import io.neutronjms.util.MarshallingSupport;
 
 import java.io.DataInputStream;
@@ -113,7 +113,7 @@ public class OpenWireTextMessage extends OpenWireMessage {
     }
 
     @Override
-    public void beforeMarshall(WireFormat wireFormat) throws IOException {
+    public void beforeMarshall(OpenWireFormat wireFormat) throws IOException {
         super.beforeMarshall(wireFormat);
         storeContent();
     }

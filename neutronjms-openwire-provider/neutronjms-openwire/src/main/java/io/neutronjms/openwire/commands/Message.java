@@ -17,7 +17,7 @@
 package io.neutronjms.openwire.commands;
 
 import static io.neutronjms.openwire.OpenWireConstants.ADIVSORY_MESSAGE_TYPE;
-import io.neutronjms.openwire.WireFormat;
+import io.neutronjms.openwire.codec.OpenWireFormat;
 import io.neutronjms.util.MarshallingSupport;
 
 import java.io.DataInputStream;
@@ -204,7 +204,7 @@ public abstract class Message extends BaseCommand implements MarshallAware {
     }
 
     @Override
-    public void beforeMarshall(WireFormat wireFormat) throws IOException {
+    public void beforeMarshall(OpenWireFormat wireFormat) throws IOException {
         // Need to marshal the properties.
         if (marshalledProperties == null && properties != null) {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -216,15 +216,15 @@ public abstract class Message extends BaseCommand implements MarshallAware {
     }
 
     @Override
-    public void afterMarshall(WireFormat wireFormat) throws IOException {
+    public void afterMarshall(OpenWireFormat wireFormat) throws IOException {
     }
 
     @Override
-    public void beforeUnmarshall(WireFormat wireFormat) throws IOException {
+    public void beforeUnmarshall(OpenWireFormat wireFormat) throws IOException {
     }
 
     @Override
-    public void afterUnmarshall(WireFormat wireFormat) throws IOException {
+    public void afterUnmarshall(OpenWireFormat wireFormat) throws IOException {
     }
 
     /**

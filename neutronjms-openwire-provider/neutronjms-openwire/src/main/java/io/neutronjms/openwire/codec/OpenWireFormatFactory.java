@@ -16,7 +16,6 @@
  */
 package io.neutronjms.openwire.codec;
 
-import io.neutronjms.openwire.WireFormat;
 import io.neutronjms.openwire.commands.WireFormatInfo;
 
 /**
@@ -41,7 +40,7 @@ public class OpenWireFormatFactory {
     private long maxFrameSize = OpenWireFormat.DEFAULT_MAX_FRAME_SIZE;
     private String host = null;
 
-    public WireFormat createWireFormat() {
+    public OpenWireFormat createWireFormat() {
         WireFormatInfo info = new WireFormatInfo();
         info.setVersion(version);
 

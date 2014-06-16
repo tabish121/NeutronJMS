@@ -16,18 +16,18 @@
  */
 package io.neutronjms.openwire.commands;
 
-import io.neutronjms.openwire.WireFormat;
+import io.neutronjms.openwire.codec.OpenWireFormat;
 
 import java.io.IOException;
 
 public interface MarshallAware {
 
-    void beforeMarshall(WireFormat wireFormat) throws IOException;
+    void beforeMarshall(OpenWireFormat wireFormat) throws IOException;
 
-    void afterMarshall(WireFormat wireFormat) throws IOException;
+    void afterMarshall(OpenWireFormat wireFormat) throws IOException;
 
-    void beforeUnmarshall(WireFormat wireFormat) throws IOException;
+    void beforeUnmarshall(OpenWireFormat wireFormat) throws IOException;
 
-    void afterUnmarshall(WireFormat wireFormat) throws IOException;
+    void afterUnmarshall(OpenWireFormat wireFormat) throws IOException;
 
 }

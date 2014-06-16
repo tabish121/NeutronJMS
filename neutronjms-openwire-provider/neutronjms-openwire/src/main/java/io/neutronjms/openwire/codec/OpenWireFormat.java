@@ -16,7 +16,6 @@
  */
 package io.neutronjms.openwire.codec;
 
-import io.neutronjms.openwire.WireFormat;
 import io.neutronjms.openwire.commands.CommandTypes;
 import io.neutronjms.openwire.commands.DataStructure;
 import io.neutronjms.openwire.commands.WireFormatInfo;
@@ -35,7 +34,7 @@ import org.fusesource.hawtbuf.DataByteArrayOutputStream;
 /**
  * The OpenWire Protocol Encoder and Decoder implementation.
  */
-public final class OpenWireFormat implements WireFormat {
+public final class OpenWireFormat {
 
     public static final int DEFAULT_VERSION = CommandTypes.PROTOCOL_STORE_VERSION;
     public static final int DEFAULT_WIRE_VERSION = CommandTypes.PROTOCOL_VERSION;
@@ -105,12 +104,10 @@ public final class OpenWireFormat implements WireFormat {
             + tightEncodingEnabled + ", sizePrefixDisabled=" + sizePrefixDisabled + ", maxFrameSize=" + maxFrameSize + "}";
     }
 
-    @Override
     public int getVersion() {
         return version;
     }
 
-    @Override
     public synchronized Buffer marshal(Object command) throws IOException {
         if (cacheEnabled) {
             runMarshallCacheEvictionSweep();
@@ -167,7 +164,6 @@ public final class OpenWireFormat implements WireFormat {
         return sequence;
     }
 
-    @Override
     public synchronized Object unmarshal(Buffer sequence) throws IOException {
         bytesIn.restart(sequence);
 
@@ -182,7 +178,6 @@ public final class OpenWireFormat implements WireFormat {
         return command;
     }
 
-    @Override
     public synchronized void marshal(Object o, DataOutput dataOut) throws IOException {
 
         if (cacheEnabled) {
@@ -238,7 +233,6 @@ public final class OpenWireFormat implements WireFormat {
         }
     }
 
-    @Override
     public Object unmarshal(DataInput dis) throws IOException {
         DataInput dataIn = dis;
         if (!sizePrefixDisabled) {
@@ -295,7 +289,6 @@ public final class OpenWireFormat implements WireFormat {
      *
      * @param version
      */
-    @Override
     public void setVersion(int version) {
         String mfName = "io.neutronjms.openwire.codec.v" + version + ".MarshallerFactory";
         Class<?> mfClass;
