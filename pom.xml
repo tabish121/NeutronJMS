@@ -54,6 +54,7 @@
     <jetty-version>8.1.15.v20140411</jetty-version>
     <vertex-version>2.1</vertex-version>
     <mockito-version>1.9.5</mockito-version>
+    <openwire-version>1.0-SNAPSHOT</openwire-version>
 
     <!-- Maven Plugin Version for this Project -->
     <maven-surefire-plugin-version>2.16</maven-surefire-plugin-version>
@@ -85,7 +86,7 @@
     <module>neutronjms-stomp</module>
     <module>neutronjms-tests</module>
     <module>neutronjms-test-support</module>
-    <module>neutronjms-openwire-provider</module>
+    <module>neutronjms-openwire</module>
   </modules>
 
   <dependencyManagement>
@@ -115,11 +116,6 @@
       </dependency>
       <dependency>
         <groupId>io.neutronjms</groupId>
-        <artifactId>neutronjms-openwire-generator</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>io.neutronjms</groupId>
         <artifactId>neutronjms-test-support</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -129,6 +125,11 @@
         <version>${project.version}</version>
       </dependency>
 
+      <dependency>
+        <groupId>io.openwire</groupId>
+        <artifactId>openwire-core</artifactId>
+        <version>${openwire-version}</version>
+      </dependency>
       <dependency>
         <groupId>org.apache.geronimo.specs</groupId>
         <artifactId>geronimo-jms_1.1_spec</artifactId>
