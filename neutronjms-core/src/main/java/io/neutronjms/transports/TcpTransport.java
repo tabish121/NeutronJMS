@@ -167,6 +167,19 @@ public class TcpTransport implements Transport {
         vertx.eventBus().send(socket.writeHandlerID(), sendBuffer);
     }
 
+    @Override
+    public void send(org.fusesource.hawtbuf.Buffer output) throws IOException {
+        checkConnected();
+        int length = output.length();
+        if (length == 0) {
+            return;
+        }
+
+        org.fusesource.hawtbuf.Buffer clone = output.deepCopy();
+        Buffer sendBuffer = new Buffer(clone.data);
+        vertx.eventBus().send(socket.writeHandlerID(), sendBuffer);
+    }
+
     /**
      * Allows a subclass to configure the NetClient beyond what this transport might do.
      *
