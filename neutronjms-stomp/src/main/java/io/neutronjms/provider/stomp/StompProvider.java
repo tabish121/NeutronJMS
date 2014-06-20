@@ -287,8 +287,8 @@ public class StompProvider extends AbstractAsyncProvider implements TransportLis
             public void run() {
                 try {
                     checkClosed();
-                    StompSession amqpSession = connection.getSession(sessionId);
-                    amqpSession.acknowledge(request);
+                    StompSession session = connection.getSession(sessionId);
+                    session.acknowledge(request);
                 } catch (Exception error) {
                     request.onFailure(error);
                 }
