@@ -17,6 +17,8 @@
 package io.neutronjms.provider.openwire;
 
 import io.neutronjms.jms.message.JmsOutboundMessageDispatch;
+import io.neutronjms.jms.meta.JmsProducerId;
+import io.neutronjms.jms.meta.JmsProducerInfo;
 import io.neutronjms.provider.AsyncResult;
 
 /**
@@ -24,21 +26,12 @@ import io.neutronjms.provider.AsyncResult;
  */
 public class OpenWireProducer {
 
-    /**
-     * @param envelope
-     * @param request
-     */
-    public void send(JmsOutboundMessageDispatch envelope, AsyncResult<Void> request) {
-        // TODO Auto-generated method stub
+    private final OpenWireSession session;
+    private final JmsProducerInfo producerInfo;
 
-    }
-
-    /**
-     * @param request
-     */
-    public void close(AsyncResult<Void> request) {
-        // TODO Auto-generated method stub
-
+    public OpenWireProducer(OpenWireSession session, JmsProducerInfo producerInfo) {
+        this.session = session;
+        this.producerInfo = producerInfo;
     }
 
     /**
@@ -46,7 +39,34 @@ public class OpenWireProducer {
      */
     public void open(AsyncResult<Void> request) {
         // TODO Auto-generated method stub
-
     }
 
+    /**
+     * @param request
+     */
+    public void close(AsyncResult<Void> request) {
+        // TODO Auto-generated method stub
+    }
+
+    /**
+     * @param envelope
+     * @param request
+     */
+    public void send(JmsOutboundMessageDispatch envelope, AsyncResult<Void> request) {
+        // TODO Auto-generated method stub
+    }
+
+    /**
+     * @returns the parent OpenWireSession for this OpenWireConsumer.
+     */
+    public OpenWireSession getSession() {
+        return this.session;
+    }
+
+    /**
+     * @returns the JmsProducerId that identifies this Producer instance.
+     */
+    public JmsProducerId getProducerId() {
+        return this.producerInfo.getProducerId();
+    }
 }

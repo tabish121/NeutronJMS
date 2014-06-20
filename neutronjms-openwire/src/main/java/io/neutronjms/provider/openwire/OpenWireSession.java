@@ -19,6 +19,7 @@ package io.neutronjms.provider.openwire;
 import io.neutronjms.jms.meta.JmsConsumerId;
 import io.neutronjms.jms.meta.JmsConsumerInfo;
 import io.neutronjms.jms.meta.JmsProducerInfo;
+import io.neutronjms.jms.meta.JmsSessionInfo;
 import io.neutronjms.jms.meta.JmsTransactionId;
 import io.neutronjms.provider.AsyncResult;
 
@@ -27,10 +28,33 @@ import io.neutronjms.provider.AsyncResult;
  */
 public class OpenWireSession {
 
+    private final OpenWireConnection connection;
+    private final JmsSessionInfo sessionInfo;
+
+    public OpenWireSession(OpenWireConnection connection, JmsSessionInfo sessionInfo) {
+        this.connection = connection;
+        this.sessionInfo = sessionInfo;
+    }
+
     /**
-     *
+     * @param request
      */
-    public void recover() {
+    public void open(AsyncResult<Void> request) {
+        // TODO Auto-generated method stub
+    }
+
+    /**
+     * @param request
+     */
+    public void close(AsyncResult<Void> request) {
+        // TODO Auto-generated method stub
+    }
+
+    /**
+     * @param transactionId
+     * @param request
+     */
+    public void begin(JmsTransactionId transactionId, AsyncResult<Void> request) {
         // TODO Auto-generated method stub
     }
 
@@ -48,46 +72,18 @@ public class OpenWireSession {
         // TODO Auto-generated method stub
     }
 
-    /**
-     * @param consumerId
-     * @return
-     */
-    public OpenWireConsumer getConsumer(JmsConsumerId consumerId) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+   /**
+    *
+    */
+   public void recover() {
+       // TODO Auto-generated method stub
+   }
 
     /**
      * @param request
      */
     public void acknowledge(AsyncResult<Void> request) {
         // TODO Auto-generated method stub
-
-    }
-
-    /**
-     * @param request
-     */
-    public void close(AsyncResult<Void> request) {
-        // TODO Auto-generated method stub
-
-    }
-
-    /**
-     * @param transactionId
-     * @param request
-     */
-    public void begin(JmsTransactionId transactionId, AsyncResult<Void> request) {
-        // TODO Auto-generated method stub
-
-    }
-
-    /**
-     * @param request
-     */
-    public void open(AsyncResult<Void> request) {
-        // TODO Auto-generated method stub
-
     }
 
     /**
@@ -118,10 +114,10 @@ public class OpenWireSession {
     }
 
     /**
-     * @param consumerInfo
+     * @param consumerId
      * @return
      */
-    public OpenWireConsumer getConsumer(JmsConsumerInfo consumerInfo) {
+    public OpenWireConsumer getConsumer(JmsConsumerId consumerId) {
         // TODO Auto-generated method stub
         return null;
     }

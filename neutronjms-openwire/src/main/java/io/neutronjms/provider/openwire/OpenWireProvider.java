@@ -277,7 +277,7 @@ public class OpenWireProvider extends AbstractAsyncProvider implements Transport
                         @Override
                         public void processConsumerInfo(JmsConsumerInfo consumerInfo) throws Exception {
                             OpenWireSession session = connection.getSession(consumerInfo.getParentId());
-                            OpenWireConsumer consumer = session.getConsumer(consumerInfo);
+                            OpenWireConsumer consumer = session.getConsumer(consumerInfo.getConsumerId());
                             consumer.close(request);
                         }
 

@@ -17,13 +17,44 @@
 package io.neutronjms.provider.openwire;
 
 import io.neutronjms.jms.message.JmsInboundMessageDispatch;
+import io.neutronjms.jms.meta.JmsConsumerId;
+import io.neutronjms.jms.meta.JmsConsumerInfo;
 import io.neutronjms.provider.AsyncResult;
 import io.neutronjms.provider.ProviderConstants.ACK_TYPE;
 
 /**
- *
+ * Implements the functionality needed to consume messages from an OpenWire Broker.
  */
 public class OpenWireConsumer {
+
+    private final OpenWireSession session;
+    private final JmsConsumerInfo consumerInfo;
+
+    public OpenWireConsumer(OpenWireSession session, JmsConsumerInfo consumerInfo) {
+        this.session = session;
+        this.consumerInfo = consumerInfo;
+    }
+
+    /**
+     * @param request
+     */
+    public void open(AsyncResult<Void> request) {
+        // TODO Auto-generated method stub
+    }
+
+    /**
+     * @param request
+     */
+    public void close(AsyncResult<Void> request) {
+        // TODO Auto-generated method stub
+    }
+
+    /**
+     * @param request
+     */
+    public void start(AsyncResult<Void> request) {
+        // TODO Auto-generated method stub
+    }
 
     /**
      * @param timeout
@@ -39,31 +70,19 @@ public class OpenWireConsumer {
      */
     public void acknowledge(JmsInboundMessageDispatch envelope, ACK_TYPE ackType, AsyncResult<Void> request) {
         // TODO Auto-generated method stub
-
     }
 
     /**
-     * @param request
+     * @returns the parent OpenWireSession for this OpenWireConsumer.
      */
-    public void close(AsyncResult<Void> request) {
-        // TODO Auto-generated method stub
-
+    public OpenWireSession getSession() {
+        return this.session;
     }
 
     /**
-     * @param request
+     * @returns the JmsConsumerId that identifies this Consumer instance.
      */
-    public void start(AsyncResult<Void> request) {
-        // TODO Auto-generated method stub
-
+    public JmsConsumerId getConsumerId() {
+        return this.consumerInfo.getConsumerId();
     }
-
-    /**
-     * @param request
-     */
-    public void open(AsyncResult<Void> request) {
-        // TODO Auto-generated method stub
-
-    }
-
 }
