@@ -14,11 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.neutronjms.openwire;
+package io.neutronjms.provider.openwire.message;
 
 /**
- * Manages the resources that are linked to a single OpenWire SessionInfo instance.
+ * 
  */
-public class OpenWireSession {
+public class OpenWireJmsObjectMessageFacade extends OpenWireJmsMessageFacade {
 
 }

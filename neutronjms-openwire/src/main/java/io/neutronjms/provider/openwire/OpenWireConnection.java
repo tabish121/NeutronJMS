@@ -14,11 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.neutronjms.openwire.message;
+package io.neutronjms.provider.openwire;
 
 /**
- * 
+ * Manages the state for a Connection to a Broker over the OpenWire protocol.
  */
-public class OpenWireJmsObjectMessageFacade extends OpenWireJmsMessageFacade {
+public class OpenWireConnection {
 
 }

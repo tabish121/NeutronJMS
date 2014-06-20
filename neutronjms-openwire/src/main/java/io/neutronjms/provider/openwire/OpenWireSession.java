@@ -14,32 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.neutronjms.openwire;
-
-import io.neutronjms.provider.AsyncProvider;
-import io.neutronjms.provider.BlockingProvider;
-import io.neutronjms.provider.DefaultBlockingProvider;
-import io.neutronjms.provider.ProviderFactory;
-
-import java.net.URI;
+package io.neutronjms.provider.openwire;
 
 /**
- * Factory for creating the OpenWire provider.
+ * Manages the resources that are linked to a single OpenWire SessionInfo instance.
  */
-public class OpenWireProviderFactory extends ProviderFactory {
+public class OpenWireSession {
 
-    @Override
-    public BlockingProvider createProvider(URI remoteURI) throws Exception {
-        return new DefaultBlockingProvider(createAsyncProvider(remoteURI));
-    }
-
-    @Override
-    public AsyncProvider createAsyncProvider(URI remoteURI) throws Exception {
-        return null;
-    }
-
-    @Override
-    public String getName() {
-        return "OpenWire";
-    }
 }

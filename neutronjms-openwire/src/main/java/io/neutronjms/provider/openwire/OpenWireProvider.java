@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.neutronjms.openwire;
+package io.neutronjms.provider.openwire;
 
 import io.neutronjms.jms.message.JmsDefaultMessageFactory;
 import io.neutronjms.jms.message.JmsInboundMessageDispatch;
@@ -26,26 +26,33 @@ import io.neutronjms.jms.meta.JmsSessionId;
 import io.neutronjms.provider.AbstractAsyncProvider;
 import io.neutronjms.provider.AsyncResult;
 import io.neutronjms.provider.ProviderConstants.ACK_TYPE;
+import io.neutronjms.provider.ProviderRequest;
+import io.neutronjms.transports.TcpTransport;
 import io.neutronjms.transports.Transport;
+import io.neutronjms.transports.TransportListener;
+import io.openwire.codec.OpenWireFormat;
 
 import java.io.IOException;
 import java.net.URI;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import javax.jms.JMSException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.vertx.java.core.buffer.Buffer;
 
 /**
  * Implements a Provider instance that is used to communicate with any Broker that
  * can provide an OpenWire protocol head.
  */
-public class OpenWireProvider extends AbstractAsyncProvider {
+public class OpenWireProvider extends AbstractAsyncProvider implements TransportListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(OpenWireProvider.class);
 
     private Transport transport;
+    private OpenWireFormat wireFormat;
 
     private long connectTimeout = JmsConnectionInfo.DEFAULT_CONNECT_TIMEOUT;
     private long closeTimeout = JmsConnectionInfo.DEFAULT_CLOSE_TIMEOUT;
@@ -73,14 +80,53 @@ public class OpenWireProvider extends AbstractAsyncProvider {
 
     @Override
     public void connect() throws IOException {
-        // TODO Auto-generated method stub
+        checkClosed();
 
+        transport = createTransport(getRemoteURI());
+        transport.connect();
     }
 
     @Override
     public void close() {
-        // TODO Auto-generated method stub
+        if (closed.compareAndSet(false, true)) {
+            final ProviderRequest<Void> request = new ProviderRequest<Void>();
+            serializer.execute(new Runnable() {
 
+                @Override
+                public void run() {
+                    try {
+//                        ShutdownInfo disconnect = new ShutdownInfo();
+//                        transport.send(codec.encode(disconnect));
+                    } catch (Exception e) {
+                        LOG.debug("Caught exception while closing proton connection");
+                    } finally {
+                        if (transport != null) {
+                            try {
+                                transport.close();
+                            } catch (Exception e) {
+                                LOG.debug("Cuaght exception while closing down Transport: {}", e.getMessage());
+                            }
+                        }
+
+                        request.onSuccess();
+                    }
+                }
+            });
+
+            try {
+                if (closeTimeout < 0) {
+                    request.getResponse();
+                } else {
+                    request.getResponse(closeTimeout, TimeUnit.MILLISECONDS);
+                }
+            } catch (IOException e) {
+                LOG.warn("Error caught while closing Provider: ", e.getMessage());
+            } finally {
+                if (serializer != null) {
+                    serializer.shutdown();
+                }
+            }
+        }
     }
 
     @Override
@@ -123,6 +169,37 @@ public class OpenWireProvider extends AbstractAsyncProvider {
     public void recover(JmsSessionId sessionId, AsyncResult<Void> request) throws IOException, UnsupportedOperationException {
         // TODO Auto-generated method stub
 
+    }
+
+    @Override
+    public void onData(Buffer incoming) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void onTransportClosed() {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void onTransportError(Throwable cause) {
+        // TODO Auto-generated method stub
+
+    }
+
+    /**
+     * Provides an extension point for subclasses to insert other types of transports such
+     * as SSL etc.
+     *
+     * @param remoteLocation
+     *        The remote location where the transport should attempt to connect.
+     *
+     * @return the newly created transport instance.
+     */
+    protected Transport createTransport(URI remoteLocation) {
+        return new TcpTransport(this, remoteLocation);
     }
 
     //---------- Property Setters and Getters --------------------------------//

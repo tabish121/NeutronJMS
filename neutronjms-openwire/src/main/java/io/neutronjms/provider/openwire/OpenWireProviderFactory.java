@@ -14,11 +14,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.neutronjms.openwire;
+package io.neutronjms.provider.openwire;
+
+import io.neutronjms.provider.AsyncProvider;
+import io.neutronjms.provider.BlockingProvider;
+import io.neutronjms.provider.DefaultBlockingProvider;
+import io.neutronjms.provider.ProviderFactory;
+
+import java.net.URI;
 
 /**
- * Manages the state for a Connection to a Broker over the OpenWire protocol.
+ * Factory for creating the OpenWire provider.
  */
-public class OpenWireConnection {
+public class OpenWireProviderFactory extends ProviderFactory {
 
+    @Override
+    public BlockingProvider createProvider(URI remoteURI) throws Exception {
+        return new DefaultBlockingProvider(createAsyncProvider(remoteURI));
+    }
+
+    @Override
+    public AsyncProvider createAsyncProvider(URI remoteURI) throws Exception {
+        return new OpenWireProvider(remoteURI);
+    }
+
+    @Override
+    public String getName() {
+        return "OpenWire";
+    }
 }
