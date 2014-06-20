@@ -24,7 +24,7 @@ import io.neutronjms.provider.ProviderFactory;
 import java.net.URI;
 
 /**
- * Factory for creating the AMQP provider.
+ * Factory for creating the STOMP provider.
  */
 public class StompProviderFactory extends ProviderFactory {
 
