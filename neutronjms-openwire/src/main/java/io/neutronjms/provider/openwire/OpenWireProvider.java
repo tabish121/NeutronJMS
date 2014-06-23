@@ -41,7 +41,6 @@ import io.neutronjms.transports.TransportListener;
 import io.openwire.codec.OpenWireFormat;
 import io.openwire.codec.OpenWireFormatFactory;
 import io.openwire.commands.Command;
-import io.openwire.commands.Response;
 import io.openwire.commands.ShutdownInfo;
 import io.openwire.commands.WireFormatInfo;
 
@@ -66,6 +65,7 @@ public class OpenWireProvider extends AbstractAsyncProvider implements Transport
     private static final Logger LOG = LoggerFactory.getLogger(OpenWireProvider.class);
 
     private final OpenWireFormatFactory factory = new OpenWireFormatFactory();
+    private final OpenWireFrameBuilder frameBuilder = new OpenWireFrameBuilder(this);
 
     private Transport transport;
     private ScheduledFuture<?> negotiateTimeoutTask;
@@ -129,7 +129,7 @@ public class OpenWireProvider extends AbstractAsyncProvider implements Transport
                     try {
                         asyncSend(new ShutdownInfo());
                     } catch (Exception e) {
-                        LOG.debug("Caught exception while closing proton connection");
+                        LOG.debug("Caught exception while closing OpenWire connection");
                     } finally {
                         if (transport != null) {
                             try {
@@ -455,8 +455,7 @@ public class OpenWireProvider extends AbstractAsyncProvider implements Transport
 
     @Override
     public void onData(Buffer incoming) {
-        // TODO Auto-generated method stub
-
+        frameBuilder.onData(incoming);
     }
 
     @Override
@@ -491,6 +490,19 @@ public class OpenWireProvider extends AbstractAsyncProvider implements Transport
 
     //---------- OpenWire Command handlers -----------------------------------//
 
+    protected void processNewFrame(Buffer frame) throws Exception {
+
+        // TODO: avoid this conversion.
+        org.fusesource.hawtbuf.Buffer buffer = new org.fusesource.hawtbuf.Buffer(frame.getBytes());
+
+        Command command = (Command) wireFormat.unmarshal(buffer);
+        if (command.isWireFormatInfo()) {
+            processWireFormatInfo((WireFormatInfo) command);
+        } else {
+            connection.processCommand(command);
+        }
+    }
+
     private void processWireFormatInfo(WireFormatInfo info) throws Exception {
 
         if (negotiateTimeoutTask != null) {
@@ -499,10 +511,6 @@ public class OpenWireProvider extends AbstractAsyncProvider implements Transport
         }
 
         wireFormat.renegotiateWireFormat(info);
-    }
-
-    private void processResponse(Response response) throws Exception {
-
     }
 
     //---------- Internal utility methods ------------------------------------//
@@ -586,5 +594,13 @@ public class OpenWireProvider extends AbstractAsyncProvider implements Transport
 
     public void setNegotiateTimeout(long negotiateTimeout) {
         this.negotiateTimeout = negotiateTimeout;
+    }
+
+    public long getMaxFrameSize() {
+        return wireFormat.getMaxFrameSize();
+    }
+
+    public void setMaxFrameSize(long maxFrameSize) {
+        this.wireFormat.setMaxFrameSize(maxFrameSize);
     }
 }
