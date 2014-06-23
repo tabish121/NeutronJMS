@@ -19,12 +19,10 @@ package io.neutronjms.test.support;
 import io.neutronjms.jms.JmsConnectionFactory;
 
 import java.net.URI;
-import java.util.Map;
 
 import javax.jms.Connection;
 
 import org.apache.activemq.broker.BrokerService;
-import org.apache.activemq.broker.TransportConnector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,30 +35,6 @@ public class OpenwireTestSupport extends NeutronJmsTestSupport {
 
     protected boolean isOpenwireDiscovery() {
         return false;
-    }
-
-    @Override
-    protected void addAdditionalConnectors(BrokerService brokerService, Map<String, Integer> portMap) throws Exception {
-        int port = 0;
-        if (portMap.containsKey("openwire")) {
-            port = portMap.get("openwire");
-        }
-        TransportConnector connector = brokerService.addConnector("openwire://0.0.0.0:" + port);
-        connector.setName("openwire");
-        if (isOpenwireDiscovery()) {
-            connector.setDiscoveryUri(new URI("multicast://default"));
-        }
-        port = connector.getPublishableConnectURI().getPort();
-        LOG.debug("Using stomp port: {}", port);
-    }
-
-    public URI getBrokerStompConnectionURI() {
-        try {
-            return new URI("openwire://127.0.0.1:" +
-                brokerService.getTransportConnectorByName("openwire").getPublishableConnectURI().getPort());
-        } catch (Exception e) {
-            throw new RuntimeException();
-        }
     }
 
     public String getOpenwireFailoverURI() throws Exception {
@@ -79,11 +53,11 @@ public class OpenwireTestSupport extends NeutronJmsTestSupport {
     }
 
     public Connection createOpenwireConnection() throws Exception {
-        return createOpenwireConnection(getBrokerStompConnectionURI());
+        return createOpenwireConnection(getBrokerOpenWireConnectionURI());
     }
 
     public Connection createOpenwireConnection(String username, String password) throws Exception {
-        return createOpenwireConnection(getBrokerStompConnectionURI(), username, password);
+        return createOpenwireConnection(getBrokerOpenWireConnectionURI(), username, password);
     }
 
     public Connection createOpenwireConnection(URI brokerURI) throws Exception {
