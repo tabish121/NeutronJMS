@@ -102,7 +102,7 @@ public class NeutronJmsTestSupport {
         return name.getMethodName();
     }
 
-    public URI getBrokerOpenWireConnectionURI() {
+    public URI getBrokerActiveMQClientConnectionURI() {
         try {
             return new URI("tcp://127.0.0.1:" +
                 brokerService.getTransportConnectorByName("openwire").getPublishableConnectURI().getPort());
@@ -244,7 +244,7 @@ public class NeutronJmsTestSupport {
     }
 
     public Connection createActiveMQConnection() throws Exception {
-        return createActiveMQConnection(getBrokerOpenWireConnectionURI());
+        return createActiveMQConnection(getBrokerActiveMQClientConnectionURI());
     }
 
     public Connection createActiveMQConnection(URI brokerURI) throws Exception {

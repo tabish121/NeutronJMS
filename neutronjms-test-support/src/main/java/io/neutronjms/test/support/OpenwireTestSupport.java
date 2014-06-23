@@ -37,6 +37,15 @@ public class OpenwireTestSupport extends NeutronJmsTestSupport {
         return false;
     }
 
+    public URI getBrokerOpenWireConnectionURI() {
+        try {
+            return new URI("openwire://127.0.0.1:" +
+                brokerService.getTransportConnectorByName("openwire").getPublishableConnectURI().getPort());
+        } catch (Exception e) {
+            throw new RuntimeException();
+        }
+    }
+
     public String getOpenwireFailoverURI() throws Exception {
         StringBuilder uri = new StringBuilder();
         uri.append("failover://(");
