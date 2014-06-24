@@ -26,7 +26,6 @@ import io.neutronjms.jms.meta.JmsSessionInfo;
 import io.neutronjms.provider.AsyncResult;
 import io.neutronjms.provider.openwire.message.OpenWireJmsMessageFactory;
 import io.openwire.commands.Command;
-import io.openwire.commands.ConnectionInfo;
 import io.openwire.commands.ExceptionResponse;
 import io.openwire.commands.Response;
 
@@ -71,14 +70,13 @@ public class OpenWireConnection implements OpenWireResource {
 
     @Override
     public void open(AsyncResult<Void> request) throws Exception {
-        ConnectionInfo info = openWireConnection.createConnectionInfo();
-        info.setClientId(connectionInfo.getClientId());
-        info.setFaultTolerant(false);
-        info.setManageable(true);
-        info.setUserName(connectionInfo.getUsername());
-        info.setPassword(connectionInfo.getPassword());
+        openWireConnection.setClientId(connectionInfo.getClientId());
+        openWireConnection.setFaultTolerant(false);
+        openWireConnection.setManageable(true);
+        openWireConnection.setUserName(connectionInfo.getUsername());
+        openWireConnection.setPassword(connectionInfo.getPassword());
 
-        syncSend(info, request);
+        syncSend(openWireConnection, request);
     }
 
     @Override
