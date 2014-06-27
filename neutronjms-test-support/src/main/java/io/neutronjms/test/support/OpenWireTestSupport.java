@@ -29,9 +29,9 @@ import org.slf4j.LoggerFactory;
 /**
  * Test support class used in OpenWire based tests.
  */
-public class OpenwireTestSupport extends NeutronJmsTestSupport {
+public class OpenWireTestSupport extends NeutronJmsTestSupport {
 
-    protected static final Logger LOG = LoggerFactory.getLogger(OpenwireTestSupport.class);
+    protected static final Logger LOG = LoggerFactory.getLogger(OpenWireTestSupport.class);
 
     protected boolean isOpenwireDiscovery() {
         return false;

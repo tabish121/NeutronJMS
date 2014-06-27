@@ -100,7 +100,9 @@ public class OpenWireProvider extends AbstractAsyncProvider implements Transport
     public void connect() throws IOException {
         checkClosed();
 
-        this.wireFormat = factory.createWireFormat();
+        factory.setTightEncodingEnabled(false);
+
+        wireFormat = factory.createWireFormat();
 
         // Set a trigger to fail the Provider if we don't get a WireFormatInfo back
         // from the broker in time.
@@ -496,6 +498,7 @@ public class OpenWireProvider extends AbstractAsyncProvider implements Transport
         org.fusesource.hawtbuf.Buffer buffer = new org.fusesource.hawtbuf.Buffer(frame.getBytes());
 
         Command command = (Command) wireFormat.unmarshal(buffer);
+        LOG.info("New incoming command: {}", command);
         if (command.isWireFormatInfo()) {
             processWireFormatInfo((WireFormatInfo) command);
         } else {

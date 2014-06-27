@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.neutronjms.openwire;
+package io.neutronjms.jms;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -22,7 +22,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import io.neutronjms.jms.JmsConnection;
 import io.neutronjms.jms.JmsConnectionFactory;
-import io.neutronjms.test.support.OpenwireTestSupport;
+import io.neutronjms.test.support.OpenWireTestSupport;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -32,7 +32,7 @@ import javax.jms.JMSException;
 
 import org.junit.Test;
 
-public class JmsConnectionFactoryTest extends OpenwireTestSupport {
+public class JmsConnectionFactoryTest extends OpenWireTestSupport {
 
     private final String username = "USER";
     private final String password = "PASSWORD";

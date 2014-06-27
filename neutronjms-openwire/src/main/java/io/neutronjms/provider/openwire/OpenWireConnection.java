@@ -25,6 +25,7 @@ import io.neutronjms.jms.meta.JmsSessionId;
 import io.neutronjms.jms.meta.JmsSessionInfo;
 import io.neutronjms.provider.AsyncResult;
 import io.neutronjms.provider.openwire.message.OpenWireJmsMessageFactory;
+import io.openwire.commands.BrokerInfo;
 import io.openwire.commands.Command;
 import io.openwire.commands.ExceptionResponse;
 import io.openwire.commands.Response;
@@ -47,6 +48,7 @@ public class OpenWireConnection implements OpenWireResource {
     private final JmsConnectionInfo connectionInfo;
     private final OpenWireJmsMessageFactory messageFactory;
     private final io.openwire.utils.OpenWireConnection openWireConnection;
+    private BrokerInfo brokerInfo;
 
     private int requestSequence;
     private final Map<Integer, AsyncResult<Void>> requests = new HashMap<Integer, AsyncResult<Void>>();
@@ -231,6 +233,9 @@ public class OpenWireConnection implements OpenWireResource {
                 onResponse(response, request);
             }
         } else {
+            if (incoming.isBrokerInfo()) {
+                this.brokerInfo = (BrokerInfo) incoming;
+            }
             // TODO - Handle OpenWire Commands.
         }
     }
