@@ -30,12 +30,14 @@ import javax.jms.ExceptionListener;
 import javax.jms.JMSException;
 import javax.jms.Session;
 
+import org.junit.Test;
+
 /**
  * Test for basic JmsConnection functionality and error handling.
  */
 public class JmsConnectionTest extends OpenWireTestSupport {
 
-    //@Test(timeout=30000)
+    @Test(timeout=30000)
     public void testCreateConnection() throws Exception {
         JmsConnectionFactory factory = new JmsConnectionFactory(getBrokerOpenWireConnectionURI());
         JmsConnection connection = (JmsConnection) factory.createConnection();

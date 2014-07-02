@@ -72,6 +72,7 @@ public class OpenWireConnection implements OpenWireResource {
 
     @Override
     public void open(AsyncResult<Void> request) throws Exception {
+        LOG.info("OpenWireConnection open called: {}", connectionInfo);
         openWireConnection.setClientId(connectionInfo.getClientId());
         openWireConnection.setFaultTolerant(false);
         openWireConnection.setManageable(true);

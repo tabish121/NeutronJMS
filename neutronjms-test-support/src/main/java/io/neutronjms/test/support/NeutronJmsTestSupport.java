@@ -170,7 +170,7 @@ public class NeutronJmsTestSupport {
         if (portMap.containsKey("openwire")) {
             port = portMap.get("openwire");
         }
-        TransportConnector connector = brokerService.addConnector("tcp://0.0.0.0:" + port);
+        TransportConnector connector = brokerService.addConnector("tcp://0.0.0.0:" + port + "?trace=true");
         connector.setName("openwire");
         int openwirePort = connector.getPublishableConnectURI().getPort();
         LOG.debug("Using openwire port: {}", openwirePort);

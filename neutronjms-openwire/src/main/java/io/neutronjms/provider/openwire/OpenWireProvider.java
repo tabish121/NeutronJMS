@@ -73,6 +73,9 @@ public class OpenWireProvider extends AbstractAsyncProvider implements Transport
     private OpenWireFormat wireFormat;
     private OpenWireConnection connection;
 
+    private boolean wireFormatNegotiationComplete;
+    private AsyncResult<Void> onWireFormatNegotiated;
+
     private long connectTimeout = JmsConnectionInfo.DEFAULT_CONNECT_TIMEOUT;
     private long closeTimeout = JmsConnectionInfo.DEFAULT_CLOSE_TIMEOUT;
     private long requestTimeout = JmsConnectionInfo.DEFAULT_REQUEST_TIMEOUT;
@@ -101,6 +104,7 @@ public class OpenWireProvider extends AbstractAsyncProvider implements Transport
         checkClosed();
 
         factory.setTightEncodingEnabled(false);
+        factory.setCacheEnabled(false);
 
         wireFormat = factory.createWireFormat();
 
@@ -201,7 +205,36 @@ public class OpenWireProvider extends AbstractAsyncProvider implements Transport
                             requestTimeout = connectionInfo.getRequestTimeout();
 
                             connection = new OpenWireConnection(OpenWireProvider.this, connectionInfo);
-                            connection.open(request);
+                            if (wireFormatNegotiationComplete) {
+                                connection.open(request);
+                            } else {
+                                onWireFormatNegotiated = new AsyncResult<Void>() {
+
+                                    @Override
+                                    public void onFailure(Throwable result) {
+                                        request.onFailure(result);
+                                    }
+
+                                    @Override
+                                    public void onSuccess(Void result) {
+                                        try {
+                                            connection.open(request);
+                                        } catch (Exception e) {
+                                            request.onFailure(e);
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onSuccess() {
+                                        onSuccess(null);
+                                    }
+
+                                    @Override
+                                    public boolean isComplete() {
+                                        return false;
+                                    }
+                                };
+                            }
                         }
 
                         @Override
@@ -237,6 +270,11 @@ public class OpenWireProvider extends AbstractAsyncProvider implements Transport
                 try {
                     checkClosed();
                     resource.visit(new JmsDefaultResourceVisitor() {
+
+                        @Override
+                        public void processConnectionInfo(JmsConnectionInfo connectionInfo) throws Exception {
+                            LOG.info("Connection start called.");
+                        }
 
                         @Override
                         public void processConsumerInfo(JmsConsumerInfo consumerInfo) throws Exception {
@@ -514,6 +552,13 @@ public class OpenWireProvider extends AbstractAsyncProvider implements Transport
         }
 
         wireFormat.renegotiateWireFormat(info);
+        wireFormatNegotiationComplete = true;
+
+        LOG.debug("OpenWireFormat after negotiation: {}", wireFormat);
+
+        if (onWireFormatNegotiated != null) {
+            onWireFormatNegotiated.onSuccess();
+        }
     }
 
     //---------- Internal utility methods ------------------------------------//
@@ -528,6 +573,7 @@ public class OpenWireProvider extends AbstractAsyncProvider implements Transport
      * @throws IOException if an error occurs while sending the Command.
      */
     protected void asyncSend(Command command) throws IOException {
+        LOG.trace("Sending command: {}", command);
         transport.send(wireFormat.marshal(command));
     }
 
