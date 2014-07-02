@@ -234,7 +234,7 @@ public class OpenWireConnection implements OpenWireResource {
             }
         } else {
             if (incoming.isBrokerInfo()) {
-                this.brokerInfo = (BrokerInfo) incoming;
+                this.setBrokerInfo((BrokerInfo) incoming);
             }
             // TODO - Handle OpenWire Commands.
         }
@@ -248,5 +248,13 @@ public class OpenWireConnection implements OpenWireResource {
     @Override
     public void onExceptionReponse(ExceptionResponse error, AsyncResult<Void> request) {
         request.onFailure(error.getException());
+    }
+
+    public BrokerInfo getBrokerInfo() {
+        return brokerInfo;
+    }
+
+    public void setBrokerInfo(BrokerInfo brokerInfo) {
+        this.brokerInfo = brokerInfo;
     }
 }
