@@ -554,6 +554,10 @@ public class OpenWireProvider extends AbstractAsyncProvider implements Transport
         wireFormat.renegotiateWireFormat(info);
         wireFormatNegotiationComplete = true;
 
+        if (transport instanceof TcpTransport) {
+            ((TcpTransport) transport).setTcpNoDelay(wireFormat.isTcpNoDelayEnabled());
+        }
+
         LOG.debug("OpenWireFormat after negotiation: {}", wireFormat);
 
         if (onWireFormatNegotiated != null) {
