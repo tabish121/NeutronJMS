@@ -45,7 +45,7 @@ public class JmsConnectionTest extends OpenWireTestSupport {
         connection.close();
     }
 
-    //@Test(timeout=1200000)
+    @Test(timeout=1200000)
     public void testCreateConnectionAndStart() throws Exception {
         JmsConnectionFactory factory = new JmsConnectionFactory(getBrokerOpenWireConnectionURI());
         JmsConnection connection = (JmsConnection) factory.createConnection();
@@ -54,7 +54,7 @@ public class JmsConnectionTest extends OpenWireTestSupport {
         connection.close();
     }
 
-    //@Test(expected = JMSException.class)
+    @Test(expected = JMSException.class)
     public void testCreateWithDuplicateClientIdFails() throws Exception {
         JmsConnectionFactory factory = new JmsConnectionFactory(getBrokerOpenWireConnectionURI());
         JmsConnection connection1 = (JmsConnection) factory.createConnection();
@@ -69,7 +69,7 @@ public class JmsConnectionTest extends OpenWireTestSupport {
         connection2.close();
     }
 
-    //@Test(expected = JMSException.class)
+    @Test(expected = JMSException.class)
     public void testSetClientIdAfterStartedFails() throws Exception {
         JmsConnectionFactory factory = new JmsConnectionFactory(getBrokerOpenWireConnectionURI());
         JmsConnection connection = (JmsConnection) factory.createConnection();
@@ -79,7 +79,7 @@ public class JmsConnectionTest extends OpenWireTestSupport {
         connection.close();
     }
 
-    //@Test(timeout=30000)
+    @Test(timeout=30000)
     public void testCreateConnectionAsSystemAdmin() throws Exception {
         JmsConnectionFactory factory = new JmsConnectionFactory(getBrokerOpenWireConnectionURI());
         factory.setUsername("system");
@@ -90,7 +90,7 @@ public class JmsConnectionTest extends OpenWireTestSupport {
         connection.close();
     }
 
-    //@Test(timeout=30000)
+    @Test(timeout=30000)
     public void testCreateConnectionCallSystemAdmin() throws Exception {
         JmsConnectionFactory factory = new JmsConnectionFactory(getBrokerOpenWireConnectionURI());
         JmsConnection connection = (JmsConnection) factory.createConnection("system", "manager");

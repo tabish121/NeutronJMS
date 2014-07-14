@@ -35,11 +35,13 @@ import io.neutronjms.provider.AbstractAsyncProvider;
 import io.neutronjms.provider.AsyncResult;
 import io.neutronjms.provider.ProviderConstants.ACK_TYPE;
 import io.neutronjms.provider.ProviderRequest;
+import io.neutronjms.transports.RawTcpTransport;
 import io.neutronjms.transports.TcpTransport;
 import io.neutronjms.transports.Transport;
 import io.neutronjms.transports.TransportListener;
 import io.openwire.codec.OpenWireFormat;
 import io.openwire.codec.OpenWireFormatFactory;
+import io.openwire.commands.BrokerInfo;
 import io.openwire.commands.Command;
 import io.openwire.commands.ShutdownInfo;
 import io.openwire.commands.WireFormatInfo;
@@ -72,6 +74,7 @@ public class OpenWireProvider extends AbstractAsyncProvider implements Transport
 
     private OpenWireFormat wireFormat;
     private OpenWireConnection connection;
+    private BrokerInfo brokerInfo;
 
     private boolean wireFormatNegotiationComplete;
     private AsyncResult<Void> onWireFormatNegotiated;
@@ -539,6 +542,8 @@ public class OpenWireProvider extends AbstractAsyncProvider implements Transport
         LOG.info("New incoming command: {}", command);
         if (command.isWireFormatInfo()) {
             processWireFormatInfo((WireFormatInfo) command);
+        } else if (command.isBrokerInfo()) {
+            setBrokerInfo((BrokerInfo) command);
         } else {
             connection.processCommand(command);
         }
@@ -655,5 +660,13 @@ public class OpenWireProvider extends AbstractAsyncProvider implements Transport
 
     public void setMaxFrameSize(long maxFrameSize) {
         this.wireFormat.setMaxFrameSize(maxFrameSize);
+    }
+
+    public BrokerInfo getBrokerInfo() {
+        return brokerInfo;
+    }
+
+    public void setBrokerInfo(BrokerInfo brokerInfo) {
+        this.brokerInfo = brokerInfo;
     }
 }
