@@ -31,7 +31,7 @@ import io.neutronjms.provider.DefaultProviderListener;
 import io.neutronjms.provider.ProviderConstants.ACK_TYPE;
 import io.neutronjms.provider.ProviderFactory;
 import io.neutronjms.provider.ProviderListener;
-import io.neutronjms.provider.ProviderRequest;
+import io.neutronjms.provider.ProviderFuture;
 import io.neutronjms.util.IOExceptionSupport;
 
 import java.io.IOException;
@@ -159,7 +159,7 @@ public class FailoverProvider extends DefaultProviderListener implements AsyncPr
     @Override
     public void close() {
         if (closed.compareAndSet(false, true)) {
-            final ProviderRequest<Void> request = new ProviderRequest<Void>();
+            final ProviderFuture<Void> request = new ProviderFuture<Void>();
             serializer.execute(new Runnable() {
 
                 @Override
@@ -193,9 +193,9 @@ public class FailoverProvider extends DefaultProviderListener implements AsyncPr
 
             try {
                 if (this.closeTimeout >= 0) {
-                    request.getResponse();
+                    request.sync();
                 } else {
-                    request.getResponse(closeTimeout, TimeUnit.MILLISECONDS);
+                    request.sync(closeTimeout, TimeUnit.MILLISECONDS);
                 }
             } catch (IOException e) {
                 LOG.warn("Error caught while closing Provider: ", e.getMessage());
@@ -772,7 +772,7 @@ public class FailoverProvider extends DefaultProviderListener implements AsyncPr
      *
      * @param <T>
      */
-    protected abstract class FailoverRequest<T> extends ProviderRequest<T> implements Runnable {
+    protected abstract class FailoverRequest<T> extends ProviderFuture<T> implements Runnable {
 
         private final long id = requestId.incrementAndGet();
 

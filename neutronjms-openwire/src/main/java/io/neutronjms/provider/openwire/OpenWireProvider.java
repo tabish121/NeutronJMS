@@ -34,7 +34,7 @@ import io.neutronjms.jms.meta.JmsTransactionInfo;
 import io.neutronjms.provider.AbstractAsyncProvider;
 import io.neutronjms.provider.AsyncResult;
 import io.neutronjms.provider.ProviderConstants.ACK_TYPE;
-import io.neutronjms.provider.ProviderRequest;
+import io.neutronjms.provider.ProviderFuture;
 import io.neutronjms.transports.RawTcpTransport;
 import io.neutronjms.transports.TcpTransport;
 import io.neutronjms.transports.Transport;
@@ -130,7 +130,7 @@ public class OpenWireProvider extends AbstractAsyncProvider implements Transport
     @Override
     public void close() {
         if (closed.compareAndSet(false, true)) {
-            final ProviderRequest<Void> request = new ProviderRequest<Void>();
+            final ProviderFuture<Void> request = new ProviderFuture<Void>();
             serializer.execute(new Runnable() {
 
                 @Override
@@ -155,9 +155,9 @@ public class OpenWireProvider extends AbstractAsyncProvider implements Transport
 
             try {
                 if (closeTimeout < 0) {
-                    request.getResponse();
+                    request.sync();
                 } else {
-                    request.getResponse(closeTimeout, TimeUnit.MILLISECONDS);
+                    request.sync(closeTimeout, TimeUnit.MILLISECONDS);
                 }
             } catch (IOException e) {
                 LOG.warn("Error caught while closing Provider: ", e.getMessage());

@@ -20,7 +20,7 @@ import io.neutronjms.jms.message.JmsMessageTransformation;
 import io.neutronjms.jms.meta.JmsProducerId;
 import io.neutronjms.jms.meta.JmsProducerInfo;
 import io.neutronjms.provider.AsyncProvider;
-import io.neutronjms.provider.ProviderRequest;
+import io.neutronjms.provider.ProviderFuture;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
@@ -321,9 +321,9 @@ public class JmsMessageProducer implements MessageProducer {
     }
 
     protected void onConnectionRecovery(AsyncProvider provider) throws Exception {
-        ProviderRequest<Void> request = new ProviderRequest<Void>();
+        ProviderFuture<Void> request = new ProviderFuture<Void>();
         provider.create(producerInfo, request);
-        request.getResponse();
+        request.sync();
     }
 
     protected void onConnectionRecovered(AsyncProvider provider) throws Exception {

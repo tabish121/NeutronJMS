@@ -31,7 +31,7 @@ import io.neutronjms.jms.meta.JmsTransactionId;
 import io.neutronjms.provider.AsyncProvider;
 import io.neutronjms.provider.ProviderConstants.ACK_TYPE;
 import io.neutronjms.provider.ProviderListener;
-import io.neutronjms.provider.ProviderRequest;
+import io.neutronjms.provider.ProviderFuture;
 import io.neutronjms.util.IdGenerator;
 import io.neutronjms.util.ThreadPoolUtils;
 
@@ -170,9 +170,9 @@ public class JmsConnection implements Connection, TopicConnection, QueueConnecti
                 this.tempDestinations.clear();
 
                 if (isConnected() && !failed.get()) {
-                    ProviderRequest<Void> request = new ProviderRequest<Void>();
+                    ProviderFuture<Void> request = new ProviderFuture<Void>();
                     provider.destroy(connectionInfo, request);
-                    request.getResponse();
+                    request.sync();
                 }
 
                 connected.set(false);
@@ -595,9 +595,9 @@ public class JmsConnection implements Connection, TopicConnection, QueueConnecti
         checkClosedOrFailed();
 
         try {
-            ProviderRequest<Void> request = new ProviderRequest<Void>();
+            ProviderFuture<Void> request = new ProviderFuture<Void>();
             provider.create(resource, request);
-            request.getResponse();
+            request.sync();
             return resource;
         } catch (Exception ex) {
             throw JmsExceptionSupport.create(ex);
@@ -608,9 +608,9 @@ public class JmsConnection implements Connection, TopicConnection, QueueConnecti
         connect();
 
         try {
-            ProviderRequest<Void> request = new ProviderRequest<Void>();
+            ProviderFuture<Void> request = new ProviderFuture<Void>();
             provider.start(resource, request);
-            request.getResponse();
+            request.sync();
         } catch (Exception ioe) {
             throw JmsExceptionSupport.create(ioe);
         }
@@ -625,9 +625,9 @@ public class JmsConnection implements Connection, TopicConnection, QueueConnecti
         //        any response comes back.
 
         try {
-            ProviderRequest<Void> request = new ProviderRequest<Void>();
+            ProviderFuture<Void> request = new ProviderFuture<Void>();
             provider.destroy(resource, request);
-            request.getResponse();
+            request.sync();
         } catch (Exception ioe) {
             throw JmsExceptionSupport.create(ioe);
         }
@@ -641,9 +641,9 @@ public class JmsConnection implements Connection, TopicConnection, QueueConnecti
         //        should be done asynchronously.  A send can be done async
         //        in many cases, such as non-persistent delivery.
         try {
-            ProviderRequest<Void> request = new ProviderRequest<Void>();
+            ProviderFuture<Void> request = new ProviderFuture<Void>();
             provider.send(envelope, request);
-            request.getResponse();
+            request.sync();
         } catch (Exception ioe) {
             throw JmsExceptionSupport.create(ioe);
         }
@@ -658,9 +658,9 @@ public class JmsConnection implements Connection, TopicConnection, QueueConnecti
         //        we only care that the request hits the wire, not that
         //        any response comes back.
         try {
-            ProviderRequest<Void> request = new ProviderRequest<Void>();
+            ProviderFuture<Void> request = new ProviderFuture<Void>();
             provider.acknowledge(envelope, ackType, request);
-            request.getResponse();
+            request.sync();
         } catch (Exception ioe) {
             throw JmsExceptionSupport.create(ioe);
         }
@@ -675,9 +675,9 @@ public class JmsConnection implements Connection, TopicConnection, QueueConnecti
         //        we only care that the request hits the wire, not that
         //        any response comes back.
         try {
-            ProviderRequest<Void> request = new ProviderRequest<Void>();
+            ProviderFuture<Void> request = new ProviderFuture<Void>();
             provider.acknowledge(sessionId, request);
-            request.getResponse();
+            request.sync();
         } catch (Exception ioe) {
             throw JmsExceptionSupport.create(ioe);
         }
@@ -688,9 +688,9 @@ public class JmsConnection implements Connection, TopicConnection, QueueConnecti
         connect();
 
         try {
-            ProviderRequest<Void> request = new ProviderRequest<Void>();
+            ProviderFuture<Void> request = new ProviderFuture<Void>();
             provider.unsubscribe(name, request);
-            request.getResponse();
+            request.sync();
         } catch (Exception ioe) {
             throw JmsExceptionSupport.create(ioe);
         }
@@ -701,9 +701,9 @@ public class JmsConnection implements Connection, TopicConnection, QueueConnecti
         connect();
 
         try {
-            ProviderRequest<Void> request = new ProviderRequest<Void>();
+            ProviderFuture<Void> request = new ProviderFuture<Void>();
             provider.commit(sessionId, request);
-            request.getResponse();
+            request.sync();
         } catch (Exception ioe) {
             throw JmsExceptionSupport.create(ioe);
         }
@@ -714,9 +714,9 @@ public class JmsConnection implements Connection, TopicConnection, QueueConnecti
         connect();
 
         try {
-            ProviderRequest<Void> request = new ProviderRequest<Void>();
+            ProviderFuture<Void> request = new ProviderFuture<Void>();
             provider.rollback(sessionId, request);
-            request.getResponse();
+            request.sync();
         } catch (Exception ioe) {
             throw JmsExceptionSupport.create(ioe);
         }
@@ -727,9 +727,9 @@ public class JmsConnection implements Connection, TopicConnection, QueueConnecti
         connect();
 
         try {
-            ProviderRequest<Void> request = new ProviderRequest<Void>();
+            ProviderFuture<Void> request = new ProviderFuture<Void>();
             provider.recover(sessionId, request);
-            request.getResponse();
+            request.sync();
         } catch (Exception ioe) {
             throw JmsExceptionSupport.create(ioe);
         }
@@ -740,9 +740,9 @@ public class JmsConnection implements Connection, TopicConnection, QueueConnecti
         connect();
 
         try {
-            ProviderRequest<Void> request = new ProviderRequest<Void>();
+            ProviderFuture<Void> request = new ProviderFuture<Void>();
             provider.pull(consumerId, timeout, request);
-            request.getResponse();
+            request.sync();
         } catch (Exception ioe) {
             throw JmsExceptionSupport.create(ioe);
         }
@@ -1017,9 +1017,9 @@ public class JmsConnection implements Connection, TopicConnection, QueueConnecti
 
         LOG.debug("Connection {} is starting recovery.", connectionInfo.getConnectionId());
 
-        ProviderRequest<Void> request = new ProviderRequest<Void>();
+        ProviderFuture<Void> request = new ProviderFuture<Void>();
         provider.create(connectionInfo, request);
-        request.getResponse();
+        request.sync();
 
         for (JmsDestination tempDestination : tempDestinations.values()) {
             createResource(tempDestination);

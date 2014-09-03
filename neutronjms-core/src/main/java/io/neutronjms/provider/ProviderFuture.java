@@ -23,20 +23,20 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Asynchronous Provider response class.
+ * Asynchronous Provider Future class.
  */
-public class ProviderRequest<T> implements AsyncResult<T> {
+public class ProviderFuture<T> implements AsyncResult<T> {
 
     protected final CountDownLatch latch = new CountDownLatch(1);
     protected Throwable error;
     protected T result;
     protected final AsyncResult<T> watcher;
 
-    public ProviderRequest() {
+    public ProviderFuture() {
         this.watcher = null;
     }
 
-    public ProviderRequest(AsyncResult<T> watcher) {
+    public ProviderFuture(AsyncResult<T> watcher) {
         this.watcher = watcher;
     }
 
@@ -80,14 +80,14 @@ public class ProviderRequest<T> implements AsyncResult<T> {
      *
      * @throws IOException if an error occurs while waiting for the response.
      */
-    public T getResponse(long amount, TimeUnit unit) throws IOException {
+    public T sync(long amount, TimeUnit unit) throws IOException {
         try {
             latch.await(amount, unit);
         } catch (InterruptedException e) {
             Thread.interrupted();
             throw IOExceptionSupport.create(e);
         }
-        return getResult();
+        return doSync();
     }
 
     /**
@@ -97,17 +97,17 @@ public class ProviderRequest<T> implements AsyncResult<T> {
      *
      * @throws IOException if an error occurs while waiting for the response.
      */
-    public T getResponse() throws IOException {
+    public T sync() throws IOException {
         try {
             latch.await();
         } catch (InterruptedException e) {
             Thread.interrupted();
             throw IOExceptionSupport.create(e);
         }
-        return getResult();
+        return doSync();
     }
 
-    private T getResult() throws IOException {
+    private T doSync() throws IOException {
         Throwable cause = error;
         if (cause != null) {
             throw IOExceptionSupport.create(cause);

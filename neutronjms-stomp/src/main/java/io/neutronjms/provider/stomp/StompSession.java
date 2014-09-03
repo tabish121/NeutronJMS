@@ -23,7 +23,7 @@ import io.neutronjms.jms.meta.JmsProducerInfo;
 import io.neutronjms.jms.meta.JmsSessionId;
 import io.neutronjms.jms.meta.JmsSessionInfo;
 import io.neutronjms.provider.AsyncResult;
-import io.neutronjms.provider.ProviderRequest;
+import io.neutronjms.provider.ProviderFuture;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -211,7 +211,7 @@ public class StompSession {
      * at the time of the Session Acknowledge call to complete the acknowledge of all
      * their delivered messages.
      */
-    private static class AggregateResult extends ProviderRequest<Void> {
+    private static class AggregateResult extends ProviderFuture<Void> {
 
         private final AtomicInteger consumers;
 

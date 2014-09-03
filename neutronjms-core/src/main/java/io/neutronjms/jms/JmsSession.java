@@ -28,7 +28,7 @@ import io.neutronjms.jms.meta.JmsSessionId;
 import io.neutronjms.jms.meta.JmsSessionInfo;
 import io.neutronjms.provider.AsyncProvider;
 import io.neutronjms.provider.ProviderConstants.ACK_TYPE;
-import io.neutronjms.provider.ProviderRequest;
+import io.neutronjms.provider.ProviderFuture;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -958,9 +958,9 @@ public class JmsSession implements Session, QueueSession, TopicSession, JmsMessa
 
     protected void onConnectionRecovery(AsyncProvider provider) throws Exception {
 
-        ProviderRequest<Void> request = new ProviderRequest<Void>();
+        ProviderFuture<Void> request = new ProviderFuture<Void>();
         provider.create(sessionInfo, request);
-        request.getResponse();
+        request.sync();
 
         if (this.acknowledgementMode == SESSION_TRANSACTED) {
             if (transactionContext.isInTransaction()) {
