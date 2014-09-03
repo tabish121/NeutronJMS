@@ -77,12 +77,12 @@ public class StompConnection {
 
     private final StompJmsMessageFactory messageFactory;
     private final Map<JmsSessionId, StompSession> sessions = new HashMap<JmsSessionId, StompSession>();
-    private final Map<String, AsyncResult<Void>> requests = new HashMap<String, AsyncResult<Void>>();
+    private final Map<String, AsyncResult> requests = new HashMap<String, AsyncResult>();
     private final JmsConnectionInfo connectionInfo;
     private final StompProvider provider;
 
     private StompServerAdapter serverAdapter;
-    private AsyncResult<Void> pendingConnect;
+    private AsyncResult pendingConnect;
     private boolean connected;
     private long requestCounter;
     private String remoteSessionId;
@@ -122,7 +122,7 @@ public class StompConnection {
      *
      * @throws IOException if a connection attempt is in-progress or already connected.
      */
-    public void connect(AsyncResult<Void> request) throws IOException {
+    public void connect(AsyncResult request) throws IOException {
         if (connected || pendingConnect != null) {
             throw new IOException("The connection is already established");
         }
@@ -158,7 +158,7 @@ public class StompConnection {
      *
      * @throws IOException if a session with the same Id value already exists.
      */
-    public void createSession(JmsSessionInfo sessionInfo, AsyncResult<Void> request) throws IOException {
+    public void createSession(JmsSessionInfo sessionInfo, AsyncResult request) throws IOException {
         if (this.sessions.containsKey(sessionInfo.getSessionId())) {
             throw new IOException("A Session with the given ID already exists.");
         }
@@ -273,7 +273,7 @@ public class StompConnection {
             provider.fireProviderException(new IOException("Invalid Receipt frame received."));
         }
 
-        AsyncResult<Void> request = requests.remove(receipt);
+        AsyncResult request = requests.remove(receipt);
         if (request == null) {
             LOG.warn("received receipt for unknown request: " + receipt);
         }
@@ -295,7 +295,7 @@ public class StompConnection {
         String receipt = errorFrame.getProperty(RECEIPT_ID);
 
         if (receipt != null && !receipt.isEmpty()) {
-            AsyncResult<Void> request = requests.remove(receipt);
+            AsyncResult request = requests.remove(receipt);
             if (request != null) {
                 request.onFailure(error);
                 return;
@@ -392,7 +392,7 @@ public class StompConnection {
      *
      * @throws IOException if an error occurs while sending the request frame.
      */
-    public void request(StompFrame frame, AsyncResult<Void> request) throws IOException {
+    public void request(StompFrame frame, AsyncResult request) throws IOException {
         String receiptId = String.valueOf(getNextRequestId());
         frame.setProperty(RECEIPT_REQUESTED, receiptId);
         requests.put(receiptId, request);
@@ -407,11 +407,11 @@ public class StompConnection {
      *
      * @param <T>
      */
-    protected class ReceiptHandler implements AsyncResult<Void> {
+    protected class ReceiptHandler implements AsyncResult {
 
-        private final AsyncResult<Void> pending;
+        private final AsyncResult pending;
 
-        public ReceiptHandler(AsyncResult<Void> pending) {
+        public ReceiptHandler(AsyncResult pending) {
             this.pending = pending;
         }
 
@@ -426,13 +426,8 @@ public class StompConnection {
         }
 
         @Override
-        public void onSuccess(Void result) {
-            pending.onSuccess(result);
-        }
-
-        @Override
         public void onSuccess() {
-            onSuccess(null);
+            pending.onSuccess();
         }
     }
 

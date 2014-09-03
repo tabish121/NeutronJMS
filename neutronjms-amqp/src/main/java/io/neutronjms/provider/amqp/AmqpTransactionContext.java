@@ -66,7 +66,7 @@ public class AmqpTransactionContext extends AbstractAmqpResource<JmsSessionInfo,
     private final Set<AmqpConsumer> txConsumers = new LinkedHashSet<AmqpConsumer>();
 
     private Delivery pendingDelivery;
-    private AsyncResult<Void> pendingRequest;
+    private AsyncResult pendingRequest;
 
     /**
      * Creates a new AmqpTransaction instance.
@@ -91,7 +91,7 @@ public class AmqpTransactionContext extends AbstractAmqpResource<JmsSessionInfo,
                     current.setProviderHint(declared.getTxnId());
                     pendingDelivery.settle();
                     LOG.info("New TX started: {}", current.getProviderHint());
-                    AsyncResult<Void> request = this.pendingRequest;
+                    AsyncResult request = this.pendingRequest;
                     this.pendingRequest = null;
                     this.pendingDelivery = null;
                     request.onSuccess();
@@ -101,7 +101,7 @@ public class AmqpTransactionContext extends AbstractAmqpResource<JmsSessionInfo,
                     Rejected rejected = (Rejected) state;
                     TransactionRolledBackException ex =
                         new TransactionRolledBackException(rejected.getError().getDescription());
-                    AsyncResult<Void> request = this.pendingRequest;
+                    AsyncResult request = this.pendingRequest;
                     this.current = null;
                     this.pendingRequest = null;
                     this.pendingDelivery = null;
@@ -110,7 +110,7 @@ public class AmqpTransactionContext extends AbstractAmqpResource<JmsSessionInfo,
                 } else {
                     LOG.info("Last TX request succeeded: {}", current.getProviderHint());
                     pendingDelivery.settle();
-                    AsyncResult<Void> request = this.pendingRequest;
+                    AsyncResult request = this.pendingRequest;
                     if (pendingDelivery.getContext() != null) {
                         if (pendingDelivery.getContext().equals(COMMIT_MARKER)) {
                             postCommit();
@@ -147,7 +147,7 @@ public class AmqpTransactionContext extends AbstractAmqpResource<JmsSessionInfo,
     protected void doClose() {
     }
 
-    public void begin(JmsTransactionId txId, AsyncResult<Void> request) throws Exception {
+    public void begin(JmsTransactionId txId, AsyncResult request) throws Exception {
         if (current != null) {
             throw new IOException("Begin called while a TX is still Active.");
         }
@@ -163,7 +163,7 @@ public class AmqpTransactionContext extends AbstractAmqpResource<JmsSessionInfo,
         sendTxCommand(message);
     }
 
-    public void commit(AsyncResult<Void> request) throws Exception {
+    public void commit(AsyncResult request) throws Exception {
         if (current == null) {
             throw new IllegalStateException("Rollback called with no active Transaction.");
         }
@@ -183,7 +183,7 @@ public class AmqpTransactionContext extends AbstractAmqpResource<JmsSessionInfo,
         sendTxCommand(message);
     }
 
-    public void rollback(AsyncResult<Void> request) throws Exception {
+    public void rollback(AsyncResult request) throws Exception {
         if (current == null) {
             throw new IllegalStateException("Rollback called with no active Transaction.");
         }

@@ -49,7 +49,7 @@ public class OpenWireConnection implements OpenWireResource {
     private final io.openwire.utils.OpenWireConnection openWireConnection;
 
     private int requestSequence;
-    private final Map<Integer, AsyncResult<Void>> requests = new HashMap<Integer, AsyncResult<Void>>();
+    private final Map<Integer, AsyncResult> requests = new HashMap<Integer, AsyncResult>();
     private final Map<JmsSessionId, OpenWireSession> sessions = new HashMap<JmsSessionId, OpenWireSession>();
 
     /**
@@ -69,7 +69,7 @@ public class OpenWireConnection implements OpenWireResource {
     }
 
     @Override
-    public void open(AsyncResult<Void> request) throws Exception {
+    public void open(AsyncResult request) throws Exception {
         LOG.info("OpenWireConnection open called: {}", connectionInfo);
         openWireConnection.setClientId(connectionInfo.getClientId());
         openWireConnection.setFaultTolerant(false);
@@ -81,7 +81,7 @@ public class OpenWireConnection implements OpenWireResource {
     }
 
     @Override
-    public void close(AsyncResult<Void> request) throws Exception {
+    public void close(AsyncResult request) throws Exception {
         syncSend(openWireConnection.createRemoveInfo(), request);
     }
 
@@ -98,7 +98,7 @@ public class OpenWireConnection implements OpenWireResource {
      * @param destination
      * @param request
      */
-    public void createTemporaryDestination(JmsDestination destination, AsyncResult<Void> request) throws Exception {
+    public void createTemporaryDestination(JmsDestination destination, AsyncResult request) throws Exception {
         // TODO Auto-generated method stub
     }
 
@@ -106,7 +106,7 @@ public class OpenWireConnection implements OpenWireResource {
      * @param destination
      * @param request
      */
-    public void destroyTemporaryDestination(JmsDestination destination, AsyncResult<Void> request) throws Exception {
+    public void destroyTemporaryDestination(JmsDestination destination, AsyncResult request) throws Exception {
         // TODO Auto-generated method stub
     }
 
@@ -197,7 +197,7 @@ public class OpenWireConnection implements OpenWireResource {
      *
      * @throws IOException if an error occurs while sending the command.
      */
-    public void syncSend(Command command, AsyncResult<Void> request) throws IOException {
+    public void syncSend(Command command, AsyncResult request) throws IOException {
         command.setResponseRequired(true);
         command.setCommandId(++requestSequence);
 
@@ -217,7 +217,7 @@ public class OpenWireConnection implements OpenWireResource {
     public void processCommand(Command incoming) throws Exception {
         if (incoming.isResponse()) {
             Response response = (Response) incoming;
-            AsyncResult<Void> request = requests.remove(response.getCorrelationId());
+            AsyncResult request = requests.remove(response.getCorrelationId());
             if (request == null) {
                 LOG.warn("Received response for unkown request: {}", request);
                 return;
@@ -237,12 +237,12 @@ public class OpenWireConnection implements OpenWireResource {
     }
 
     @Override
-    public void onResponse(Response response, AsyncResult<Void> request) {
+    public void onResponse(Response response, AsyncResult request) {
         request.onSuccess();
     }
 
     @Override
-    public void onExceptionReponse(ExceptionResponse error, AsyncResult<Void> request) {
+    public void onExceptionReponse(ExceptionResponse error, AsyncResult request) {
         request.onFailure(error.getException());
     }
 }

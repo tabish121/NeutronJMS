@@ -87,7 +87,7 @@ public class AmqpConsumer extends AbstractAmqpResource<JmsConsumerInfo, Receiver
     /**
      * Starts the consumer by setting the link credit to the given prefetch value.
      */
-    public void start(AsyncResult<Void> request) {
+    public void start(AsyncResult request) {
         this.endpoint.flow(info.getPrefetchSize());
         request.onSuccess();
     }

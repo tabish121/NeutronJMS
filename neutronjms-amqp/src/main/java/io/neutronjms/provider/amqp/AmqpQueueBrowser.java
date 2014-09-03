@@ -46,7 +46,7 @@ public class AmqpQueueBrowser extends AmqpConsumer {
      * Starts the QueueBrowser by activating drain mode with the initial credits.
      */
     @Override
-    public void start(AsyncResult<Void> request) {
+    public void start(AsyncResult request) {
         this.endpoint.flow(info.getPrefetchSize());
         request.onSuccess();
     }

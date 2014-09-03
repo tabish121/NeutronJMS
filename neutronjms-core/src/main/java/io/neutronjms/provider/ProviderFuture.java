@@ -25,18 +25,17 @@ import java.util.concurrent.TimeUnit;
 /**
  * Asynchronous Provider Future class.
  */
-public class ProviderFuture<T> implements AsyncResult<T> {
+public class ProviderFuture implements AsyncResult {
 
     protected final CountDownLatch latch = new CountDownLatch(1);
     protected Throwable error;
-    protected T result;
-    protected final AsyncResult<T> watcher;
+    protected final AsyncResult watcher;
 
     public ProviderFuture() {
         this.watcher = null;
     }
 
-    public ProviderFuture(AsyncResult<T> watcher) {
+    public ProviderFuture(AsyncResult watcher) {
         this.watcher = watcher;
     }
 
@@ -55,17 +54,11 @@ public class ProviderFuture<T> implements AsyncResult<T> {
     }
 
     @Override
-    public void onSuccess(T result) {
-        this.result = result;
+    public void onSuccess() {
         latch.countDown();
         if (watcher != null) {
-            watcher.onSuccess(result);
+            watcher.onSuccess();
         }
-    }
-
-    @Override
-    public void onSuccess() {
-        onSuccess(null);
     }
 
     /**
@@ -80,14 +73,14 @@ public class ProviderFuture<T> implements AsyncResult<T> {
      *
      * @throws IOException if an error occurs while waiting for the response.
      */
-    public T sync(long amount, TimeUnit unit) throws IOException {
+    public void sync(long amount, TimeUnit unit) throws IOException {
         try {
             latch.await(amount, unit);
         } catch (InterruptedException e) {
             Thread.interrupted();
             throw IOExceptionSupport.create(e);
         }
-        return doSync();
+        failOnError();
     }
 
     /**
@@ -97,21 +90,20 @@ public class ProviderFuture<T> implements AsyncResult<T> {
      *
      * @throws IOException if an error occurs while waiting for the response.
      */
-    public T sync() throws IOException {
+    public void sync() throws IOException {
         try {
             latch.await();
         } catch (InterruptedException e) {
             Thread.interrupted();
             throw IOExceptionSupport.create(e);
         }
-        return doSync();
+        failOnError();
     }
 
-    private T doSync() throws IOException {
+    private void failOnError() throws IOException {
         Throwable cause = error;
         if (cause != null) {
             throw IOExceptionSupport.create(cause);
         }
-        return result;
     }
 }

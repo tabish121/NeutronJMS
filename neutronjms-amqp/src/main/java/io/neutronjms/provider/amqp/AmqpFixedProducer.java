@@ -77,7 +77,7 @@ public class AmqpFixedProducer extends AmqpProducer {
     }
 
     @Override
-    public void close(AsyncResult<Void> request) {
+    public void close(AsyncResult request) {
         // If any sends are held we need to wait for them to complete.
         if (!pendingSends.isEmpty()) {
             this.closeRequest = request;
@@ -88,7 +88,7 @@ public class AmqpFixedProducer extends AmqpProducer {
     }
 
     @Override
-    public boolean send(JmsOutboundMessageDispatch envelope, AsyncResult<Void> request) throws IOException, JMSException {
+    public boolean send(JmsOutboundMessageDispatch envelope, AsyncResult request) throws IOException, JMSException {
 
         // TODO - Handle the case where remote has no credit which means we can't send to it.
         //        We need to hold the send until remote credit becomes available but we should
@@ -106,7 +106,7 @@ public class AmqpFixedProducer extends AmqpProducer {
         }
     }
 
-    private void doSend(JmsOutboundMessageDispatch envelope, AsyncResult<Void> request) throws IOException, JMSException {
+    private void doSend(JmsOutboundMessageDispatch envelope, AsyncResult request) throws IOException, JMSException {
         JmsMessageFacade facade = envelope.getMessage().getFacade();
 
         LOG.trace("Producer sending message: {}", envelope.getMessage().getFacade().getMessageId());
@@ -240,8 +240,7 @@ public class AmqpFixedProducer extends AmqpProducer {
                 continue;
             }
 
-            @SuppressWarnings("unchecked")
-            AsyncResult<Void> request = (AsyncResult<Void>) delivery.getContext();
+            AsyncResult request = (AsyncResult) delivery.getContext();
 
             if (state instanceof Accepted) {
                 toRemove.add(delivery);
@@ -327,9 +326,9 @@ public class AmqpFixedProducer extends AmqpProducer {
     private class PendingSend {
 
         public JmsOutboundMessageDispatch envelope;
-        public AsyncResult<Void> request;
+        public AsyncResult request;
 
-        public PendingSend(JmsOutboundMessageDispatch envelope, AsyncResult<Void> request) {
+        public PendingSend(JmsOutboundMessageDispatch envelope, AsyncResult request) {
             this.envelope = envelope;
             this.request = request;
         }

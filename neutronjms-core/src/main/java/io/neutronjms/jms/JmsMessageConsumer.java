@@ -439,13 +439,13 @@ public class JmsMessageConsumer implements MessageConsumer, JmsMessageListener, 
     }
 
     protected void onConnectionRecovery(AsyncProvider provider) throws Exception {
-        ProviderFuture<Void> request = new ProviderFuture<Void>();
+        ProviderFuture request = new ProviderFuture();
         provider.create(consumerInfo, request);
         request.sync();
     }
 
     protected void onConnectionRecovered(AsyncProvider provider) throws Exception {
-        ProviderFuture<Void> request = new ProviderFuture<Void>();
+        ProviderFuture request = new ProviderFuture();
         provider.start(consumerInfo, request);
         request.sync();
     }

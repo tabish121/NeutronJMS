@@ -70,7 +70,7 @@ public class StompSession {
      *
      * @throws IOException if an error occurs while closing a consumer.
      */
-    public void close(AsyncResult<Void> request) throws IOException {
+    public void close(AsyncResult request) throws IOException {
         if (consumers.isEmpty()) {
             request.onSuccess();
         }
@@ -91,7 +91,7 @@ public class StompSession {
      * @param request
      *        the asynchronous request that is waiting for this action to complete.
      */
-    public void createProducer(JmsProducerInfo producerInfo, AsyncResult<Void> request) {
+    public void createProducer(JmsProducerInfo producerInfo, AsyncResult request) {
         StompProducer producer = new StompProducer(this, producerInfo);
         producers.put(producerInfo.getProducerId(), producer);
         request.onSuccess();
@@ -121,7 +121,7 @@ public class StompSession {
      * @throws IOException if an error occurs on sending the subscribe request.
      * @throws JMSException if there is an error creating the requested type of subscription.
      */
-    public void createConsumer(JmsConsumerInfo consumerInfo, AsyncResult<Void> request) throws JMSException, IOException {
+    public void createConsumer(JmsConsumerInfo consumerInfo, AsyncResult request) throws JMSException, IOException {
         if (consumerInfo.getPrefetchSize() == 0) {
             throw new JMSException("Cannot create a consumer with Zero Prefetch in STOMP");
         }
@@ -154,7 +154,7 @@ public class StompSession {
      *
      * @throws IOException if an error occurs sending any ACK frames.
      */
-    public void acknowledge(AsyncResult<Void> request) throws IOException {
+    public void acknowledge(AsyncResult request) throws IOException {
         AggregateResult pending = new AggregateResult(consumers.size(), request);
         for (StompConsumer consumer : consumers.values()) {
             consumer.acknowledge(pending);
@@ -171,14 +171,14 @@ public class StompSession {
     /**
      * @param request
      */
-    public void rollback(AsyncResult<Void> request) {
+    public void rollback(AsyncResult request) {
         // TODO Auto-generated method stub
     }
 
     /**
      * @param request
      */
-    public void commit(AsyncResult<Void> request) {
+    public void commit(AsyncResult request) {
         // TODO Auto-generated method stub
     }
 
@@ -211,19 +211,19 @@ public class StompSession {
      * at the time of the Session Acknowledge call to complete the acknowledge of all
      * their delivered messages.
      */
-    private static class AggregateResult extends ProviderFuture<Void> {
+    private static class AggregateResult extends ProviderFuture {
 
         private final AtomicInteger consumers;
 
-        public AggregateResult(int numConsumers, AsyncResult<Void> request) {
+        public AggregateResult(int numConsumers, AsyncResult request) {
             super(request);
             this.consumers = new AtomicInteger(numConsumers);
         }
 
         @Override
-        public void onSuccess(Void result) {
+        public void onSuccess() {
             if (consumers.decrementAndGet() == 0) {
-                super.onSuccess(result);
+                super.onSuccess();
             }
         }
     }

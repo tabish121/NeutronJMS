@@ -59,7 +59,7 @@ public abstract class AmqpProducer extends AbstractAmqpResource<JmsProducerInfo,
      * @throws IOException if an error occurs sending the message
      * @throws JMSException if an error occurs while preparing the message for send.
      */
-    public abstract boolean send(JmsOutboundMessageDispatch envelope, AsyncResult<Void> request) throws IOException, JMSException;
+    public abstract boolean send(JmsOutboundMessageDispatch envelope, AsyncResult request) throws IOException, JMSException;
 
     /**
      * @return true if this is an anonymous producer or false if fixed to a given destination.

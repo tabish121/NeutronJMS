@@ -37,14 +37,14 @@ public class OpenWireProducer {
     /**
      * @param request
      */
-    public void open(AsyncResult<Void> request) {
+    public void open(AsyncResult request) {
         // TODO Auto-generated method stub
     }
 
     /**
      * @param request
      */
-    public void close(AsyncResult<Void> request) {
+    public void close(AsyncResult request) {
         // TODO Auto-generated method stub
     }
 
@@ -52,7 +52,7 @@ public class OpenWireProducer {
      * @param envelope
      * @param request
      */
-    public void send(JmsOutboundMessageDispatch envelope, AsyncResult<Void> request) {
+    public void send(JmsOutboundMessageDispatch envelope, AsyncResult request) {
         // TODO Auto-generated method stub
     }
 

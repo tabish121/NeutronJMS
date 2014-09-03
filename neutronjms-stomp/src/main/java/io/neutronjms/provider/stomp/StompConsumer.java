@@ -99,7 +99,7 @@ public class StompConsumer {
      * @throws JMSException if the subscription requested is not supported or invalid.
      * @throws IOException if an error occurs while sending the frame.
      */
-    public void subscribe(AsyncResult<Void> request) throws JMSException, IOException {
+    public void subscribe(AsyncResult request) throws JMSException, IOException {
         StompFrame subscribe = new StompFrame(SUBSCRIBE);
         subscribe.setProperty(ID, consumerInfo.getConsumerId().toString());
         subscribe.setProperty(DESTINATION, adapter.toStompDestination(consumerInfo.getDestination()));
@@ -123,7 +123,7 @@ public class StompConsumer {
      * @param request
      *        the request that initiated this operation/
      */
-    public void close(AsyncResult<Void> request) throws IOException {
+    public void close(AsyncResult request) throws IOException {
         session.removeConsumer(getConsumerId());
         StompFrame frame = new StompFrame(UNSUBSCRIBE);
         frame.setProperty(ID, consumerInfo.getConsumerId().toString());
@@ -163,7 +163,7 @@ public class StompConsumer {
      *
      * @throws IOException if an error occurs while sending the ACK frame.
      */
-    public void acknowledge(AsyncResult<Void> request) throws IOException {
+    public void acknowledge(AsyncResult request) throws IOException {
         LOG.trace("Session Acknowledge for consumer: {}", getConsumerId());
 
         // STOMP client Ack messages are cumulative so one frame is all we need.
@@ -189,7 +189,7 @@ public class StompConsumer {
      *
      * @throws IOException if an error occurs while writing the frame.
      */
-    public void acknowledge(JmsInboundMessageDispatch envelope, ACK_TYPE ackType, AsyncResult<Void> request) throws IOException {
+    public void acknowledge(JmsInboundMessageDispatch envelope, ACK_TYPE ackType, AsyncResult request) throws IOException {
         StompFrame messageFrame = (StompFrame) envelope.getProviderHint();
         JmsMessageId messageId;
         try {

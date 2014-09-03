@@ -35,7 +35,7 @@ public interface AmqpResource {
      * @param request
      *        The initiating request that triggered this open call.
      */
-    void open(AsyncResult<Void> request);
+    void open(AsyncResult request);
 
     /**
      * @return if the resource has moved to the opened state on the remote.
@@ -60,7 +60,7 @@ public interface AmqpResource {
      * @param request
      *        The initiating request that triggered this close call.
      */
-    void close(AsyncResult<Void> request);
+    void close(AsyncResult request);
 
     /**
      * @return if the resource has moved to the closed state on the remote.

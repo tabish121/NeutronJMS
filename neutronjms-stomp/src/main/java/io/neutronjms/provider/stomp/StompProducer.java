@@ -59,7 +59,7 @@ public class StompProducer {
      * @param request
      *        the asynchronous request instance awaiting completion of this action.
      */
-    public void close(AsyncResult<Void> request) {
+    public void close(AsyncResult request) {
         session.removeProducer(getProducerId());
         request.onSuccess();
     }
@@ -72,7 +72,7 @@ public class StompProducer {
      * @param request
      *        the asynchronous request that will await the completed send operation.
      */
-    public void send(JmsOutboundMessageDispatch envelope, AsyncResult<Void> request) throws IOException {
+    public void send(JmsOutboundMessageDispatch envelope, AsyncResult request) throws IOException {
         StompJmsMessageFacade facade = (StompJmsMessageFacade) envelope.getMessage().getFacade();
         StompFrame sendFrame = facade.getStompMessage();
 

@@ -57,7 +57,7 @@ public class AmqpAnonymousProducer extends AmqpProducer {
     }
 
     @Override
-    public boolean send(JmsOutboundMessageDispatch envelope, AsyncResult<Void> request) throws IOException, JMSException {
+    public boolean send(JmsOutboundMessageDispatch envelope, AsyncResult request) throws IOException, JMSException {
 
         LOG.trace("Started send chain for anonymous producer: {}", getProducerId());
 
@@ -78,17 +78,17 @@ public class AmqpAnonymousProducer extends AmqpProducer {
     }
 
     @Override
-    public void open(AsyncResult<Void> request) {
+    public void open(AsyncResult request) {
         // Trigger an immediate open, we don't talk to the Broker until
         // a send occurs so we must not let the client block.
         request.onSuccess();
     }
 
     @Override
-    public void close(AsyncResult<Void> request) {
+    public void close(AsyncResult request) {
         // Trigger an immediate close, the internal producers that are currently in a send
         // will track their own state and close as the send completes or fails.
-        request.onSuccess(null);
+        request.onSuccess();
     }
 
     @Override
@@ -118,13 +118,13 @@ public class AmqpAnonymousProducer extends AmqpProducer {
         return new JmsProducerId(producerIdKey, -1, producerIdCount++);
     }
 
-    private abstract class AnonymousRequest<T> implements AsyncResult<T> {
+    private abstract class AnonymousRequest implements AsyncResult {
 
-        protected final AsyncResult<Void> sendResult;
+        protected final AsyncResult sendResult;
         protected final AmqpProducer producer;
         protected final JmsOutboundMessageDispatch envelope;
 
-        public AnonymousRequest(AsyncResult<Void> sendResult, AmqpProducer producer, JmsOutboundMessageDispatch envelope) {
+        public AnonymousRequest(AsyncResult sendResult, AmqpProducer producer, JmsOutboundMessageDispatch envelope) {
             this.sendResult = sendResult;
             this.producer = producer;
             this.envelope = envelope;
@@ -133,11 +133,6 @@ public class AmqpAnonymousProducer extends AmqpProducer {
         @Override
         public boolean isComplete() {
             return sendResult.isComplete();
-        }
-
-        @Override
-        public void onSuccess() {
-            onSuccess(null);
         }
 
         /**
@@ -151,14 +146,14 @@ public class AmqpAnonymousProducer extends AmqpProducer {
         }
     }
 
-    private final class AnonymousOpenRequest extends AnonymousRequest<Void> {
+    private final class AnonymousOpenRequest extends AnonymousRequest {
 
-        public AnonymousOpenRequest(AsyncResult<Void> sendResult, AmqpProducer producer, JmsOutboundMessageDispatch envelope) {
+        public AnonymousOpenRequest(AsyncResult sendResult, AmqpProducer producer, JmsOutboundMessageDispatch envelope) {
             super(sendResult, producer, envelope);
         }
 
         @Override
-        public void onSuccess(Void result) {
+        public void onSuccess() {
             LOG.trace("Open phase of anonymous send complete: {} ", getProducerId());
             AnonymousSendRequest send = new AnonymousSendRequest(this);
             try {
@@ -169,30 +164,30 @@ public class AmqpAnonymousProducer extends AmqpProducer {
         }
     }
 
-    private final class AnonymousSendRequest extends AnonymousRequest<Void> {
+    private final class AnonymousSendRequest extends AnonymousRequest {
 
         public AnonymousSendRequest(AnonymousOpenRequest open) {
             super(open.sendResult, open.producer, open.envelope);
         }
 
         @Override
-        public void onSuccess(Void result) {
+        public void onSuccess() {
             LOG.trace("Send phase of anonymous send complete: {} ", getProducerId());
             AnonymousCloseRequest close = new AnonymousCloseRequest(this);
             producer.close(close);
         }
     }
 
-    private final class AnonymousCloseRequest extends AnonymousRequest<Void> {
+    private final class AnonymousCloseRequest extends AnonymousRequest {
 
         public AnonymousCloseRequest(AnonymousSendRequest send) {
             super(send.sendResult, send.producer, send.envelope);
         }
 
         @Override
-        public void onSuccess(Void result) {
+        public void onSuccess() {
             LOG.trace("Close phase of anonymous send complete: {} ", getProducerId());
-            sendResult.onSuccess(null);
+            sendResult.onSuccess();
         }
     }
 }

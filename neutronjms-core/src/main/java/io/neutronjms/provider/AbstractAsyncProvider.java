@@ -68,22 +68,22 @@ public abstract class AbstractAsyncProvider implements AsyncProvider {
     }
 
     @Override
-    public void commit(JmsSessionId sessionId, AsyncResult<Void> request) throws IOException, JMSException, UnsupportedOperationException {
+    public void commit(JmsSessionId sessionId, AsyncResult request) throws IOException, JMSException, UnsupportedOperationException {
         throw new UnsupportedOperationException("Provider does not support Transactions");
     }
 
     @Override
-    public void rollback(JmsSessionId sessionId, AsyncResult<Void> request) throws IOException, JMSException, UnsupportedOperationException {
+    public void rollback(JmsSessionId sessionId, AsyncResult request) throws IOException, JMSException, UnsupportedOperationException {
         throw new UnsupportedOperationException("Provider does not support Transactions");
     }
 
     @Override
-    public void unsubscribe(String subscription, AsyncResult<Void> request) throws IOException, JMSException, UnsupportedOperationException {
+    public void unsubscribe(String subscription, AsyncResult request) throws IOException, JMSException, UnsupportedOperationException {
         throw new UnsupportedOperationException("Provider does not support unsubscribe operations");
     }
 
     @Override
-    public void pull(JmsConsumerId consumerId, long timeout, AsyncResult<Void> request) throws IOException, UnsupportedOperationException {
+    public void pull(JmsConsumerId consumerId, long timeout, AsyncResult request) throws IOException, UnsupportedOperationException {
         throw new UnsupportedOperationException("Provider does not support message pull");
     }
 

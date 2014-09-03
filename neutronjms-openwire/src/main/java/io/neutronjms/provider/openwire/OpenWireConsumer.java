@@ -38,21 +38,21 @@ public class OpenWireConsumer {
     /**
      * @param request
      */
-    public void open(AsyncResult<Void> request) {
+    public void open(AsyncResult request) {
         // TODO Auto-generated method stub
     }
 
     /**
      * @param request
      */
-    public void close(AsyncResult<Void> request) {
+    public void close(AsyncResult request) {
         // TODO Auto-generated method stub
     }
 
     /**
      * @param request
      */
-    public void start(AsyncResult<Void> request) {
+    public void start(AsyncResult request) {
         // TODO Auto-generated method stub
     }
 
@@ -68,7 +68,7 @@ public class OpenWireConsumer {
      * @param ackType
      * @param request
      */
-    public void acknowledge(JmsInboundMessageDispatch envelope, ACK_TYPE ackType, AsyncResult<Void> request) {
+    public void acknowledge(JmsInboundMessageDispatch envelope, ACK_TYPE ackType, AsyncResult request) {
         // TODO Auto-generated method stub
     }
 

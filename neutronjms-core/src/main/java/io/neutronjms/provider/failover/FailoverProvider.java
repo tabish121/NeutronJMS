@@ -30,8 +30,8 @@ import io.neutronjms.provider.AsyncResult;
 import io.neutronjms.provider.DefaultProviderListener;
 import io.neutronjms.provider.ProviderConstants.ACK_TYPE;
 import io.neutronjms.provider.ProviderFactory;
-import io.neutronjms.provider.ProviderListener;
 import io.neutronjms.provider.ProviderFuture;
+import io.neutronjms.provider.ProviderListener;
 import io.neutronjms.util.IOExceptionSupport;
 
 import java.io.IOException;
@@ -75,7 +75,7 @@ public class FailoverProvider extends DefaultProviderListener implements AsyncPr
     private final AtomicBoolean closed = new AtomicBoolean();
     private final AtomicBoolean failed = new AtomicBoolean();
     private final AtomicLong requestId = new AtomicLong();
-    private final Map<Long, FailoverRequest<?>> requests = new LinkedHashMap<Long, FailoverRequest<?>>();
+    private final Map<Long, FailoverRequest> requests = new LinkedHashMap<Long, FailoverRequest>();
     private final DefaultProviderListener closedListener = new DefaultProviderListener();
     private final JmsSslContext sslContext;
     private final JmsMessageFactory defaultMessageFactory = new JmsDefaultMessageFactory();
@@ -159,15 +159,15 @@ public class FailoverProvider extends DefaultProviderListener implements AsyncPr
     @Override
     public void close() {
         if (closed.compareAndSet(false, true)) {
-            final ProviderFuture<Void> request = new ProviderFuture<Void>();
+            final ProviderFuture request = new ProviderFuture();
             serializer.execute(new Runnable() {
 
                 @Override
                 public void run() {
                     try {
                         IOException error = failureCause != null ? failureCause : new IOException("Connection closed");
-                        List<FailoverRequest<?>> pending = new ArrayList<FailoverRequest<?>>(requests.values());
-                        for (FailoverRequest<?> request : pending) {
+                        List<FailoverRequest> pending = new ArrayList<FailoverRequest>(requests.values());
+                        for (FailoverRequest request : pending) {
                             request.onFailure(error);
                         }
 
@@ -186,7 +186,7 @@ public class FailoverProvider extends DefaultProviderListener implements AsyncPr
                             serializer.shutdown();
                         }
 
-                        request.onSuccess(null);
+                        request.onSuccess();
                     }
                 }
             });
@@ -204,9 +204,9 @@ public class FailoverProvider extends DefaultProviderListener implements AsyncPr
     }
 
     @Override
-    public void create(final JmsResource resource, AsyncResult<Void> request) throws IOException, JMSException, UnsupportedOperationException {
+    public void create(final JmsResource resource, AsyncResult request) throws IOException, JMSException, UnsupportedOperationException {
         checkClosed();
-        final FailoverRequest<Void> pending = new FailoverRequest<Void>(request) {
+        final FailoverRequest pending = new FailoverRequest(request) {
             @Override
             public void doTask() throws Exception {
                 if (resource instanceof JmsConnectionInfo) {
@@ -225,9 +225,9 @@ public class FailoverProvider extends DefaultProviderListener implements AsyncPr
     }
 
     @Override
-    public void start(final JmsResource resource, final AsyncResult<Void> request) throws IOException, JMSException {
+    public void start(final JmsResource resource, final AsyncResult request) throws IOException, JMSException {
         checkClosed();
-        final FailoverRequest<Void> pending = new FailoverRequest<Void>(request) {
+        final FailoverRequest pending = new FailoverRequest(request) {
             @Override
             public void doTask() throws Exception {
                 provider.start(resource, this);
@@ -238,9 +238,9 @@ public class FailoverProvider extends DefaultProviderListener implements AsyncPr
     }
 
     @Override
-    public void destroy(final JmsResource resourceId, AsyncResult<Void> request) throws IOException, JMSException, UnsupportedOperationException {
+    public void destroy(final JmsResource resourceId, AsyncResult request) throws IOException, JMSException, UnsupportedOperationException {
         checkClosed();
-        final FailoverRequest<Void> pending = new FailoverRequest<Void>(request) {
+        final FailoverRequest pending = new FailoverRequest(request) {
             @Override
             public void doTask() throws IOException, JMSException, UnsupportedOperationException {
                 provider.destroy(resourceId, this);
@@ -257,9 +257,9 @@ public class FailoverProvider extends DefaultProviderListener implements AsyncPr
     }
 
     @Override
-    public void send(final JmsOutboundMessageDispatch envelope, AsyncResult<Void> request) throws IOException, JMSException {
+    public void send(final JmsOutboundMessageDispatch envelope, AsyncResult request) throws IOException, JMSException {
         checkClosed();
-        final FailoverRequest<Void> pending = new FailoverRequest<Void>(request) {
+        final FailoverRequest pending = new FailoverRequest(request) {
             @Override
             public void doTask() throws Exception {
                 provider.send(envelope, this);
@@ -270,9 +270,9 @@ public class FailoverProvider extends DefaultProviderListener implements AsyncPr
     }
 
     @Override
-    public void acknowledge(final JmsSessionId sessionId, AsyncResult<Void> request) throws IOException, JMSException {
+    public void acknowledge(final JmsSessionId sessionId, AsyncResult request) throws IOException, JMSException {
         checkClosed();
-        final FailoverRequest<Void> pending = new FailoverRequest<Void>(request) {
+        final FailoverRequest pending = new FailoverRequest(request) {
             @Override
             public void doTask() throws Exception {
                 provider.acknowledge(sessionId, this);
@@ -289,9 +289,9 @@ public class FailoverProvider extends DefaultProviderListener implements AsyncPr
     }
 
     @Override
-    public void acknowledge(final JmsInboundMessageDispatch envelope, final ACK_TYPE ackType, AsyncResult<Void> request) throws IOException, JMSException {
+    public void acknowledge(final JmsInboundMessageDispatch envelope, final ACK_TYPE ackType, AsyncResult request) throws IOException, JMSException {
         checkClosed();
-        final FailoverRequest<Void> pending = new FailoverRequest<Void>(request) {
+        final FailoverRequest pending = new FailoverRequest(request) {
             @Override
             public void doTask() throws Exception {
                 provider.acknowledge(envelope, ackType, this);
@@ -308,9 +308,9 @@ public class FailoverProvider extends DefaultProviderListener implements AsyncPr
     }
 
     @Override
-    public void commit(final JmsSessionId sessionId, AsyncResult<Void> request) throws IOException, JMSException, UnsupportedOperationException {
+    public void commit(final JmsSessionId sessionId, AsyncResult request) throws IOException, JMSException, UnsupportedOperationException {
         checkClosed();
-        final FailoverRequest<Void> pending = new FailoverRequest<Void>(request) {
+        final FailoverRequest pending = new FailoverRequest(request) {
             @Override
             public void doTask() throws Exception {
                 provider.commit(sessionId, this);
@@ -326,9 +326,9 @@ public class FailoverProvider extends DefaultProviderListener implements AsyncPr
     }
 
     @Override
-    public void rollback(final JmsSessionId sessionId, AsyncResult<Void> request) throws IOException, JMSException, UnsupportedOperationException {
+    public void rollback(final JmsSessionId sessionId, AsyncResult request) throws IOException, JMSException, UnsupportedOperationException {
         checkClosed();
-        final FailoverRequest<Void> pending = new FailoverRequest<Void>(request) {
+        final FailoverRequest pending = new FailoverRequest(request) {
             @Override
             public void doTask() throws Exception {
                 provider.rollback(sessionId, this);
@@ -345,9 +345,9 @@ public class FailoverProvider extends DefaultProviderListener implements AsyncPr
 
 
     @Override
-    public void recover(final JmsSessionId sessionId, final AsyncResult<Void> request) throws IOException, UnsupportedOperationException {
+    public void recover(final JmsSessionId sessionId, final AsyncResult request) throws IOException, UnsupportedOperationException {
         checkClosed();
-        final FailoverRequest<Void> pending = new FailoverRequest<Void>(request) {
+        final FailoverRequest pending = new FailoverRequest(request) {
             @Override
             public void doTask() throws Exception {
                 provider.recover(sessionId, this);
@@ -363,9 +363,9 @@ public class FailoverProvider extends DefaultProviderListener implements AsyncPr
     }
 
     @Override
-    public void unsubscribe(final String subscription, AsyncResult<Void> request) throws IOException, JMSException, UnsupportedOperationException {
+    public void unsubscribe(final String subscription, AsyncResult request) throws IOException, JMSException, UnsupportedOperationException {
         checkClosed();
-        final FailoverRequest<Void> pending = new FailoverRequest<Void>(request) {
+        final FailoverRequest pending = new FailoverRequest(request) {
             @Override
             public void doTask() throws Exception {
                 provider.unsubscribe(subscription, this);
@@ -376,9 +376,9 @@ public class FailoverProvider extends DefaultProviderListener implements AsyncPr
     }
 
     @Override
-    public void pull(final JmsConsumerId consumerId, final long timeout, final AsyncResult<Void> request) throws IOException, UnsupportedOperationException {
+    public void pull(final JmsConsumerId consumerId, final long timeout, final AsyncResult request) throws IOException, UnsupportedOperationException {
         checkClosed();
-        final FailoverRequest<Void> pending = new FailoverRequest<Void>(request) {
+        final FailoverRequest pending = new FailoverRequest(request) {
             @Override
             public void doTask() throws Exception {
                 provider.pull(consumerId, timeout, this);
@@ -462,8 +462,8 @@ public class FailoverProvider extends DefaultProviderListener implements AsyncPr
                         FailoverProvider.this.provider = provider;
                         provider.setProviderListener(FailoverProvider.this);
 
-                        List<FailoverRequest<?>> pending = new ArrayList<FailoverRequest<?>>(requests.values());
-                        for (FailoverRequest<?> request : pending) {
+                        List<FailoverRequest> pending = new ArrayList<FailoverRequest>(requests.values());
+                        for (FailoverRequest request : pending) {
                             request.run();
                         }
                     } else {
@@ -479,8 +479,8 @@ public class FailoverProvider extends DefaultProviderListener implements AsyncPr
 
                         listener.onConnectionRestored();
 
-                        List<FailoverRequest<?>> pending = new ArrayList<FailoverRequest<?>>(requests.values());
-                        for (FailoverRequest<?> request : pending) {
+                        List<FailoverRequest> pending = new ArrayList<FailoverRequest>(requests.values());
+                        for (FailoverRequest request : pending) {
                             request.run();
                         }
 
@@ -772,11 +772,11 @@ public class FailoverProvider extends DefaultProviderListener implements AsyncPr
      *
      * @param <T>
      */
-    protected abstract class FailoverRequest<T> extends ProviderFuture<T> implements Runnable {
+    protected abstract class FailoverRequest extends ProviderFuture implements Runnable {
 
         private final long id = requestId.incrementAndGet();
 
-        public FailoverRequest(AsyncResult<T> watcher) {
+        public FailoverRequest(AsyncResult watcher) {
             super(watcher);
         }
 
@@ -788,7 +788,7 @@ public class FailoverProvider extends DefaultProviderListener implements AsyncPr
                     requests.remove(id);
                     watcher.onFailure(new IOException("Provider disconnected"));
                 } else if (succeedsWhenOffline()) {
-                    onSuccess(null);
+                    onSuccess();
                 }
             } else {
                 try {
@@ -822,9 +822,9 @@ public class FailoverProvider extends DefaultProviderListener implements AsyncPr
         }
 
         @Override
-        public void onSuccess(T result) {
+        public void onSuccess() {
             requests.remove(id);
-            super.onSuccess(result);
+            super.onSuccess();
         }
 
         /**

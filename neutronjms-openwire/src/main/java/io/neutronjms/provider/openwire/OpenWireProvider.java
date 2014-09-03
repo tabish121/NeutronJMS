@@ -35,7 +35,6 @@ import io.neutronjms.provider.AbstractAsyncProvider;
 import io.neutronjms.provider.AsyncResult;
 import io.neutronjms.provider.ProviderConstants.ACK_TYPE;
 import io.neutronjms.provider.ProviderFuture;
-import io.neutronjms.transports.RawTcpTransport;
 import io.neutronjms.transports.TcpTransport;
 import io.neutronjms.transports.Transport;
 import io.neutronjms.transports.TransportListener;
@@ -77,7 +76,7 @@ public class OpenWireProvider extends AbstractAsyncProvider implements Transport
     private BrokerInfo brokerInfo;
 
     private boolean wireFormatNegotiationComplete;
-    private AsyncResult<Void> onWireFormatNegotiated;
+    private AsyncResult onWireFormatNegotiated;
 
     private long connectTimeout = JmsConnectionInfo.DEFAULT_CONNECT_TIMEOUT;
     private long closeTimeout = JmsConnectionInfo.DEFAULT_CLOSE_TIMEOUT;
@@ -130,7 +129,7 @@ public class OpenWireProvider extends AbstractAsyncProvider implements Transport
     @Override
     public void close() {
         if (closed.compareAndSet(false, true)) {
-            final ProviderFuture<Void> request = new ProviderFuture<Void>();
+            final ProviderFuture request = new ProviderFuture();
             serializer.execute(new Runnable() {
 
                 @Override
@@ -170,7 +169,7 @@ public class OpenWireProvider extends AbstractAsyncProvider implements Transport
     }
 
     @Override
-    public void create(final JmsResource resource, final AsyncResult<Void> request) throws IOException, JMSException {
+    public void create(final JmsResource resource, final AsyncResult request) throws IOException, JMSException {
         checkClosed();
         serializer.execute(new Runnable() {
 
@@ -211,7 +210,7 @@ public class OpenWireProvider extends AbstractAsyncProvider implements Transport
                             if (wireFormatNegotiationComplete) {
                                 connection.open(request);
                             } else {
-                                onWireFormatNegotiated = new AsyncResult<Void>() {
+                                onWireFormatNegotiated = new AsyncResult() {
 
                                     @Override
                                     public void onFailure(Throwable result) {
@@ -219,17 +218,12 @@ public class OpenWireProvider extends AbstractAsyncProvider implements Transport
                                     }
 
                                     @Override
-                                    public void onSuccess(Void result) {
+                                    public void onSuccess() {
                                         try {
                                             connection.open(request);
                                         } catch (Exception e) {
                                             request.onFailure(e);
                                         }
-                                    }
-
-                                    @Override
-                                    public void onSuccess() {
-                                        onSuccess(null);
                                     }
 
                                     @Override
@@ -264,7 +258,7 @@ public class OpenWireProvider extends AbstractAsyncProvider implements Transport
     }
 
     @Override
-    public void start(final JmsResource resource, final AsyncResult<Void> request) throws IOException {
+    public void start(final JmsResource resource, final AsyncResult request) throws IOException {
         checkClosed();
         serializer.execute(new Runnable() {
 
@@ -294,7 +288,7 @@ public class OpenWireProvider extends AbstractAsyncProvider implements Transport
     }
 
     @Override
-    public void destroy(final JmsResource resource, final AsyncResult<Void> request) throws IOException {
+    public void destroy(final JmsResource resource, final AsyncResult request) throws IOException {
         checkClosed();
         serializer.execute(new Runnable() {
 
@@ -334,7 +328,7 @@ public class OpenWireProvider extends AbstractAsyncProvider implements Transport
                             if (destination.isTemporary()) {
                                 connection.destroyTemporaryDestination(destination, request);
                             } else {
-                                request.onSuccess(null);
+                                request.onSuccess();
                             }
                         }
                     });
@@ -346,7 +340,7 @@ public class OpenWireProvider extends AbstractAsyncProvider implements Transport
     }
 
     @Override
-    public void send(final JmsOutboundMessageDispatch envelope, final AsyncResult<Void> request) throws IOException, JMSException {
+    public void send(final JmsOutboundMessageDispatch envelope, final AsyncResult request) throws IOException, JMSException {
         checkClosed();
         serializer.execute(new Runnable() {
 
@@ -365,7 +359,7 @@ public class OpenWireProvider extends AbstractAsyncProvider implements Transport
     }
 
     @Override
-    public void acknowledge(final JmsSessionId sessionId, final AsyncResult<Void> request) throws IOException {
+    public void acknowledge(final JmsSessionId sessionId, final AsyncResult request) throws IOException {
         checkClosed();
         serializer.execute(new Runnable() {
 
@@ -383,7 +377,7 @@ public class OpenWireProvider extends AbstractAsyncProvider implements Transport
     }
 
     @Override
-    public void acknowledge(final JmsInboundMessageDispatch envelope, final ACK_TYPE ackType, final AsyncResult<Void> request) throws IOException {
+    public void acknowledge(final JmsInboundMessageDispatch envelope, final ACK_TYPE ackType, final AsyncResult request) throws IOException {
         checkClosed();
         serializer.execute(new Runnable() {
 
@@ -402,7 +396,7 @@ public class OpenWireProvider extends AbstractAsyncProvider implements Transport
     }
 
     @Override
-    public void commit(final JmsSessionId sessionId, final AsyncResult<Void> request) throws IOException, JMSException, UnsupportedOperationException {
+    public void commit(final JmsSessionId sessionId, final AsyncResult request) throws IOException, JMSException, UnsupportedOperationException {
         checkClosed();
         serializer.execute(new Runnable() {
 
@@ -420,7 +414,7 @@ public class OpenWireProvider extends AbstractAsyncProvider implements Transport
     }
 
     @Override
-    public void rollback(final JmsSessionId sessionId, final AsyncResult<Void> request) throws IOException, JMSException, UnsupportedOperationException {
+    public void rollback(final JmsSessionId sessionId, final AsyncResult request) throws IOException, JMSException, UnsupportedOperationException {
         checkClosed();
         serializer.execute(new Runnable() {
 
@@ -438,7 +432,7 @@ public class OpenWireProvider extends AbstractAsyncProvider implements Transport
     }
 
     @Override
-    public void recover(final JmsSessionId sessionId, final AsyncResult<Void> request) throws IOException, UnsupportedOperationException {
+    public void recover(final JmsSessionId sessionId, final AsyncResult request) throws IOException, UnsupportedOperationException {
         checkClosed();
         serializer.execute(new Runnable() {
 
@@ -457,7 +451,7 @@ public class OpenWireProvider extends AbstractAsyncProvider implements Transport
     }
 
     @Override
-    public void pull(final JmsConsumerId consumerId, final long timeout, final AsyncResult<Void> request) throws IOException, UnsupportedOperationException {
+    public void pull(final JmsConsumerId consumerId, final long timeout, final AsyncResult request) throws IOException, UnsupportedOperationException {
         checkClosed();
         serializer.execute(new Runnable() {
 
@@ -477,7 +471,7 @@ public class OpenWireProvider extends AbstractAsyncProvider implements Transport
     }
 
     @Override
-    public void unsubscribe(final String subscription, final AsyncResult<Void> request) throws IOException, JMSException, UnsupportedOperationException {
+    public void unsubscribe(final String subscription, final AsyncResult request) throws IOException, JMSException, UnsupportedOperationException {
         checkClosed();
         serializer.execute(new Runnable() {
 

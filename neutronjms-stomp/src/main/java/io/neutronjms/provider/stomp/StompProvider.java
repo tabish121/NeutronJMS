@@ -78,7 +78,7 @@ public class StompProvider extends AbstractAsyncProvider implements TransportLis
     @Override
     public void close() {
         if (closed.compareAndSet(false, true)) {
-            final ProviderFuture<Void> request = new ProviderFuture<Void>();
+            final ProviderFuture request = new ProviderFuture();
             serializer.execute(new Runnable() {
 
                 @Override
@@ -120,7 +120,7 @@ public class StompProvider extends AbstractAsyncProvider implements TransportLis
     }
 
     @Override
-    public void create(final JmsResource resource, final AsyncResult<Void> request) throws IOException, JMSException, UnsupportedOperationException {
+    public void create(final JmsResource resource, final AsyncResult request) throws IOException, JMSException, UnsupportedOperationException {
         checkClosed();
         serializer.execute(new Runnable() {
 
@@ -176,7 +176,7 @@ public class StompProvider extends AbstractAsyncProvider implements TransportLis
     }
 
     @Override
-    public void start(final JmsResource resource, final AsyncResult<Void> request) throws IOException {
+    public void start(final JmsResource resource, final AsyncResult request) throws IOException {
         checkClosed();
         serializer.execute(new Runnable() {
 
@@ -202,7 +202,7 @@ public class StompProvider extends AbstractAsyncProvider implements TransportLis
     }
 
     @Override
-    public void destroy(final JmsResource resource, final AsyncResult<Void> request) throws IOException, JMSException, UnsupportedOperationException {
+    public void destroy(final JmsResource resource, final AsyncResult request) throws IOException, JMSException, UnsupportedOperationException {
         checkClosed();
         serializer.execute(new Runnable() {
 
@@ -260,7 +260,7 @@ public class StompProvider extends AbstractAsyncProvider implements TransportLis
     }
 
     @Override
-    public void send(final JmsOutboundMessageDispatch envelope, final AsyncResult<Void> request) throws IOException, JMSException {
+    public void send(final JmsOutboundMessageDispatch envelope, final AsyncResult request) throws IOException, JMSException {
         checkClosed();
         serializer.execute(new Runnable() {
 
@@ -279,7 +279,7 @@ public class StompProvider extends AbstractAsyncProvider implements TransportLis
     }
 
     @Override
-    public void acknowledge(final JmsSessionId sessionId, final AsyncResult<Void> request) throws IOException {
+    public void acknowledge(final JmsSessionId sessionId, final AsyncResult request) throws IOException {
         checkClosed();
         serializer.execute(new Runnable() {
 
@@ -297,7 +297,7 @@ public class StompProvider extends AbstractAsyncProvider implements TransportLis
     }
 
     @Override
-    public void acknowledge(final JmsInboundMessageDispatch envelope, final ACK_TYPE ackType, final AsyncResult<Void> request) throws IOException {
+    public void acknowledge(final JmsInboundMessageDispatch envelope, final ACK_TYPE ackType, final AsyncResult request) throws IOException {
         checkClosed();
         serializer.execute(new Runnable() {
 
@@ -316,7 +316,7 @@ public class StompProvider extends AbstractAsyncProvider implements TransportLis
     }
 
     @Override
-    public void commit(final JmsSessionId sessionId, final AsyncResult<Void> request) throws IOException, JMSException, UnsupportedOperationException {
+    public void commit(final JmsSessionId sessionId, final AsyncResult request) throws IOException, JMSException, UnsupportedOperationException {
         checkClosed();
         serializer.execute(new Runnable() {
 
@@ -334,7 +334,7 @@ public class StompProvider extends AbstractAsyncProvider implements TransportLis
     }
 
     @Override
-    public void rollback(final JmsSessionId sessionId, final AsyncResult<Void> request) throws IOException, JMSException, UnsupportedOperationException {
+    public void rollback(final JmsSessionId sessionId, final AsyncResult request) throws IOException, JMSException, UnsupportedOperationException {
         checkClosed();
         serializer.execute(new Runnable() {
 
@@ -352,7 +352,7 @@ public class StompProvider extends AbstractAsyncProvider implements TransportLis
     }
 
     @Override
-    public void recover(final JmsSessionId sessionId, final AsyncResult<Void> request) throws IOException, UnsupportedOperationException {
+    public void recover(final JmsSessionId sessionId, final AsyncResult request) throws IOException, UnsupportedOperationException {
         checkClosed();
         serializer.execute(new Runnable() {
 
@@ -371,7 +371,7 @@ public class StompProvider extends AbstractAsyncProvider implements TransportLis
     }
 
     @Override
-    public void pull(final JmsConsumerId consumerId, long timeout, final AsyncResult<Void> request) throws IOException, UnsupportedOperationException {
+    public void pull(final JmsConsumerId consumerId, long timeout, final AsyncResult request) throws IOException, UnsupportedOperationException {
         checkClosed();
         serializer.execute(new Runnable() {
 
@@ -401,7 +401,7 @@ public class StompProvider extends AbstractAsyncProvider implements TransportLis
     }
 
     @Override
-    public void unsubscribe(final String subscription, final AsyncResult<Void> request) throws IOException, JMSException, UnsupportedOperationException {
+    public void unsubscribe(final String subscription, final AsyncResult request) throws IOException, JMSException, UnsupportedOperationException {
         checkClosed();
         serializer.execute(new Runnable() {
 

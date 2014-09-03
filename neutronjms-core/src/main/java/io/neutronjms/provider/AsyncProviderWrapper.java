@@ -71,57 +71,57 @@ public class AsyncProviderWrapper<E extends AsyncProvider> implements AsyncProvi
     }
 
     @Override
-    public void create(JmsResource resource, AsyncResult<Void> request) throws IOException, JMSException, UnsupportedOperationException {
+    public void create(JmsResource resource, AsyncResult request) throws IOException, JMSException, UnsupportedOperationException {
         next.create(resource, request);
     }
 
     @Override
-    public void start(JmsResource resource, AsyncResult<Void> request) throws IOException, JMSException {
+    public void start(JmsResource resource, AsyncResult request) throws IOException, JMSException {
         next.start(resource, request);
     }
 
     @Override
-    public void destroy(JmsResource resourceId, AsyncResult<Void> request) throws IOException, JMSException, UnsupportedOperationException {
+    public void destroy(JmsResource resourceId, AsyncResult request) throws IOException, JMSException, UnsupportedOperationException {
         next.destroy(resourceId, request);
     }
 
     @Override
-    public void send(JmsOutboundMessageDispatch envelope, AsyncResult<Void> request) throws IOException, JMSException {
+    public void send(JmsOutboundMessageDispatch envelope, AsyncResult request) throws IOException, JMSException {
         next.send(envelope, request);
     }
 
     @Override
-    public void acknowledge(JmsSessionId sessionId, AsyncResult<Void> request) throws IOException, JMSException {
+    public void acknowledge(JmsSessionId sessionId, AsyncResult request) throws IOException, JMSException {
         next.acknowledge(sessionId, request);
     }
 
     @Override
-    public void acknowledge(JmsInboundMessageDispatch envelope, ACK_TYPE ackType, AsyncResult<Void> request) throws IOException, JMSException {
+    public void acknowledge(JmsInboundMessageDispatch envelope, ACK_TYPE ackType, AsyncResult request) throws IOException, JMSException {
         next.acknowledge(envelope, ackType, request);
     }
 
     @Override
-    public void commit(JmsSessionId sessionId, AsyncResult<Void> request) throws IOException, JMSException, UnsupportedOperationException {
+    public void commit(JmsSessionId sessionId, AsyncResult request) throws IOException, JMSException, UnsupportedOperationException {
         next.commit(sessionId, request);
     }
 
     @Override
-    public void rollback(JmsSessionId sessionId, AsyncResult<Void> request) throws IOException, JMSException, UnsupportedOperationException {
+    public void rollback(JmsSessionId sessionId, AsyncResult request) throws IOException, JMSException, UnsupportedOperationException {
         next.rollback(sessionId, request);
     }
 
     @Override
-    public void recover(JmsSessionId sessionId, AsyncResult<Void> request) throws IOException, UnsupportedOperationException {
+    public void recover(JmsSessionId sessionId, AsyncResult request) throws IOException, UnsupportedOperationException {
         next.recover(sessionId, request);
     }
 
     @Override
-    public void unsubscribe(String subscription, AsyncResult<Void> request) throws IOException, JMSException, UnsupportedOperationException {
+    public void unsubscribe(String subscription, AsyncResult request) throws IOException, JMSException, UnsupportedOperationException {
         next.unsubscribe(subscription, request);
     }
 
     @Override
-    public void pull(JmsConsumerId consumerId, long timeout, AsyncResult<Void> request) throws IOException, UnsupportedOperationException {
+    public void pull(JmsConsumerId consumerId, long timeout, AsyncResult request) throws IOException, UnsupportedOperationException {
         next.pull(consumerId, timeout, request);
     }
 

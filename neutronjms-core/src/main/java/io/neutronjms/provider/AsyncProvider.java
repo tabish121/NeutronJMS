@@ -96,7 +96,7 @@ public interface AsyncProvider {
      * @throws JMSException if an error occurs due to JMS violation such as bad credentials.
      * @throws UnsupportedOperationException is the provider cannot create the indicated resource.
      */
-    void create(JmsResource resource, AsyncResult<Void> request)
+    void create(JmsResource resource, AsyncResult request)
         throws IOException, JMSException, UnsupportedOperationException;
 
     /**
@@ -123,7 +123,7 @@ public interface AsyncProvider {
      * @throws IOException if an error occurs or the Provider is already closed.
      * @throws JMSException if an error occurs due to JMS violation such as already closed resource.
      */
-    void start(JmsResource resource, AsyncResult<Void> request) throws IOException, JMSException;
+    void start(JmsResource resource, AsyncResult request) throws IOException, JMSException;
 
     /**
      * Instruct the Provider to dispose of a given JmsResource.
@@ -146,7 +146,7 @@ public interface AsyncProvider {
      * @throws JMSException if an error occurs due to JMS violation such as not authorized.
      * @throws UnsupportedOperationException is the provider cannot destroy the indicated resource.
      */
-    void destroy(JmsResource resourceId, AsyncResult<Void> request) throws IOException, JMSException, UnsupportedOperationException;
+    void destroy(JmsResource resourceId, AsyncResult request) throws IOException, JMSException, UnsupportedOperationException;
 
     /**
      * Sends the JmsMessage contained in the outbound dispatch envelope.
@@ -159,7 +159,7 @@ public interface AsyncProvider {
      * @throws IOException if an error occurs or the Provider is already closed.
      * @throws JMSException if an error that maps to JMS occurs such as not authorized.
      */
-    void send(JmsOutboundMessageDispatch envelope, AsyncResult<Void> request) throws IOException, JMSException;
+    void send(JmsOutboundMessageDispatch envelope, AsyncResult request) throws IOException, JMSException;
 
     /**
      * Called to acknowledge all messages that have been delivered in a given session.
@@ -179,7 +179,7 @@ public interface AsyncProvider {
      * @throws IOException if an error occurs or the Provider is already closed.
      * @throws JMSException if an error occurs due to JMS violation such as unmatched ack.
      */
-    void acknowledge(JmsSessionId sessionId, AsyncResult<Void> request) throws IOException, JMSException;
+    void acknowledge(JmsSessionId sessionId, AsyncResult request) throws IOException, JMSException;
 
     /**
      * Called to acknowledge a JmsMessage has been delivered, consumed, re-delivered...etc.
@@ -200,7 +200,7 @@ public interface AsyncProvider {
      * @throws IOException if an error occurs or the Provider is already closed.
      * @throws JMSException if an error occurs due to JMS violation such as unmatched ack.
      */
-    void acknowledge(JmsInboundMessageDispatch envelope, ACK_TYPE ackType, AsyncResult<Void> request)
+    void acknowledge(JmsInboundMessageDispatch envelope, ACK_TYPE ackType, AsyncResult request)
         throws IOException, JMSException;
 
     /**
@@ -219,7 +219,7 @@ public interface AsyncProvider {
      * @throws JMSException if an error occurs due to JMS violation such not authorized.
      * @throws UnsupportedOperationException is the provider does not support transactions.
      */
-    void commit(JmsSessionId sessionId, AsyncResult<Void> request) throws IOException, JMSException, UnsupportedOperationException;
+    void commit(JmsSessionId sessionId, AsyncResult request) throws IOException, JMSException, UnsupportedOperationException;
 
     /**
      * Called to roll back an open transaction.
@@ -237,7 +237,7 @@ public interface AsyncProvider {
      * @throws JMSException if an error occurs due to JMS violation such not authorized.
      * @throws UnsupportedOperationException is the provider does not support transactions.
      */
-    void rollback(JmsSessionId sessionId, AsyncResult<Void> request) throws IOException, JMSException, UnsupportedOperationException;
+    void rollback(JmsSessionId sessionId, AsyncResult request) throws IOException, JMSException, UnsupportedOperationException;
 
     /**
      * Called to recover all unacknowledged messages for a Session in client Ack mode.
@@ -253,7 +253,7 @@ public interface AsyncProvider {
      * @throws IOException if an error occurs or the Provider is already closed.
      * @throws UnsupportedOperationException is the provider does not support recover.
      */
-    void recover(JmsSessionId sessionId, AsyncResult<Void> request) throws IOException, UnsupportedOperationException;
+    void recover(JmsSessionId sessionId, AsyncResult request) throws IOException, UnsupportedOperationException;
 
     /**
      * Remove a durable topic subscription by name.
@@ -271,7 +271,7 @@ public interface AsyncProvider {
      * @throws JMSException if an error occurs due to JMS violation such not authorized.
      * @throws UnsupportedOperationException is the provider does not support named unsubscribes.
      */
-    void unsubscribe(String subscription, AsyncResult<Void> request) throws IOException, JMSException, UnsupportedOperationException;
+    void unsubscribe(String subscription, AsyncResult request) throws IOException, JMSException, UnsupportedOperationException;
 
     /**
      * Request a remote peer send a Message to this client.  A message pull request is
@@ -290,7 +290,7 @@ public interface AsyncProvider {
      *
      * @throws IOException if an error occurs or the Provider is already closed.
      */
-    void pull(JmsConsumerId consumerId, long timeout, AsyncResult<Void> request) throws IOException, UnsupportedOperationException;
+    void pull(JmsConsumerId consumerId, long timeout, AsyncResult request) throws IOException, UnsupportedOperationException;
 
     /**
      * Gets the Provider specific Message factory for use in the JMS layer when a Session

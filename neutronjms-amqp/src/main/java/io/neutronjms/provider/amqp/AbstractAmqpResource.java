@@ -43,8 +43,8 @@ public abstract class AbstractAmqpResource<R extends JmsResource, E extends Endp
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractAmqpResource.class);
 
-    protected AsyncResult<Void> openRequest;
-    protected AsyncResult<Void> closeRequest;
+    protected AsyncResult openRequest;
+    protected AsyncResult closeRequest;
 
     protected E endpoint;
     protected R info;
@@ -75,7 +75,7 @@ public abstract class AbstractAmqpResource<R extends JmsResource, E extends Endp
     }
 
     @Override
-    public void open(AsyncResult<Void> request) {
+    public void open(AsyncResult request) {
         this.openRequest = request;
         doOpen();
         this.endpoint.setContext(this);
@@ -101,7 +101,7 @@ public abstract class AbstractAmqpResource<R extends JmsResource, E extends Endp
     }
 
     @Override
-    public void close(AsyncResult<Void> request) {
+    public void close(AsyncResult request) {
         // If already closed signal success or else the caller might never get notified.
         if (endpoint.getLocalState() == EndpointState.CLOSED &&
             endpoint.getRemoteState() == EndpointState.CLOSED) {

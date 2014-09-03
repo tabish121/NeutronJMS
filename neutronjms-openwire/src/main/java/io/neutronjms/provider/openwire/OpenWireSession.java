@@ -39,14 +39,14 @@ public class OpenWireSession {
     /**
      * @param request
      */
-    public void open(AsyncResult<Void> request) {
+    public void open(AsyncResult request) {
         // TODO Auto-generated method stub
     }
 
     /**
      * @param request
      */
-    public void close(AsyncResult<Void> request) {
+    public void close(AsyncResult request) {
         // TODO Auto-generated method stub
     }
 
@@ -54,21 +54,21 @@ public class OpenWireSession {
      * @param transactionId
      * @param request
      */
-    public void begin(JmsTransactionId transactionId, AsyncResult<Void> request) {
+    public void begin(JmsTransactionId transactionId, AsyncResult request) {
         // TODO Auto-generated method stub
     }
 
     /**
      * @param request
      */
-    public void commit(AsyncResult<Void> request) {
+    public void commit(AsyncResult request) {
         // TODO Auto-generated method stub
     }
 
     /**
      * @param request
      */
-    public void rollback(AsyncResult<Void> request) {
+    public void rollback(AsyncResult request) {
         // TODO Auto-generated method stub
     }
 
@@ -82,7 +82,7 @@ public class OpenWireSession {
     /**
      * @param request
      */
-    public void acknowledge(AsyncResult<Void> request) {
+    public void acknowledge(AsyncResult request) {
         // TODO Auto-generated method stub
     }
 

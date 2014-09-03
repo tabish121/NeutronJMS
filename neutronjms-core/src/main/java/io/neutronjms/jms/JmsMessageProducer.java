@@ -321,7 +321,7 @@ public class JmsMessageProducer implements MessageProducer {
     }
 
     protected void onConnectionRecovery(AsyncProvider provider) throws Exception {
-        ProviderFuture<Void> request = new ProviderFuture<Void>();
+        ProviderFuture request = new ProviderFuture();
         provider.create(producerInfo, request);
         request.sync();
     }

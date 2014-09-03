@@ -33,7 +33,7 @@ public interface OpenWireResource {
      *
      * @throws Exception if an error occurs attempting to open the resource.
      */
-    void open(AsyncResult<Void> request) throws Exception;
+    void open(AsyncResult request) throws Exception;
 
     /**
      * Close this resource and any child resources that it might contain.
@@ -43,7 +43,7 @@ public interface OpenWireResource {
      *
      * @throws Exception if an error occurs attempting to open the resource.
      */
-    void close(AsyncResult<Void> request) throws Exception;
+    void close(AsyncResult request) throws Exception;
 
     /**
      * Called when a response has arrived for a previously sent command.
@@ -53,7 +53,7 @@ public interface OpenWireResource {
      * @param request
      *        the request that triggered the initial operation.
      */
-    void onResponse(Response response, AsyncResult<Void> request);
+    void onResponse(Response response, AsyncResult request);
 
     /**
      * Called when an response is received for a previously sent command that
@@ -64,6 +64,6 @@ public interface OpenWireResource {
      * @param request
      *        the request that triggered the initial operation.
      */
-    void onExceptionReponse(ExceptionResponse error, AsyncResult<Void> request);
+    void onExceptionReponse(ExceptionResponse error, AsyncResult request);
 
 }

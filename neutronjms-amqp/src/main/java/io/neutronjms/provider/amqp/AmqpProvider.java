@@ -152,7 +152,7 @@ public class AmqpProvider extends AbstractAsyncProvider implements TransportList
     @Override
     public void close() {
         if (closed.compareAndSet(false, true)) {
-            final ProviderFuture<Void> request = new ProviderFuture<Void>();
+            final ProviderFuture request = new ProviderFuture();
             serializer.execute(new Runnable() {
 
                 @Override
@@ -201,7 +201,7 @@ public class AmqpProvider extends AbstractAsyncProvider implements TransportList
     }
 
     @Override
-    public void create(final JmsResource resource, final AsyncResult<Void> request) throws IOException, JMSException {
+    public void create(final JmsResource resource, final AsyncResult request) throws IOException, JMSException {
         checkClosed();
         serializer.execute(new Runnable() {
 
@@ -276,7 +276,7 @@ public class AmqpProvider extends AbstractAsyncProvider implements TransportList
     }
 
     @Override
-    public void start(final JmsResource resource, final AsyncResult<Void> request) throws IOException {
+    public void start(final JmsResource resource, final AsyncResult request) throws IOException {
         checkClosed();
         serializer.execute(new Runnable() {
 
@@ -303,7 +303,7 @@ public class AmqpProvider extends AbstractAsyncProvider implements TransportList
     }
 
     @Override
-    public void destroy(final JmsResource resource, final AsyncResult<Void> request) throws IOException {
+    public void destroy(final JmsResource resource, final AsyncResult request) throws IOException {
         checkClosed();
         serializer.execute(new Runnable() {
 
@@ -341,7 +341,7 @@ public class AmqpProvider extends AbstractAsyncProvider implements TransportList
                         @Override
                         public void processDestination(JmsDestination destination) throws Exception {
                             // TODO - Delete remote temporary Topic or Queue
-                            request.onSuccess(null);
+                            request.onSuccess();
                         }
                     });
 
@@ -354,7 +354,7 @@ public class AmqpProvider extends AbstractAsyncProvider implements TransportList
     }
 
     @Override
-    public void send(final JmsOutboundMessageDispatch envelope, final AsyncResult<Void> request) throws IOException {
+    public void send(final JmsOutboundMessageDispatch envelope, final AsyncResult request) throws IOException {
         checkClosed();
         serializer.execute(new Runnable() {
 
@@ -386,7 +386,7 @@ public class AmqpProvider extends AbstractAsyncProvider implements TransportList
     }
 
     @Override
-    public void acknowledge(final JmsSessionId sessionId, final AsyncResult<Void> request) throws IOException {
+    public void acknowledge(final JmsSessionId sessionId, final AsyncResult request) throws IOException {
         checkClosed();
         serializer.execute(new Runnable() {
 
@@ -406,7 +406,7 @@ public class AmqpProvider extends AbstractAsyncProvider implements TransportList
     }
 
     @Override
-    public void acknowledge(final JmsInboundMessageDispatch envelope, final ACK_TYPE ackType, final AsyncResult<Void> request) throws IOException {
+    public void acknowledge(final JmsInboundMessageDispatch envelope, final ACK_TYPE ackType, final AsyncResult request) throws IOException {
         checkClosed();
         serializer.execute(new Runnable() {
 
@@ -442,7 +442,7 @@ public class AmqpProvider extends AbstractAsyncProvider implements TransportList
     }
 
     @Override
-    public void commit(final JmsSessionId sessionId, final AsyncResult<Void> request) throws IOException {
+    public void commit(final JmsSessionId sessionId, final AsyncResult request) throws IOException {
         checkClosed();
         serializer.execute(new Runnable() {
 
@@ -461,7 +461,7 @@ public class AmqpProvider extends AbstractAsyncProvider implements TransportList
     }
 
     @Override
-    public void rollback(final JmsSessionId sessionId, final AsyncResult<Void> request) throws IOException {
+    public void rollback(final JmsSessionId sessionId, final AsyncResult request) throws IOException {
         checkClosed();
         serializer.execute(new Runnable() {
 
@@ -480,7 +480,7 @@ public class AmqpProvider extends AbstractAsyncProvider implements TransportList
     }
 
     @Override
-    public void recover(final JmsSessionId sessionId, final AsyncResult<Void> request) throws IOException {
+    public void recover(final JmsSessionId sessionId, final AsyncResult request) throws IOException {
         checkClosed();
         serializer.execute(new Runnable() {
 
@@ -500,7 +500,7 @@ public class AmqpProvider extends AbstractAsyncProvider implements TransportList
     }
 
     @Override
-    public void unsubscribe(final String subscription, final AsyncResult<Void> request) throws IOException {
+    public void unsubscribe(final String subscription, final AsyncResult request) throws IOException {
         checkClosed();
         serializer.execute(new Runnable() {
 
@@ -518,7 +518,7 @@ public class AmqpProvider extends AbstractAsyncProvider implements TransportList
     }
 
     @Override
-    public void pull(final JmsConsumerId consumerId, final long timeout, final AsyncResult<Void> request) throws IOException {
+    public void pull(final JmsConsumerId consumerId, final long timeout, final AsyncResult request) throws IOException {
         checkClosed();
         serializer.execute(new Runnable() {
 

@@ -958,7 +958,7 @@ public class JmsSession implements Session, QueueSession, TopicSession, JmsMessa
 
     protected void onConnectionRecovery(AsyncProvider provider) throws Exception {
 
-        ProviderFuture<Void> request = new ProviderFuture<Void>();
+        ProviderFuture request = new ProviderFuture();
         provider.create(sessionInfo, request);
         request.sync();
 

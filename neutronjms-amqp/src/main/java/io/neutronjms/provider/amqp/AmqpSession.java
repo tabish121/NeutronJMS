@@ -169,7 +169,7 @@ public class AmqpSession extends AbstractAmqpResource<JmsSessionInfo, Session> {
      *
      * @throws Exception if an error occurs while performing the operation.
      */
-    public void begin(JmsTransactionId txId, AsyncResult<Void> request) throws Exception {
+    public void begin(JmsTransactionId txId, AsyncResult request) throws Exception {
         if (!this.info.isTransacted()) {
             throw new IllegalStateException("Non-transacted Session cannot start a TX.");
         }
@@ -185,7 +185,7 @@ public class AmqpSession extends AbstractAmqpResource<JmsSessionInfo, Session> {
      *
      * @throws Exception if an error occurs while performing the operation.
      */
-    public void commit(AsyncResult<Void> request) throws Exception {
+    public void commit(AsyncResult request) throws Exception {
         if (!this.info.isTransacted()) {
             throw new IllegalStateException("Non-transacted Session cannot start a TX.");
         }
@@ -201,7 +201,7 @@ public class AmqpSession extends AbstractAmqpResource<JmsSessionInfo, Session> {
      *
      * @throws Exception if an error occurs while performing the operation.
      */
-    public void rollback(AsyncResult<Void> request) throws Exception {
+    public void rollback(AsyncResult request) throws Exception {
         if (!this.info.isTransacted()) {
             throw new IllegalStateException("Non-transacted Session cannot start a TX.");
         }
