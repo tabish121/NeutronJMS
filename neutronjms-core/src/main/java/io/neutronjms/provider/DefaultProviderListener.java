@@ -38,11 +38,11 @@ public class DefaultProviderListener implements ProviderListener {
     }
 
     @Override
-    public void onConnectionRecovery(BlockingProvider provider) {
+    public void onConnectionRecovery(AsyncProvider provider) {
     }
 
     @Override
-    public void onConnectionRecovered(BlockingProvider provider) {
+    public void onConnectionRecovered(AsyncProvider provider) {
     }
 
     @Override

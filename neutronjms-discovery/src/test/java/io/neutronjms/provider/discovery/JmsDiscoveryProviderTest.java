@@ -17,9 +17,8 @@
 package io.neutronjms.provider.discovery;
 
 import static org.junit.Assert.assertNotNull;
-import io.neutronjms.provider.DefaultBlockingProvider;
+import io.neutronjms.provider.AsyncProvider;
 import io.neutronjms.provider.DefaultProviderListener;
-import io.neutronjms.provider.discovery.DiscoveryProviderFactory;
 
 import java.io.IOException;
 import java.net.URI;
@@ -64,32 +63,30 @@ public class JmsDiscoveryProviderTest {
     @Test(timeout=30000)
     public void testCreateDiscvoeryProvider() throws Exception {
         URI discoveryUri = new URI("discovery:multicast://default");
-        DefaultBlockingProvider blocking = (DefaultBlockingProvider)
-            DiscoveryProviderFactory.createBlocking(discoveryUri);
-        assertNotNull(blocking);
+        AsyncProvider provider = DiscoveryProviderFactory.createAsync(discoveryUri);
+        assertNotNull(provider);
 
         DefaultProviderListener listener = new DefaultProviderListener();
-        blocking.setProviderListener(listener);
-        blocking.start();
-        blocking.close();
+        provider.setProviderListener(listener);
+        provider.start();
+        provider.close();
     }
 
     @Test(timeout=30000, expected=IllegalStateException.class)
     public void testStartFailsWithNoListener() throws Exception {
         URI discoveryUri = new URI("discovery:multicast://default");
-        DefaultBlockingProvider blocking = (DefaultBlockingProvider)
-            DiscoveryProviderFactory.createBlocking(discoveryUri);
-        assertNotNull(blocking);
-        blocking.start();
-        blocking.close();
+        AsyncProvider provider =
+            DiscoveryProviderFactory.createAsync(discoveryUri);
+        assertNotNull(provider);
+        provider.start();
+        provider.close();
     }
 
     @Test(timeout=30000, expected=IOException.class)
     public void testCreateFailsWithUnknownAgent() throws Exception {
         URI discoveryUri = new URI("discovery:unknown://default");
-        DefaultBlockingProvider blocking = (DefaultBlockingProvider)
-            DiscoveryProviderFactory.createBlocking(discoveryUri);
-        blocking.close();
+        AsyncProvider provider = DiscoveryProviderFactory.createAsync(discoveryUri);
+        provider.close();
     }
 
     protected BrokerService createBroker() throws Exception {

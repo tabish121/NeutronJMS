@@ -35,19 +35,6 @@ public abstract class ProviderFactory {
         new FactoryFinder<ProviderFactory>(ProviderFactory.class, "META-INF/services/io/neutronjms/providers/");
 
     /**
-     * Creates an instance of the given BlockingProvider and configures it using the
-     * properties set on the given remote broker URI.
-     *
-     * @param remoteURI
-     *        The URI used to connect to a remote Broker.
-     *
-     * @return a new BlockingProvider instance.
-     *
-     * @throws Exception if an error occurs while creating the Provider instance.
-     */
-    public abstract BlockingProvider createProvider(URI remoteURI) throws Exception;
-
-    /**
      * Creates an instance of the given AsyncProvider and configures it using the
      * properties set on the given remote broker URI.
      *
@@ -64,33 +51,6 @@ public abstract class ProviderFactory {
      * @return the name of this JMS Provider, e.g. STOMP, AMQP, MQTT...etc
      */
     public abstract String getName();
-
-    /**
-     * Static create method that performs the ProviderFactory search and handles the
-     * configuration and setup.
-     *
-     * @param remoteURI
-     *        the URI of the remote peer.
-     *
-     * @return a new BlockingProvider instance that is ready for use.
-     *
-     * @throws Exception if an error occurs while creating the BlockingProvider instance.
-     */
-    public static BlockingProvider createBlocking(URI remoteURI) throws Exception {
-        BlockingProvider result = null;
-
-        try {
-            ProviderFactory factory = findProviderFactory(remoteURI);
-            result = factory.createProvider(remoteURI);
-            result.connect();
-        } catch (Exception ex) {
-            LOG.error("Failed to create BlockingProvider instance for: {}", remoteURI.getScheme());
-            LOG.trace("Error: ", ex);
-            throw ex;
-        }
-
-        return result;
-    }
 
     /**
      * Static create method that performs the ProviderFactory search and handles the
@@ -123,7 +83,7 @@ public abstract class ProviderFactory {
      * Searches for a ProviderFactory by using the scheme from the given URI.
      *
      * The search first checks the local cache of provider factories before moving on
-     * to search in the classpath.
+     * to search in the class path.
      *
      * @param location
      *        The URI whose scheme will be used to locate a ProviderFactory.

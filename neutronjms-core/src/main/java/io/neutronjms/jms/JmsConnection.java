@@ -28,9 +28,10 @@ import io.neutronjms.jms.meta.JmsConsumerId;
 import io.neutronjms.jms.meta.JmsResource;
 import io.neutronjms.jms.meta.JmsSessionId;
 import io.neutronjms.jms.meta.JmsTransactionId;
-import io.neutronjms.provider.BlockingProvider;
+import io.neutronjms.provider.AsyncProvider;
 import io.neutronjms.provider.ProviderConstants.ACK_TYPE;
 import io.neutronjms.provider.ProviderListener;
+import io.neutronjms.provider.ProviderRequest;
 import io.neutronjms.util.IdGenerator;
 import io.neutronjms.util.ThreadPoolUtils;
 
@@ -102,7 +103,7 @@ public class JmsConnection implements Connection, TopicConnection, QueueConnecti
     private URI brokerURI;
     private URI localURI;
     private SSLContext sslContext;
-    private BlockingProvider provider;
+    private AsyncProvider provider;
     private final Set<JmsConnectionListener> connectionListeners =
         new CopyOnWriteArraySet<JmsConnectionListener>();
     private final Map<JmsDestination, JmsDestination> tempDestinations =
@@ -112,7 +113,7 @@ public class JmsConnection implements Connection, TopicConnection, QueueConnecti
     private final AtomicLong transactionIdGenerator = new AtomicLong();
     private JmsMessageFactory messageFactory;
 
-    protected JmsConnection(String connectionId, BlockingProvider provider, IdGenerator clientIdGenerator) throws JMSException {
+    protected JmsConnection(String connectionId, AsyncProvider provider, IdGenerator clientIdGenerator) throws JMSException {
 
         // This executor can be used for dispatching asynchronous tasks that might block or result
         // in reentrant calls to this Connection that could block.  The thread in this executor
@@ -169,7 +170,9 @@ public class JmsConnection implements Connection, TopicConnection, QueueConnecti
                 this.tempDestinations.clear();
 
                 if (isConnected() && !failed.get()) {
-                    provider.destroy(connectionInfo);
+                    ProviderRequest<Void> request = new ProviderRequest<Void>();
+                    provider.destroy(connectionInfo, request);
+                    request.getResponse();
                 }
 
                 connected.set(false);
@@ -592,7 +595,9 @@ public class JmsConnection implements Connection, TopicConnection, QueueConnecti
         checkClosedOrFailed();
 
         try {
-            provider.create(resource);
+            ProviderRequest<Void> request = new ProviderRequest<Void>();
+            provider.create(resource, request);
+            request.getResponse();
             return resource;
         } catch (Exception ex) {
             throw JmsExceptionSupport.create(ex);
@@ -603,7 +608,9 @@ public class JmsConnection implements Connection, TopicConnection, QueueConnecti
         connect();
 
         try {
-            provider.start(resource);
+            ProviderRequest<Void> request = new ProviderRequest<Void>();
+            provider.start(resource, request);
+            request.getResponse();
         } catch (Exception ioe) {
             throw JmsExceptionSupport.create(ioe);
         }
@@ -618,7 +625,9 @@ public class JmsConnection implements Connection, TopicConnection, QueueConnecti
         //        any response comes back.
 
         try {
-            provider.destroy(resource);
+            ProviderRequest<Void> request = new ProviderRequest<Void>();
+            provider.destroy(resource, request);
+            request.getResponse();
         } catch (Exception ioe) {
             throw JmsExceptionSupport.create(ioe);
         }
@@ -632,7 +641,9 @@ public class JmsConnection implements Connection, TopicConnection, QueueConnecti
         //        should be done asynchronously.  A send can be done async
         //        in many cases, such as non-persistent delivery.
         try {
-            provider.send(envelope);
+            ProviderRequest<Void> request = new ProviderRequest<Void>();
+            provider.send(envelope, request);
+            request.getResponse();
         } catch (Exception ioe) {
             throw JmsExceptionSupport.create(ioe);
         }
@@ -647,7 +658,9 @@ public class JmsConnection implements Connection, TopicConnection, QueueConnecti
         //        we only care that the request hits the wire, not that
         //        any response comes back.
         try {
-            provider.acknowledge(envelope, ackType);
+            ProviderRequest<Void> request = new ProviderRequest<Void>();
+            provider.acknowledge(envelope, ackType, request);
+            request.getResponse();
         } catch (Exception ioe) {
             throw JmsExceptionSupport.create(ioe);
         }
@@ -662,7 +675,9 @@ public class JmsConnection implements Connection, TopicConnection, QueueConnecti
         //        we only care that the request hits the wire, not that
         //        any response comes back.
         try {
-            provider.acknowledge(sessionId);
+            ProviderRequest<Void> request = new ProviderRequest<Void>();
+            provider.acknowledge(sessionId, request);
+            request.getResponse();
         } catch (Exception ioe) {
             throw JmsExceptionSupport.create(ioe);
         }
@@ -673,7 +688,9 @@ public class JmsConnection implements Connection, TopicConnection, QueueConnecti
         connect();
 
         try {
-            provider.unsubscribe(name);
+            ProviderRequest<Void> request = new ProviderRequest<Void>();
+            provider.unsubscribe(name, request);
+            request.getResponse();
         } catch (Exception ioe) {
             throw JmsExceptionSupport.create(ioe);
         }
@@ -684,7 +701,9 @@ public class JmsConnection implements Connection, TopicConnection, QueueConnecti
         connect();
 
         try {
-            provider.commit(sessionId);
+            ProviderRequest<Void> request = new ProviderRequest<Void>();
+            provider.commit(sessionId, request);
+            request.getResponse();
         } catch (Exception ioe) {
             throw JmsExceptionSupport.create(ioe);
         }
@@ -695,7 +714,9 @@ public class JmsConnection implements Connection, TopicConnection, QueueConnecti
         connect();
 
         try {
-            provider.rollback(sessionId);
+            ProviderRequest<Void> request = new ProviderRequest<Void>();
+            provider.rollback(sessionId, request);
+            request.getResponse();
         } catch (Exception ioe) {
             throw JmsExceptionSupport.create(ioe);
         }
@@ -706,7 +727,9 @@ public class JmsConnection implements Connection, TopicConnection, QueueConnecti
         connect();
 
         try {
-            provider.recover(sessionId);
+            ProviderRequest<Void> request = new ProviderRequest<Void>();
+            provider.recover(sessionId, request);
+            request.getResponse();
         } catch (Exception ioe) {
             throw JmsExceptionSupport.create(ioe);
         }
@@ -717,7 +740,9 @@ public class JmsConnection implements Connection, TopicConnection, QueueConnecti
         connect();
 
         try {
-            provider.pull(consumerId, timeout);
+            ProviderRequest<Void> request = new ProviderRequest<Void>();
+            provider.pull(consumerId, timeout, request);
+            request.getResponse();
         } catch (Exception ioe) {
             throw JmsExceptionSupport.create(ioe);
         }
@@ -912,11 +937,11 @@ public class JmsConnection implements Connection, TopicConnection, QueueConnecti
         this.connectionInfo.setPassword(password);
     }
 
-    public BlockingProvider getProvider() {
+    public AsyncProvider getProvider() {
         return provider;
     }
 
-    void setProvider(BlockingProvider provider) {
+    void setProvider(AsyncProvider provider) {
         this.provider = provider;
     }
 
@@ -987,12 +1012,14 @@ public class JmsConnection implements Connection, TopicConnection, QueueConnecti
     }
 
     @Override
-    public void onConnectionRecovery(BlockingProvider provider) throws Exception {
+    public void onConnectionRecovery(AsyncProvider provider) throws Exception {
         // TODO - Recover Advisory Consumer once we can support it.
 
         LOG.debug("Connection {} is starting recovery.", connectionInfo.getConnectionId());
 
-        provider.create(connectionInfo);
+        ProviderRequest<Void> request = new ProviderRequest<Void>();
+        provider.create(connectionInfo, request);
+        request.getResponse();
 
         for (JmsDestination tempDestination : tempDestinations.values()) {
             createResource(tempDestination);
@@ -1004,7 +1031,7 @@ public class JmsConnection implements Connection, TopicConnection, QueueConnecti
     }
 
     @Override
-    public void onConnectionRecovered(BlockingProvider provider) throws Exception {
+    public void onConnectionRecovered(AsyncProvider provider) throws Exception {
         LOG.debug("Connection {} is finalizing recovery.", connectionInfo.getConnectionId());
 
         this.messageFactory = provider.getMessageFactory();

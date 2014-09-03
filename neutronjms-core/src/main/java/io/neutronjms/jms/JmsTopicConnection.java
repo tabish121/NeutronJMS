@@ -16,7 +16,7 @@
  */
 package io.neutronjms.jms;
 
-import io.neutronjms.provider.BlockingProvider;
+import io.neutronjms.provider.AsyncProvider;
 import io.neutronjms.util.IdGenerator;
 
 import javax.jms.ConnectionConsumer;
@@ -27,7 +27,7 @@ import javax.jms.ServerSessionPool;
 
 public class JmsTopicConnection extends JmsConnection {
 
-    public JmsTopicConnection(String connectionId, BlockingProvider provider, IdGenerator clientIdGenerator) throws JMSException {
+    public JmsTopicConnection(String connectionId, AsyncProvider provider, IdGenerator clientIdGenerator) throws JMSException {
         super(connectionId, provider, clientIdGenerator);
     }
 

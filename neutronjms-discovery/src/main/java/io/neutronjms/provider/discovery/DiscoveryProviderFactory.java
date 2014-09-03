@@ -17,8 +17,6 @@
 package io.neutronjms.provider.discovery;
 
 import io.neutronjms.provider.AsyncProvider;
-import io.neutronjms.provider.BlockingProvider;
-import io.neutronjms.provider.DefaultBlockingProvider;
 import io.neutronjms.provider.ProviderFactory;
 import io.neutronjms.provider.failover.FailoverProvider;
 import io.neutronjms.util.PropertyUtil;
@@ -36,7 +34,7 @@ public class DiscoveryProviderFactory extends ProviderFactory {
     private static final String DISCOVERED_OPTION_PREFIX = "discovered.";
 
     @Override
-    public BlockingProvider createProvider(URI remoteURI) throws Exception {
+    public AsyncProvider createAsyncProvider(URI remoteURI) throws Exception {
 
         CompositeData composite = URISupport.parseComposite(remoteURI);
         Map<String, String> options = composite.getParameters();
@@ -57,12 +55,7 @@ public class DiscoveryProviderFactory extends ProviderFactory {
         DiscoveryAgent agent = DiscoveryAgentFactory.createAgent(composite.getComponents()[0]);
         discovery.setDiscoveryAgent(agent);
 
-        return new DefaultBlockingProvider(discovery);
-    }
-
-    @Override
-    public AsyncProvider createAsyncProvider(URI remoteURI) throws Exception {
-        throw new UnsupportedOperationException("Async create not supported.");
+        return discovery;
     }
 
     @Override

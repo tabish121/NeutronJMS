@@ -27,7 +27,6 @@ import io.neutronjms.jms.meta.JmsResource;
 import io.neutronjms.jms.meta.JmsSessionId;
 import io.neutronjms.provider.AsyncProvider;
 import io.neutronjms.provider.AsyncResult;
-import io.neutronjms.provider.DefaultBlockingProvider;
 import io.neutronjms.provider.DefaultProviderListener;
 import io.neutronjms.provider.ProviderConstants.ACK_TYPE;
 import io.neutronjms.provider.ProviderFactory;
@@ -473,10 +472,10 @@ public class FailoverProvider extends DefaultProviderListener implements AsyncPr
                         provider.setProviderListener(FailoverProvider.this);
 
                         // Stage 1: Recovery all JMS Framework resources
-                        listener.onConnectionRecovery(new DefaultBlockingProvider(provider));
+                        listener.onConnectionRecovery(provider);
 
                         // Stage 2: Restart consumers, send pull commands, etc.
-                        listener.onConnectionRecovered(new DefaultBlockingProvider(provider));
+                        listener.onConnectionRecovered(provider);
 
                         listener.onConnectionRestored();
 

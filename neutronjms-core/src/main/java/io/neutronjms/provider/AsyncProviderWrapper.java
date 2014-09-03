@@ -151,12 +151,12 @@ public class AsyncProviderWrapper<E extends AsyncProvider> implements AsyncProvi
     }
 
     @Override
-    public void onConnectionRecovery(BlockingProvider provider) throws Exception {
+    public void onConnectionRecovery(AsyncProvider provider) throws Exception {
         this.listener.onConnectionRecovery(provider);
     }
 
     @Override
-    public void onConnectionRecovered(BlockingProvider provider) throws Exception {
+    public void onConnectionRecovered(AsyncProvider provider) throws Exception {
         this.listener.onConnectionRecovered(provider);
     }
 

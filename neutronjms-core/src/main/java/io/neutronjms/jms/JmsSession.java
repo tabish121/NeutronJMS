@@ -26,8 +26,9 @@ import io.neutronjms.jms.meta.JmsMessageId;
 import io.neutronjms.jms.meta.JmsProducerId;
 import io.neutronjms.jms.meta.JmsSessionId;
 import io.neutronjms.jms.meta.JmsSessionInfo;
-import io.neutronjms.provider.BlockingProvider;
+import io.neutronjms.provider.AsyncProvider;
 import io.neutronjms.provider.ProviderConstants.ACK_TYPE;
+import io.neutronjms.provider.ProviderRequest;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -955,9 +956,11 @@ public class JmsSession implements Session, QueueSession, TopicSession, JmsMessa
         }
     }
 
-    protected void onConnectionRecovery(BlockingProvider provider) throws Exception {
+    protected void onConnectionRecovery(AsyncProvider provider) throws Exception {
 
-        provider.create(sessionInfo);
+        ProviderRequest<Void> request = new ProviderRequest<Void>();
+        provider.create(sessionInfo, request);
+        request.getResponse();
 
         if (this.acknowledgementMode == SESSION_TRANSACTED) {
             if (transactionContext.isInTransaction()) {
@@ -975,7 +978,7 @@ public class JmsSession implements Session, QueueSession, TopicSession, JmsMessa
         }
     }
 
-    protected void onConnectionRecovered(BlockingProvider provider) throws Exception {
+    protected void onConnectionRecovered(AsyncProvider provider) throws Exception {
 
         this.messageFactory = provider.getMessageFactory();
 

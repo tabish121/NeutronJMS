@@ -17,8 +17,6 @@
 package io.neutronjms.provider.failover;
 
 import io.neutronjms.provider.AsyncProvider;
-import io.neutronjms.provider.BlockingProvider;
-import io.neutronjms.provider.DefaultBlockingProvider;
 import io.neutronjms.provider.ProviderFactory;
 import io.neutronjms.util.PropertyUtil;
 import io.neutronjms.util.URISupport;
@@ -33,14 +31,13 @@ import java.util.Map;
 public class FailoverProviderFactory extends ProviderFactory {
 
     @Override
-    public BlockingProvider createProvider(URI remoteURI) throws Exception {
-
+    public AsyncProvider createAsyncProvider(URI remoteURI) throws Exception {
         CompositeData composite = URISupport.parseComposite(remoteURI);
         Map<String, String> options = composite.getParameters();
         Map<String, String> nested = PropertyUtil.filterProperties(options, "nested.");
 
-        FailoverProvider failover = new FailoverProvider(composite.getComponents(), nested);
-        if (!PropertyUtil.setProperties(failover, options)) {
+        FailoverProvider provider = new FailoverProvider(composite.getComponents(), nested);
+        if (!PropertyUtil.setProperties(provider, options)) {
             String msg = ""
                 + " Not all options could be set on the Failover provider."
                 + " Check the options are spelled correctly."
@@ -49,14 +46,7 @@ public class FailoverProviderFactory extends ProviderFactory {
             throw new IllegalArgumentException(msg);
         }
 
-        BlockingProvider provider = new DefaultBlockingProvider(failover);
-
         return provider;
-    }
-
-    @Override
-    public AsyncProvider createAsyncProvider(URI remoteURI) throws Exception {
-        throw new UnsupportedOperationException();
     }
 
     @Override

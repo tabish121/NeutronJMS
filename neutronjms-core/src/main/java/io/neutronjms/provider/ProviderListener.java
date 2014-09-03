@@ -56,7 +56,7 @@ public interface ProviderListener {
      * @throws Exception if an error occurs during recovery attempt, this will fail
      *         the Provider that's being used for recovery.
      */
-    void onConnectionRecovery(BlockingProvider provider) throws Exception;
+    void onConnectionRecovery(AsyncProvider provider) throws Exception;
 
     /**
      * Called to indicate that a connection to the Broker has been reestablished and
@@ -72,7 +72,7 @@ public interface ProviderListener {
      * @throws Exception if an error occurs during recovery attempt, this will fail
      *         the Provider that's being used for recovery.
      */
-    void onConnectionRecovered(BlockingProvider provider) throws Exception;
+    void onConnectionRecovered(AsyncProvider provider) throws Exception;
 
     /**
      * Called to signal that all recovery operations are now complete and the Provider

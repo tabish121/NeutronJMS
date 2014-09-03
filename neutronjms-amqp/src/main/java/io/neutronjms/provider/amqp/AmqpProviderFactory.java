@@ -17,8 +17,6 @@
 package io.neutronjms.provider.amqp;
 
 import io.neutronjms.provider.AsyncProvider;
-import io.neutronjms.provider.BlockingProvider;
-import io.neutronjms.provider.DefaultBlockingProvider;
 import io.neutronjms.provider.ProviderFactory;
 import io.neutronjms.util.PropertyUtil;
 
@@ -29,11 +27,6 @@ import java.util.Map;
  * Factory for creating the AMQP provider.
  */
 public class AmqpProviderFactory extends ProviderFactory {
-
-    @Override
-    public BlockingProvider createProvider(URI remoteURI) throws Exception {
-        return new DefaultBlockingProvider(createAsyncProvider(remoteURI));
-    }
 
     @Override
     public AsyncProvider createAsyncProvider(URI remoteURI) throws Exception {

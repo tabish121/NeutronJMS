@@ -17,8 +17,6 @@
 package io.neutronjms.provider.stomp;
 
 import io.neutronjms.provider.AsyncProvider;
-import io.neutronjms.provider.BlockingProvider;
-import io.neutronjms.provider.DefaultBlockingProvider;
 import io.neutronjms.provider.ProviderFactory;
 
 import java.net.URI;
@@ -27,11 +25,6 @@ import java.net.URI;
  * Factory for creating the STOMP provider.
  */
 public class StompProviderFactory extends ProviderFactory {
-
-    @Override
-    public BlockingProvider createProvider(URI remoteURI) {
-        return new DefaultBlockingProvider(new StompProvider(remoteURI));
-    }
 
     @Override
     public AsyncProvider createAsyncProvider(URI remoteURI) throws Exception {
