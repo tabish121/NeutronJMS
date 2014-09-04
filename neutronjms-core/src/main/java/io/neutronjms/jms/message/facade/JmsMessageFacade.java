@@ -220,6 +220,26 @@ public interface JmsMessageFacade {
     void setRedeliveryCounter(int redeliveryCount) throws JMSException;
 
     /**
+     * Used to quickly check if a message has been redelivered.
+     *
+     * @returns true if the message was redelivered, false otherwise.
+     *
+     * @throws JMSException if an error occurs while accessing the property.
+     */
+    boolean isRedelivered() throws JMSException;
+
+    /**
+     * Used to set the redelivered state of a message.  This can serve to clear
+     * the redelivery counter or set its initial value to one.
+     *
+     * @param redelivered
+     *        true if the message is to be marked as redelivered, false otherwise.
+     *
+     * @throws JMSException if an error occurs while accessing the property.
+     */
+    void setRedelivered(boolean redelivered) throws JMSException;
+
+    /**
      * Returns the Type values as defined by the provider or set by the sending client.
      *
      * @return a String value that defines the message type.

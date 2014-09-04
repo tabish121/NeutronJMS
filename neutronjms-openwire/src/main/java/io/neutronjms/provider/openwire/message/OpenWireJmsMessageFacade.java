@@ -251,4 +251,16 @@ public class OpenWireJmsMessageFacade implements JmsMessageFacade {
         // TODO Auto-generated method stub
         return false;
     }
+
+    @Override
+    public boolean isRedelivered() throws JMSException {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public void setRedelivered(boolean redelivered) throws JMSException {
+        // TODO Auto-generated method stub
+
+    }
 }

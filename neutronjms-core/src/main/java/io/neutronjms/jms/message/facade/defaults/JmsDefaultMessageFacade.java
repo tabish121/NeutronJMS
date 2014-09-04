@@ -212,6 +212,24 @@ public class JmsDefaultMessageFacade implements JmsMessageFacade {
     }
 
     @Override
+    public boolean isRedelivered() throws JMSException {
+        return redeliveryCount > 0;
+    }
+
+    @Override
+    public void setRedelivered(boolean redelivered) throws JMSException {
+        if (redelivered) {
+            if (!isRedelivered()) {
+                setRedeliveryCounter(1);
+            }
+        } else {
+            if (isRedelivered()) {
+                setRedeliveryCounter(0);
+            }
+        }
+    }
+
+    @Override
     public String getType() {
         return type;
     }

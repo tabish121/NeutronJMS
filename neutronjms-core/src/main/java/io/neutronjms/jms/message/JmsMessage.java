@@ -369,7 +369,7 @@ public class JmsMessage implements javax.jms.Message {
         JMS_PROPERTY_SETERS.put("JMSXDeliveryCount", new PropertySetter() {
             @Override
             public void set(JmsConnection connection, JmsMessage message, Object value) throws JMSException {
-                Integer rc = (Integer) TypeConversionSupport.convert(connection, value, Integer.class);
+                Integer rc = (Integer) TypeConversionSupport.convert(value, Integer.class);
                 if (rc == null) {
                     throw new MessageFormatException("Property JMSXDeliveryCount cannot be set from a " + value.getClass().getName() + ".");
                 }
@@ -379,7 +379,7 @@ public class JmsMessage implements javax.jms.Message {
         JMS_PROPERTY_SETERS.put("JMSXGroupID", new PropertySetter() {
             @Override
             public void set(JmsConnection connection, JmsMessage message, Object value) throws JMSException {
-                String rc = (String) TypeConversionSupport.convert(connection, value, String.class);
+                String rc = (String) TypeConversionSupport.convert(value, String.class);
                 if (rc == null) {
                     throw new MessageFormatException("Property JMSXGroupID cannot be set from a " + value.getClass().getName() + ".");
                 }
@@ -389,7 +389,7 @@ public class JmsMessage implements javax.jms.Message {
         JMS_PROPERTY_SETERS.put("JMSXGroupSeq", new PropertySetter() {
             @Override
             public void set(JmsConnection connection, JmsMessage message, Object value) throws JMSException {
-                Integer rc = (Integer) TypeConversionSupport.convert(connection, value, Integer.class);
+                Integer rc = (Integer) TypeConversionSupport.convert(value, Integer.class);
                 if (rc == null) {
                     throw new MessageFormatException("Property JMSXGroupSeq cannot be set from a " + value.getClass().getName() + ".");
                 }
@@ -399,7 +399,7 @@ public class JmsMessage implements javax.jms.Message {
         JMS_PROPERTY_SETERS.put("JMSCorrelationID", new PropertySetter() {
             @Override
             public void set(JmsConnection connection, JmsMessage message, Object value) throws JMSException {
-                String rc = (String) TypeConversionSupport.convert(connection, value, String.class);
+                String rc = (String) TypeConversionSupport.convert(value, String.class);
                 if (rc == null) {
                     throw new MessageFormatException("Property JMSCorrelationID cannot be set from a " + value.getClass().getName() + ".");
                 }
@@ -409,9 +409,9 @@ public class JmsMessage implements javax.jms.Message {
         JMS_PROPERTY_SETERS.put("JMSDeliveryMode", new PropertySetter() {
             @Override
             public void set(JmsConnection connection, JmsMessage message, Object value) throws JMSException {
-                Integer rc = (Integer) TypeConversionSupport.convert(connection, value, Integer.class);
+                Integer rc = (Integer) TypeConversionSupport.convert(value, Integer.class);
                 if (rc == null) {
-                    Boolean bool = (Boolean) TypeConversionSupport.convert(connection, value, Boolean.class);
+                    Boolean bool = (Boolean) TypeConversionSupport.convert(value, Boolean.class);
                     if (bool == null) {
                         throw new MessageFormatException("Property JMSDeliveryMode cannot be set from a " + value.getClass().getName() + ".");
                     } else {
@@ -424,7 +424,7 @@ public class JmsMessage implements javax.jms.Message {
         JMS_PROPERTY_SETERS.put("JMSExpiration", new PropertySetter() {
             @Override
             public void set(JmsConnection connection, JmsMessage message, Object value) throws JMSException {
-                Long rc = (Long) TypeConversionSupport.convert(connection, value, Long.class);
+                Long rc = (Long) TypeConversionSupport.convert(value, Long.class);
                 if (rc == null) {
                     throw new MessageFormatException("Property JMSExpiration cannot be set from a " + value.getClass().getName() + ".");
                 }
@@ -434,7 +434,7 @@ public class JmsMessage implements javax.jms.Message {
         JMS_PROPERTY_SETERS.put("JMSPriority", new PropertySetter() {
             @Override
             public void set(JmsConnection connection, JmsMessage message, Object value) throws JMSException {
-                Integer rc = (Integer) TypeConversionSupport.convert(connection, value, Integer.class);
+                Integer rc = (Integer) TypeConversionSupport.convert(value, Integer.class);
                 if (rc == null) {
                     throw new MessageFormatException("Property JMSPriority cannot be set from a " + value.getClass().getName() + ".");
                 }
@@ -444,7 +444,7 @@ public class JmsMessage implements javax.jms.Message {
         JMS_PROPERTY_SETERS.put("JMSRedelivered", new PropertySetter() {
             @Override
             public void set(JmsConnection connection, JmsMessage message, Object value) throws JMSException {
-                Boolean rc = (Boolean) TypeConversionSupport.convert(connection, value, Boolean.class);
+                Boolean rc = (Boolean) TypeConversionSupport.convert(value, Boolean.class);
                 if (rc == null) {
                     throw new MessageFormatException("Property JMSRedelivered cannot be set from a " + value.getClass().getName() + ".");
                 }
@@ -454,7 +454,7 @@ public class JmsMessage implements javax.jms.Message {
         JMS_PROPERTY_SETERS.put("JMSReplyTo", new PropertySetter() {
             @Override
             public void set(JmsConnection connection, JmsMessage message, Object value) throws JMSException {
-                JmsDestination rc = (JmsDestination) TypeConversionSupport.convert(connection, value, JmsDestination.class);
+                JmsDestination rc = (JmsDestination) TypeConversionSupport.convert(value, JmsDestination.class);
                 if (rc == null) {
                     throw new MessageFormatException("Property JMSReplyTo cannot be set from a " + value.getClass().getName() + ".");
                 }
@@ -464,7 +464,7 @@ public class JmsMessage implements javax.jms.Message {
         JMS_PROPERTY_SETERS.put("JMSTimestamp", new PropertySetter() {
             @Override
             public void set(JmsConnection connection, JmsMessage message, Object value) throws JMSException {
-                Long rc = (Long) TypeConversionSupport.convert(connection, value, Long.class);
+                Long rc = (Long) TypeConversionSupport.convert(value, Long.class);
                 if (rc == null) {
                     throw new MessageFormatException("Property JMSTimestamp cannot be set from a " + value.getClass().getName() + ".");
                 }
@@ -474,7 +474,7 @@ public class JmsMessage implements javax.jms.Message {
         JMS_PROPERTY_SETERS.put("JMSType", new PropertySetter() {
             @Override
             public void set(JmsConnection connection, JmsMessage message, Object value) throws JMSException {
-                String rc = (String) TypeConversionSupport.convert(connection, value, String.class);
+                String rc = (String) TypeConversionSupport.convert(value, String.class);
                 if (rc == null) {
                     throw new MessageFormatException("Property JMSType cannot be set from a " + value.getClass().getName() + ".");
                 }
@@ -544,7 +544,7 @@ public class JmsMessage implements javax.jms.Message {
         if (value == null) {
             return false;
         }
-        Boolean rc = (Boolean) TypeConversionSupport.convert(connection, value, Boolean.class);
+        Boolean rc = (Boolean) TypeConversionSupport.convert(value, Boolean.class);
         if (rc == null) {
             throw new MessageFormatException("Property " + name + " was a " + value.getClass().getName() + " and cannot be read as a boolean");
         }
@@ -557,7 +557,7 @@ public class JmsMessage implements javax.jms.Message {
         if (value == null) {
             throw new NumberFormatException("property " + name + " was null");
         }
-        Byte rc = (Byte) TypeConversionSupport.convert(connection, value, Byte.class);
+        Byte rc = (Byte) TypeConversionSupport.convert(value, Byte.class);
         if (rc == null) {
             throw new MessageFormatException("Property " + name + " was a " + value.getClass().getName() + " and cannot be read as a byte");
         }
@@ -570,7 +570,7 @@ public class JmsMessage implements javax.jms.Message {
         if (value == null) {
             throw new NumberFormatException("property " + name + " was null");
         }
-        Short rc = (Short) TypeConversionSupport.convert(connection, value, Short.class);
+        Short rc = (Short) TypeConversionSupport.convert(value, Short.class);
         if (rc == null) {
             throw new MessageFormatException("Property " + name + " was a " + value.getClass().getName() + " and cannot be read as a short");
         }
@@ -583,7 +583,7 @@ public class JmsMessage implements javax.jms.Message {
         if (value == null) {
             throw new NumberFormatException("property " + name + " was null");
         }
-        Integer rc = (Integer) TypeConversionSupport.convert(connection, value, Integer.class);
+        Integer rc = (Integer) TypeConversionSupport.convert(value, Integer.class);
         if (rc == null) {
             throw new MessageFormatException("Property " + name + " was a " + value.getClass().getName() + " and cannot be read as an integer");
         }
@@ -596,7 +596,7 @@ public class JmsMessage implements javax.jms.Message {
         if (value == null) {
             throw new NumberFormatException("property " + name + " was null");
         }
-        Long rc = (Long) TypeConversionSupport.convert(connection, value, Long.class);
+        Long rc = (Long) TypeConversionSupport.convert(value, Long.class);
         if (rc == null) {
             throw new MessageFormatException("Property " + name + " was a " + value.getClass().getName() + " and cannot be read as a long");
         }
@@ -609,7 +609,7 @@ public class JmsMessage implements javax.jms.Message {
         if (value == null) {
             throw new NullPointerException("property " + name + " was null");
         }
-        Float rc = (Float) TypeConversionSupport.convert(connection, value, Float.class);
+        Float rc = (Float) TypeConversionSupport.convert(value, Float.class);
         if (rc == null) {
             throw new MessageFormatException("Property " + name + " was a " + value.getClass().getName() + " and cannot be read as a float");
         }
@@ -622,7 +622,7 @@ public class JmsMessage implements javax.jms.Message {
         if (value == null) {
             throw new NullPointerException("property " + name + " was null");
         }
-        Double rc = (Double) TypeConversionSupport.convert(connection, value, Double.class);
+        Double rc = (Double) TypeConversionSupport.convert(value, Double.class);
         if (rc == null) {
             throw new MessageFormatException("Property " + name + " was a " + value.getClass().getName() + " and cannot be read as a double");
         }
@@ -635,7 +635,7 @@ public class JmsMessage implements javax.jms.Message {
         if (value == null) {
             return null;
         }
-        String rc = (String) TypeConversionSupport.convert(connection, value, String.class);
+        String rc = (String) TypeConversionSupport.convert(value, String.class);
         if (rc == null) {
             throw new MessageFormatException("Property " + name + " was a " + value.getClass().getName() + " and cannot be read as a String");
         }

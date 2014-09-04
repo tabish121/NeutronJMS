@@ -16,7 +16,6 @@
  */
 package io.neutronjms.util;
 
-import io.neutronjms.jms.JmsConnection;
 import io.neutronjms.jms.JmsDestination;
 import io.neutronjms.jms.JmsQueue;
 
@@ -49,7 +48,7 @@ public final class TypeConversionSupport {
     }
 
     interface Converter {
-        Object convert(JmsConnection connection, Object value);
+        Object convert(Object value);
     }
 
     private static final HashMap<ConversionKey, Converter> CONVERSION_MAP = new HashMap<ConversionKey, Converter>();
@@ -57,7 +56,7 @@ public final class TypeConversionSupport {
     static {
         Converter toStringConverter = new Converter() {
             @Override
-            public Object convert(JmsConnection connection, Object value) {
+            public Object convert(Object value) {
                 return value.toString();
             }
         };
@@ -71,50 +70,50 @@ public final class TypeConversionSupport {
 
         CONVERSION_MAP.put(new ConversionKey(String.class, Boolean.class), new Converter() {
             @Override
-            public Object convert(JmsConnection connection, Object value) {
+            public Object convert(Object value) {
                 return Boolean.valueOf((String) value);
             }
         });
         CONVERSION_MAP.put(new ConversionKey(String.class, Byte.class), new Converter() {
             @Override
-            public Object convert(JmsConnection connection, Object value) {
+            public Object convert(Object value) {
                 return Byte.valueOf((String) value);
             }
         });
         CONVERSION_MAP.put(new ConversionKey(String.class, Short.class), new Converter() {
             @Override
-            public Object convert(JmsConnection connection, Object value) {
+            public Object convert(Object value) {
                 return Short.valueOf((String) value);
             }
         });
         CONVERSION_MAP.put(new ConversionKey(String.class, Integer.class), new Converter() {
             @Override
-            public Object convert(JmsConnection connection, Object value) {
+            public Object convert(Object value) {
                 return Integer.valueOf((String) value);
             }
         });
         CONVERSION_MAP.put(new ConversionKey(String.class, Long.class), new Converter() {
             @Override
-            public Object convert(JmsConnection connection, Object value) {
+            public Object convert(Object value) {
                 return Long.valueOf((String) value);
             }
         });
         CONVERSION_MAP.put(new ConversionKey(String.class, Float.class), new Converter() {
             @Override
-            public Object convert(JmsConnection connection, Object value) {
+            public Object convert(Object value) {
                 return Float.valueOf((String) value);
             }
         });
         CONVERSION_MAP.put(new ConversionKey(String.class, Double.class), new Converter() {
             @Override
-            public Object convert(JmsConnection connection, Object value) {
+            public Object convert(Object value) {
                 return Double.valueOf((String) value);
             }
         });
 
         Converter longConverter = new Converter() {
             @Override
-            public Object convert(JmsConnection connection, Object value) {
+            public Object convert(Object value) {
                 return Long.valueOf(((Number) value).longValue());
             }
         };
@@ -123,14 +122,14 @@ public final class TypeConversionSupport {
         CONVERSION_MAP.put(new ConversionKey(Integer.class, Long.class), longConverter);
         CONVERSION_MAP.put(new ConversionKey(Date.class, Long.class), new Converter() {
             @Override
-            public Object convert(JmsConnection connection, Object value) {
+            public Object convert(Object value) {
                 return Long.valueOf(((Date) value).getTime());
             }
         });
 
         Converter intConverter = new Converter() {
             @Override
-            public Object convert(JmsConnection connection, Object value) {
+            public Object convert(Object value) {
                 return Integer.valueOf(((Number) value).intValue());
             }
         };
@@ -139,21 +138,23 @@ public final class TypeConversionSupport {
 
         CONVERSION_MAP.put(new ConversionKey(Byte.class, Short.class), new Converter() {
             @Override
-            public Object convert(JmsConnection connection, Object value) {
+            public Object convert(Object value) {
                 return Short.valueOf(((Number) value).shortValue());
             }
         });
 
         CONVERSION_MAP.put(new ConversionKey(Float.class, Double.class), new Converter() {
             @Override
-            public Object convert(JmsConnection connection, Object value) {
+            public Object convert(Object value) {
                 return new Double(((Number) value).doubleValue());
             }
         });
 
         CONVERSION_MAP.put(new ConversionKey(String.class, JmsDestination.class), new Converter() {
             @Override
-            public Object convert(JmsConnection connection, Object value) {
+            public Object convert(Object value) {
+                // TODO - Right now we go right to a Queue, we need to examine the name
+                //        and correctly map to the appropriate destination type.
                 return new JmsQueue(value.toString());
             }
         });
@@ -162,7 +163,7 @@ public final class TypeConversionSupport {
     private TypeConversionSupport() {
     }
 
-    public static Object convert(JmsConnection connection, Object value, Class clazz) {
+    public static Object convert(Object value, Class<?> clazz) {
 
         assert value != null && clazz != null;
 
@@ -174,6 +175,6 @@ public final class TypeConversionSupport {
         if (c == null) {
             return null;
         }
-        return c.convert(connection, value);
+        return c.convert(value);
     }
 }
