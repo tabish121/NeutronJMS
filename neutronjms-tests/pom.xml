@@ -45,10 +45,6 @@
     </dependency>
     <dependency>
       <groupId>io.neutronjms</groupId>
-      <artifactId>neutronjms-stomp</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>io.neutronjms</groupId>
       <artifactId>neutronjms-discovery</artifactId>
     </dependency>
     <dependency>

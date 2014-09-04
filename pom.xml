@@ -83,10 +83,8 @@
     <module>neutronjms-core</module>
     <module>neutronjms-amqp</module>
     <module>neutronjms-discovery</module>
-    <module>neutronjms-stomp</module>
     <module>neutronjms-tests</module>
     <module>neutronjms-test-support</module>
-    <module>neutronjms-openwire</module>
   </modules>
 
   <dependencyManagement>
