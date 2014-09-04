@@ -17,7 +17,6 @@
 package io.neutronjms.provider.amqp;
 
 import io.neutronjms.jms.JmsDestination;
-import io.neutronjms.jms.message.JmsDefaultMessageFactory;
 import io.neutronjms.jms.message.JmsInboundMessageDispatch;
 import io.neutronjms.jms.message.JmsMessageFactory;
 import io.neutronjms.jms.message.JmsOutboundMessageDispatch;
@@ -97,7 +96,6 @@ public class AmqpProvider extends AbstractProvider implements TransportListener 
     private long requestTimeout = JmsConnectionInfo.DEFAULT_REQUEST_TIMEOUT;
     private long sendTimeout = JmsConnectionInfo.DEFAULT_SEND_TIMEOUT;
 
-    private final JmsDefaultMessageFactory messageFactory = new JmsDefaultMessageFactory();
     private final EngineFactory engineFactory = new EngineFactoryImpl();
     private final Transport protonTransport = engineFactory.createTransport();
     private final Collector protonCollector = new CollectorImpl();
