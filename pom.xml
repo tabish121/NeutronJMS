@@ -40,8 +40,8 @@
   </prerequisites>
 
   <properties>
-    <source-version>1.6</source-version>
-    <target-version>1.6</target-version>
+    <source-version>1.7</source-version>
+    <target-version>1.7</target-version>
 
     <!-- Dependency Versions for this Project -->
     <junit-version>4.11</junit-version>
