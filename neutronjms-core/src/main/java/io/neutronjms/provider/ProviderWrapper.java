@@ -37,12 +37,12 @@ import javax.jms.JMSException;
  * on-top of an existing provider such as a discovery based provider that only needs to
  * pass along discovered remote peer information.
  */
-public class AsyncProviderWrapper<E extends AsyncProvider> implements AsyncProvider, ProviderListener {
+public class ProviderWrapper<E extends Provider> implements Provider, ProviderListener {
 
     protected final E next;
     protected ProviderListener listener;
 
-    public AsyncProviderWrapper(E next) {
+    public ProviderWrapper(E next) {
         this.next = next;
         this.next.setProviderListener(this);
     }
@@ -151,12 +151,12 @@ public class AsyncProviderWrapper<E extends AsyncProvider> implements AsyncProvi
     }
 
     @Override
-    public void onConnectionRecovery(AsyncProvider provider) throws Exception {
+    public void onConnectionRecovery(Provider provider) throws Exception {
         this.listener.onConnectionRecovery(provider);
     }
 
     @Override
-    public void onConnectionRecovered(AsyncProvider provider) throws Exception {
+    public void onConnectionRecovered(Provider provider) throws Exception {
         this.listener.onConnectionRecovered(provider);
     }
 
@@ -173,7 +173,7 @@ public class AsyncProviderWrapper<E extends AsyncProvider> implements AsyncProvi
     /**
      * @return the wrapped AsyncProvider.
      */
-    public AsyncProvider getNext() {
+    public Provider getNext() {
         return this.next;
     }
 }

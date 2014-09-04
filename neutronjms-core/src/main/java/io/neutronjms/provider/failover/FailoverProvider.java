@@ -25,7 +25,7 @@ import io.neutronjms.jms.meta.JmsConnectionInfo;
 import io.neutronjms.jms.meta.JmsConsumerId;
 import io.neutronjms.jms.meta.JmsResource;
 import io.neutronjms.jms.meta.JmsSessionId;
-import io.neutronjms.provider.AsyncProvider;
+import io.neutronjms.provider.Provider;
 import io.neutronjms.provider.AsyncResult;
 import io.neutronjms.provider.DefaultProviderListener;
 import io.neutronjms.provider.ProviderConstants.ACK_TYPE;
@@ -60,14 +60,14 @@ import org.slf4j.LoggerFactory;
  * connection the FailoverProvider will initiate state recovery of the active JMS
  * framework resources.
  */
-public class FailoverProvider extends DefaultProviderListener implements AsyncProvider {
+public class FailoverProvider extends DefaultProviderListener implements Provider {
 
     private static final Logger LOG = LoggerFactory.getLogger(FailoverProvider.class);
 
     private static final int UNLIMITED = -1;
 
     private ProviderListener listener;
-    private AsyncProvider provider;
+    private Provider provider;
     private final FailoverUriPool uris;
 
     private final ExecutorService serializer;
@@ -452,7 +452,7 @@ public class FailoverProvider extends DefaultProviderListener implements AsyncPr
      * @param provider
      *        The newly connect Provider instance that will become active.
      */
-    private void initializeNewConnection(final AsyncProvider provider) {
+    private void initializeNewConnection(final Provider provider) {
         this.serializer.execute(new Runnable() {
             @Override
             public void run() {
@@ -523,7 +523,7 @@ public class FailoverProvider extends DefaultProviderListener implements AsyncPr
                     try {
                         LOG.debug("Attempting connection to: {}", target);
                         JmsSslContext.setCurrentSslContext(sslContext);
-                        AsyncProvider provider = ProviderFactory.createAsync(target);
+                        Provider provider = ProviderFactory.createAsync(target);
                         initializeNewConnection(provider);
                         return;
                     } catch (Throwable e) {
@@ -643,7 +643,7 @@ public class FailoverProvider extends DefaultProviderListener implements AsyncPr
 
     @Override
     public URI getRemoteURI() {
-        AsyncProvider provider = this.provider;
+        Provider provider = this.provider;
         if (provider != null) {
             return provider.getRemoteURI();
         }

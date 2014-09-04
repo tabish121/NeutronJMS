@@ -20,7 +20,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import io.neutronjms.provider.AsyncProvider;
+import io.neutronjms.provider.Provider;
 import io.neutronjms.provider.DefaultProviderListener;
 import io.neutronjms.provider.failover.FailoverProvider;
 import io.neutronjms.provider.failover.FailoverProviderFactory;
@@ -41,7 +41,7 @@ public class FailoverProviderTest extends AmqpTestSupport {
     @Test(timeout=60000)
     public void testFailoverCreate() throws Exception {
         URI brokerURI = new URI("failover:" + getBrokerAmqpConnectionURI());
-        AsyncProvider asyncProvider = FailoverProviderFactory.createAsync(brokerURI);
+        Provider asyncProvider = FailoverProviderFactory.createAsync(brokerURI);
         assertNotNull(asyncProvider);
         FailoverProvider provider = (FailoverProvider) asyncProvider;
         assertNotNull(provider);
@@ -52,7 +52,7 @@ public class FailoverProviderTest extends AmqpTestSupport {
         URI brokerURI = new URI("failover://(" + getBrokerAmqpConnectionURI() + ")" +
                                 "?maxReconnectDelay=1000&useExponentialBackOff=false" +
                                 "&maxReconnectAttempts=10&startupMaxReconnectAttempts=20");
-        AsyncProvider asyncProvider = FailoverProviderFactory.createAsync(brokerURI);
+        Provider asyncProvider = FailoverProviderFactory.createAsync(brokerURI);
         assertNotNull(asyncProvider);
         FailoverProvider provider = (FailoverProvider) asyncProvider;
         assertNotNull(provider);
@@ -67,7 +67,7 @@ public class FailoverProviderTest extends AmqpTestSupport {
     public void testStartupReconnectAttempts() throws Exception {
         URI brokerURI = new URI("failover://(amqp://localhost:61616)" +
                                 "?maxReconnectDelay=100&startupMaxReconnectAttempts=5");
-        AsyncProvider asyncProvider = FailoverProviderFactory.createAsync(brokerURI);
+        Provider asyncProvider = FailoverProviderFactory.createAsync(brokerURI);
         assertNotNull(asyncProvider);
         FailoverProvider provider = (FailoverProvider) asyncProvider;
         assertNotNull(provider);

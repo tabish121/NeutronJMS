@@ -16,7 +16,7 @@
  */
 package io.neutronjms.provider.amqp;
 
-import io.neutronjms.provider.AsyncProvider;
+import io.neutronjms.provider.Provider;
 
 import java.net.URI;
 
@@ -26,7 +26,7 @@ import java.net.URI;
 public class AmqpSslProviderFactory extends AmqpProviderFactory {
 
     @Override
-    public AsyncProvider createAsyncProvider(URI remoteURI) throws Exception {
+    public Provider createAsyncProvider(URI remoteURI) throws Exception {
         return new AmqpSslProvider(remoteURI);
     }
 }

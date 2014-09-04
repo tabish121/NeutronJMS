@@ -34,7 +34,7 @@ import javax.jms.JMSException;
  * provider must implement.  This Provider interface requires that the implementation
  * methods all operate in an asynchronous manner.
  */
-public interface AsyncProvider {
+public interface Provider {
 
     /**
      * Performs the initial low level connection for this provider such as TCP or

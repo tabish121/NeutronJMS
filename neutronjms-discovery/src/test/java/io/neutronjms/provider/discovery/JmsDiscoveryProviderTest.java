@@ -17,7 +17,7 @@
 package io.neutronjms.provider.discovery;
 
 import static org.junit.Assert.assertNotNull;
-import io.neutronjms.provider.AsyncProvider;
+import io.neutronjms.provider.Provider;
 import io.neutronjms.provider.DefaultProviderListener;
 
 import java.io.IOException;
@@ -63,7 +63,7 @@ public class JmsDiscoveryProviderTest {
     @Test(timeout=30000)
     public void testCreateDiscvoeryProvider() throws Exception {
         URI discoveryUri = new URI("discovery:multicast://default");
-        AsyncProvider provider = DiscoveryProviderFactory.createAsync(discoveryUri);
+        Provider provider = DiscoveryProviderFactory.createAsync(discoveryUri);
         assertNotNull(provider);
 
         DefaultProviderListener listener = new DefaultProviderListener();
@@ -75,7 +75,7 @@ public class JmsDiscoveryProviderTest {
     @Test(timeout=30000, expected=IllegalStateException.class)
     public void testStartFailsWithNoListener() throws Exception {
         URI discoveryUri = new URI("discovery:multicast://default");
-        AsyncProvider provider =
+        Provider provider =
             DiscoveryProviderFactory.createAsync(discoveryUri);
         assertNotNull(provider);
         provider.start();
@@ -85,7 +85,7 @@ public class JmsDiscoveryProviderTest {
     @Test(timeout=30000, expected=IOException.class)
     public void testCreateFailsWithUnknownAgent() throws Exception {
         URI discoveryUri = new URI("discovery:unknown://default");
-        AsyncProvider provider = DiscoveryProviderFactory.createAsync(discoveryUri);
+        Provider provider = DiscoveryProviderFactory.createAsync(discoveryUri);
         provider.close();
     }
 

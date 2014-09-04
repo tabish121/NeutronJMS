@@ -16,7 +16,7 @@
  */
 package io.neutronjms.jms;
 
-import io.neutronjms.provider.AsyncProvider;
+import io.neutronjms.provider.Provider;
 import io.neutronjms.util.IdGenerator;
 
 import javax.jms.ConnectionConsumer;
@@ -27,7 +27,7 @@ import javax.jms.TopicSession;
 
 public class JmsQueueConnection extends JmsConnection {
 
-    public JmsQueueConnection(String connectionId, AsyncProvider provider, IdGenerator clientIdGenerator) throws JMSException {
+    public JmsQueueConnection(String connectionId, Provider provider, IdGenerator clientIdGenerator) throws JMSException {
         super(connectionId, provider, clientIdGenerator);
     }
 

@@ -19,7 +19,7 @@ package io.neutronjms.jms;
 import io.neutronjms.jms.message.JmsMessageTransformation;
 import io.neutronjms.jms.meta.JmsProducerId;
 import io.neutronjms.jms.meta.JmsProducerInfo;
-import io.neutronjms.provider.AsyncProvider;
+import io.neutronjms.provider.Provider;
 import io.neutronjms.provider.ProviderFuture;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -320,13 +320,13 @@ public class JmsMessageProducer implements MessageProducer {
     protected void onConnectionInterrupted() {
     }
 
-    protected void onConnectionRecovery(AsyncProvider provider) throws Exception {
+    protected void onConnectionRecovery(Provider provider) throws Exception {
         ProviderFuture request = new ProviderFuture();
         provider.create(producerInfo, request);
         request.sync();
     }
 
-    protected void onConnectionRecovered(AsyncProvider provider) throws Exception {
+    protected void onConnectionRecovered(Provider provider) throws Exception {
     }
 
     protected void onConnectionRestored() {

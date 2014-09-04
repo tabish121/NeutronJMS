@@ -16,7 +16,7 @@
  */
 package io.neutronjms.provider.discovery;
 
-import io.neutronjms.provider.AsyncProviderWrapper;
+import io.neutronjms.provider.ProviderWrapper;
 import io.neutronjms.provider.failover.FailoverProvider;
 
 import java.io.IOException;
@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
  * events about discovered remote peers using a configured DiscoveryAgent
  * instance.
  */
-public class DiscoveryProvider extends AsyncProviderWrapper<FailoverProvider> implements DiscoveryListener {
+public class DiscoveryProvider extends ProviderWrapper<FailoverProvider> implements DiscoveryListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(DiscoveryProviderFactory.class);
 

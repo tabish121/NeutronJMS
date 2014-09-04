@@ -16,7 +16,7 @@
  */
 package io.neutronjms.provider.failover;
 
-import io.neutronjms.provider.AsyncProvider;
+import io.neutronjms.provider.Provider;
 import io.neutronjms.provider.ProviderFactory;
 import io.neutronjms.util.PropertyUtil;
 import io.neutronjms.util.URISupport;
@@ -31,7 +31,7 @@ import java.util.Map;
 public class FailoverProviderFactory extends ProviderFactory {
 
     @Override
-    public AsyncProvider createAsyncProvider(URI remoteURI) throws Exception {
+    public Provider createAsyncProvider(URI remoteURI) throws Exception {
         CompositeData composite = URISupport.parseComposite(remoteURI);
         Map<String, String> options = composite.getParameters();
         Map<String, String> nested = PropertyUtil.filterProperties(options, "nested.");

@@ -16,7 +16,7 @@
  */
 package io.neutronjms.provider.amqp;
 
-import io.neutronjms.provider.AsyncProvider;
+import io.neutronjms.provider.Provider;
 import io.neutronjms.provider.ProviderFactory;
 import io.neutronjms.util.PropertyUtil;
 
@@ -29,14 +29,14 @@ import java.util.Map;
 public class AmqpProviderFactory extends ProviderFactory {
 
     @Override
-    public AsyncProvider createAsyncProvider(URI remoteURI) throws Exception {
+    public Provider createAsyncProvider(URI remoteURI) throws Exception {
 
         Map<String, String> map = PropertyUtil.parseQuery(remoteURI.getQuery());
         Map<String, String> providerOptions = PropertyUtil.filterProperties(map, "provider.");
 
         remoteURI = PropertyUtil.replaceQuery(remoteURI, map);
 
-        AsyncProvider result = new AmqpProvider(remoteURI);
+        Provider result = new AmqpProvider(remoteURI);
 
         if (!PropertyUtil.setProperties(result, providerOptions)) {
             String msg = ""

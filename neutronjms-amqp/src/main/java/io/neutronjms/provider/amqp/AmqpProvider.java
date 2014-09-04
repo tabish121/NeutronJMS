@@ -32,7 +32,7 @@ import io.neutronjms.jms.meta.JmsResourceVistor;
 import io.neutronjms.jms.meta.JmsSessionId;
 import io.neutronjms.jms.meta.JmsSessionInfo;
 import io.neutronjms.jms.meta.JmsTransactionInfo;
-import io.neutronjms.provider.AbstractAsyncProvider;
+import io.neutronjms.provider.AbstractProvider;
 import io.neutronjms.provider.AsyncResult;
 import io.neutronjms.provider.ProviderConstants.ACK_TYPE;
 import io.neutronjms.provider.ProviderFuture;
@@ -78,7 +78,7 @@ import org.vertx.java.core.buffer.Buffer;
  * All work within this Provider is serialized to a single Thread.  Any asynchronous exceptions
  * will be dispatched from that Thread and all in-bound requests are handled there as well.
  */
-public class AmqpProvider extends AbstractAsyncProvider implements TransportListener {
+public class AmqpProvider extends AbstractProvider implements TransportListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(AmqpProvider.class);
 

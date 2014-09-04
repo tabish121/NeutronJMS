@@ -16,7 +16,7 @@
  */
 package io.neutronjms.jms;
 
-import io.neutronjms.provider.AsyncProvider;
+import io.neutronjms.provider.Provider;
 
 import java.net.URI;
 
@@ -52,7 +52,7 @@ public class JmsSslConnectionFactory extends JmsConnectionFactory {
     }
 
     @Override
-    protected AsyncProvider createProvider(URI brokerURI) throws Exception {
+    protected Provider createProvider(URI brokerURI) throws Exception {
         // Create and set a new instance as the current JmsSslContext for this thread
         // based on current configuration settings.
         JmsSslContext.setCurrentSslContext(configured.copy());

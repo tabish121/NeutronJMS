@@ -20,7 +20,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import io.neutronjms.jms.JmsConnection;
-import io.neutronjms.provider.AsyncProvider;
+import io.neutronjms.provider.Provider;
 import io.neutronjms.test.support.AmqpTestSupport;
 import io.neutronjms.test.support.Wait;
 
@@ -139,7 +139,7 @@ public class JmsOfflineBehaviorTests extends AmqpTestSupport {
         connection.start();
 
         JmsConnection jmsConnection = (JmsConnection) connection;
-        final AsyncProvider provider = jmsConnection.getProvider();
+        final Provider provider = jmsConnection.getProvider();
 
         URI connectedURI = provider.getRemoteURI();
         assertNotNull(connectedURI);

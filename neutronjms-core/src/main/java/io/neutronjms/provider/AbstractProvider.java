@@ -30,12 +30,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import javax.jms.JMSException;
 
 /**
- * Base class used to implement the most common features of a AsyncProvider.
+ * Base class used to implement the most common features of a Provider instance..
  *
  * Methods that are fully optional such as transaction commit and rollback are implemented
  * here to throw an UnsupportedOperationException.
  */
-public abstract class AbstractAsyncProvider implements AsyncProvider {
+public abstract class AbstractProvider implements Provider {
 
     protected final URI remoteURI;
     protected final AtomicBoolean closed = new AtomicBoolean();
@@ -43,7 +43,7 @@ public abstract class AbstractAsyncProvider implements AsyncProvider {
 
     protected ProviderListener listener;
 
-    public AbstractAsyncProvider(URI remoteURI) {
+    public AbstractProvider(URI remoteURI) {
         this.remoteURI = remoteURI;
 
         this.serializer = Executors.newSingleThreadScheduledExecutor(new ThreadFactory() {

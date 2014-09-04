@@ -45,7 +45,7 @@ public abstract class ProviderFactory {
      *
      * @throws Exception if an error occurs while creating the Provider instance.
      */
-    public abstract AsyncProvider createAsyncProvider(URI remoteURI) throws Exception;
+    public abstract Provider createAsyncProvider(URI remoteURI) throws Exception;
 
     /**
      * @return the name of this JMS Provider, e.g. STOMP, AMQP, MQTT...etc
@@ -63,8 +63,8 @@ public abstract class ProviderFactory {
      *
      * @throws Exception if an error occurs while creating the AsyncProvider instance.
      */
-    public static AsyncProvider createAsync(URI remoteURI) throws Exception {
-        AsyncProvider result = null;
+    public static Provider createAsync(URI remoteURI) throws Exception {
+        Provider result = null;
 
         try {
             ProviderFactory factory = findProviderFactory(remoteURI);

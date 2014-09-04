@@ -21,7 +21,7 @@ import io.neutronjms.jms.message.JmsInboundMessageDispatch;
 import io.neutronjms.jms.message.JmsMessage;
 import io.neutronjms.jms.meta.JmsConsumerId;
 import io.neutronjms.jms.meta.JmsConsumerInfo;
-import io.neutronjms.provider.AsyncProvider;
+import io.neutronjms.provider.Provider;
 import io.neutronjms.provider.ProviderConstants.ACK_TYPE;
 import io.neutronjms.provider.ProviderFuture;
 import io.neutronjms.util.FifoMessageQueue;
@@ -438,13 +438,13 @@ public class JmsMessageConsumer implements MessageConsumer, JmsMessageListener, 
         messageQueue.clear();
     }
 
-    protected void onConnectionRecovery(AsyncProvider provider) throws Exception {
+    protected void onConnectionRecovery(Provider provider) throws Exception {
         ProviderFuture request = new ProviderFuture();
         provider.create(consumerInfo, request);
         request.sync();
     }
 
-    protected void onConnectionRecovered(AsyncProvider provider) throws Exception {
+    protected void onConnectionRecovered(Provider provider) throws Exception {
         ProviderFuture request = new ProviderFuture();
         provider.start(consumerInfo, request);
         request.sync();

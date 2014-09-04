@@ -26,7 +26,7 @@ import io.neutronjms.jms.meta.JmsMessageId;
 import io.neutronjms.jms.meta.JmsProducerId;
 import io.neutronjms.jms.meta.JmsSessionId;
 import io.neutronjms.jms.meta.JmsSessionInfo;
-import io.neutronjms.provider.AsyncProvider;
+import io.neutronjms.provider.Provider;
 import io.neutronjms.provider.ProviderConstants.ACK_TYPE;
 import io.neutronjms.provider.ProviderFuture;
 
@@ -956,7 +956,7 @@ public class JmsSession implements Session, QueueSession, TopicSession, JmsMessa
         }
     }
 
-    protected void onConnectionRecovery(AsyncProvider provider) throws Exception {
+    protected void onConnectionRecovery(Provider provider) throws Exception {
 
         ProviderFuture request = new ProviderFuture();
         provider.create(sessionInfo, request);
@@ -978,7 +978,7 @@ public class JmsSession implements Session, QueueSession, TopicSession, JmsMessa
         }
     }
 
-    protected void onConnectionRecovered(AsyncProvider provider) throws Exception {
+    protected void onConnectionRecovered(Provider provider) throws Exception {
 
         this.messageFactory = provider.getMessageFactory();
 

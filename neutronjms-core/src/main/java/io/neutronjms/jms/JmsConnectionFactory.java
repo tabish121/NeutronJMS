@@ -19,7 +19,7 @@ package io.neutronjms.jms;
 import io.neutronjms.jms.exceptions.JmsExceptionSupport;
 import io.neutronjms.jms.jndi.JNDIStorable;
 import io.neutronjms.jms.meta.JmsConnectionInfo;
-import io.neutronjms.provider.AsyncProvider;
+import io.neutronjms.provider.Provider;
 import io.neutronjms.provider.ProviderFactory;
 import io.neutronjms.util.IdGenerator;
 import io.neutronjms.util.PropertyUtil;
@@ -166,7 +166,7 @@ public class JmsConnectionFactory extends JNDIStorable implements ConnectionFact
     public TopicConnection createTopicConnection(String username, String password) throws JMSException {
         try {
             String connectionId = getConnectionIdGenerator().generateId();
-            AsyncProvider provider = createProvider(brokerURI);
+            Provider provider = createProvider(brokerURI);
             JmsTopicConnection result = new JmsTopicConnection(connectionId, provider, getClientIdGenerator());
             return configureConnection(result, username, password);
         } catch (Exception e) {
@@ -195,7 +195,7 @@ public class JmsConnectionFactory extends JNDIStorable implements ConnectionFact
     public Connection createConnection(String username, String password) throws JMSException {
         try {
             String connectionId = getConnectionIdGenerator().generateId();
-            AsyncProvider provider = createProvider(brokerURI);
+            Provider provider = createProvider(brokerURI);
             JmsConnection result = new JmsConnection(connectionId, provider, getClientIdGenerator());
             return configureConnection(result, username, password);
         } catch (Exception e) {
@@ -225,7 +225,7 @@ public class JmsConnectionFactory extends JNDIStorable implements ConnectionFact
     public QueueConnection createQueueConnection(String username, String password) throws JMSException {
         try {
             String connectionId = getConnectionIdGenerator().generateId();
-            AsyncProvider provider = createProvider(brokerURI);
+            Provider provider = createProvider(brokerURI);
             JmsQueueConnection result = new JmsQueueConnection(connectionId, provider, getClientIdGenerator());
             return configureConnection(result, username, password);
         } catch (Exception e) {
@@ -245,8 +245,8 @@ public class JmsConnectionFactory extends JNDIStorable implements ConnectionFact
         }
     }
 
-    protected AsyncProvider createProvider(URI brokerURI) throws Exception {
-        AsyncProvider result = null;
+    protected Provider createProvider(URI brokerURI) throws Exception {
+        Provider result = null;
 
         try {
             result = ProviderFactory.createAsync(brokerURI);

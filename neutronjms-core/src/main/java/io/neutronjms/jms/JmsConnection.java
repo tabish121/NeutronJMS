@@ -28,7 +28,7 @@ import io.neutronjms.jms.meta.JmsConsumerId;
 import io.neutronjms.jms.meta.JmsResource;
 import io.neutronjms.jms.meta.JmsSessionId;
 import io.neutronjms.jms.meta.JmsTransactionId;
-import io.neutronjms.provider.AsyncProvider;
+import io.neutronjms.provider.Provider;
 import io.neutronjms.provider.ProviderConstants.ACK_TYPE;
 import io.neutronjms.provider.ProviderFuture;
 import io.neutronjms.provider.ProviderListener;
@@ -103,7 +103,7 @@ public class JmsConnection implements Connection, TopicConnection, QueueConnecti
     private URI brokerURI;
     private URI localURI;
     private SSLContext sslContext;
-    private AsyncProvider provider;
+    private Provider provider;
     private final Set<JmsConnectionListener> connectionListeners =
         new CopyOnWriteArraySet<JmsConnectionListener>();
     private final Map<JmsDestination, JmsDestination> tempDestinations =
@@ -113,7 +113,7 @@ public class JmsConnection implements Connection, TopicConnection, QueueConnecti
     private final AtomicLong transactionIdGenerator = new AtomicLong();
     private JmsMessageFactory messageFactory;
 
-    protected JmsConnection(String connectionId, AsyncProvider provider, IdGenerator clientIdGenerator) throws JMSException {
+    protected JmsConnection(String connectionId, Provider provider, IdGenerator clientIdGenerator) throws JMSException {
 
         // This executor can be used for dispatching asynchronous tasks that might block or result
         // in reentrant calls to this Connection that could block.  The thread in this executor
@@ -937,11 +937,11 @@ public class JmsConnection implements Connection, TopicConnection, QueueConnecti
         this.connectionInfo.setPassword(password);
     }
 
-    public AsyncProvider getProvider() {
+    public Provider getProvider() {
         return provider;
     }
 
-    void setProvider(AsyncProvider provider) {
+    void setProvider(Provider provider) {
         this.provider = provider;
     }
 
@@ -1012,7 +1012,7 @@ public class JmsConnection implements Connection, TopicConnection, QueueConnecti
     }
 
     @Override
-    public void onConnectionRecovery(AsyncProvider provider) throws Exception {
+    public void onConnectionRecovery(Provider provider) throws Exception {
         // TODO - Recover Advisory Consumer once we can support it.
 
         LOG.debug("Connection {} is starting recovery.", connectionInfo.getConnectionId());
@@ -1031,7 +1031,7 @@ public class JmsConnection implements Connection, TopicConnection, QueueConnecti
     }
 
     @Override
-    public void onConnectionRecovered(AsyncProvider provider) throws Exception {
+    public void onConnectionRecovered(Provider provider) throws Exception {
         LOG.debug("Connection {} is finalizing recovery.", connectionInfo.getConnectionId());
 
         this.messageFactory = provider.getMessageFactory();
