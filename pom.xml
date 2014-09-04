@@ -104,16 +104,6 @@
       </dependency>
       <dependency>
         <groupId>io.neutronjms</groupId>
-        <artifactId>neutronjms-stomp</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>io.neutronjms</groupId>
-        <artifactId>neutronjms-openwire</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>io.neutronjms</groupId>
         <artifactId>neutronjms-test-support</artifactId>
         <version>${project.version}</version>
       </dependency>
