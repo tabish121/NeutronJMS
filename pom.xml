@@ -53,7 +53,7 @@
     <proton-version>0.7</proton-version>
     <fuse-joram-tests-version>1.0</fuse-joram-tests-version>
     <jetty-version>8.1.15.v20140411</jetty-version>
-    <vertex-version>2.1</vertex-version>
+    <vertex-version>2.1.2</vertex-version>
     <mockito-version>1.9.5</mockito-version>
 
     <!-- Maven Plugin Version for this Project -->
@@ -63,7 +63,6 @@
     <maven-eclipse-plugin-version>2.9</maven-eclipse-plugin-version>
     <maven-idea-plugin-version>2.5</maven-idea-plugin-version>
     <maven-compiler-plugin-version>3.1</maven-compiler-plugin-version>
-    <maven-antrun-plugin-version>1.6.5</maven-antrun-plugin-version>
     <findbugs-maven-plugin-version>2.5.2</findbugs-maven-plugin-version>
   </properties>
 
@@ -156,11 +155,6 @@
         <groupId>io.vertx</groupId>
         <artifactId>vertx-platform</artifactId>
         <version>${vertex-version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-antrun-plugin</artifactId>
-        <version>${maven-antrun-plugin-version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
