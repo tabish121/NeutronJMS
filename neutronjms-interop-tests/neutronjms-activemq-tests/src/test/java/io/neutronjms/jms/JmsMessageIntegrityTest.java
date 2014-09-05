@@ -58,12 +58,6 @@ public class JmsMessageIntegrityTest extends AmqpTestSupport {
         connection = createAmqpConnection();
     }
 
-    @Override
-    public void tearDown() throws Exception {
-        connection.close();
-        super.tearDown();
-    }
-
     @Test
     public void testTextMessage() throws Exception {
         connection.start();
