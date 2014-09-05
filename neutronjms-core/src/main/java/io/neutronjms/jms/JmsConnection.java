@@ -579,10 +579,6 @@ public class JmsConnection implements Connection, TopicConnection, QueueConnecti
         return new JmsSessionId(connectionInfo.getConnectionId(), sessionIdGenerator.incrementAndGet());
     }
 
-    protected JmsSessionId get() {
-        return new JmsSessionId(connectionInfo.getConnectionId(), sessionIdGenerator.incrementAndGet());
-    }
-
     protected JmsTransactionId getNextTransactionId() {
         return new JmsTransactionId(connectionInfo.getConnectionId(), transactionIdGenerator.incrementAndGet());
     }
