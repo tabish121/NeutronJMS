@@ -24,7 +24,7 @@
   </parent>
 
   <artifactId>neutronjms-discovery</artifactId>
-  <name>neutronjms-discovery</name>
+  <name>NeutronJMS Discovery Library</name>
   <description>The Broker Discovery module for NeutronJMS</description>
   <packaging>jar</packaging>
   <properties>
