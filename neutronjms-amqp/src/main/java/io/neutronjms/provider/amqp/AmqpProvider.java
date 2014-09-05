@@ -684,6 +684,7 @@ public class AmqpProvider extends AbstractAsyncProvider implements TransportList
                 protonCollector.pop();
             }
 
+            // We have to do this to pump SASL bytes in as SASL is not event driven yet.
             if (connection != null) {
                 connection.processUpdates();
             }
