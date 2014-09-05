@@ -14,11 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.neutronjms.provider.discovery;
+package io.neutronjms.tests.discovery;
 
 import static org.junit.Assert.assertNotNull;
 import io.neutronjms.provider.Provider;
 import io.neutronjms.provider.DefaultProviderListener;
+import io.neutronjms.provider.discovery.DiscoveryProviderFactory;
 
 import java.io.IOException;
 import java.net.URI;
