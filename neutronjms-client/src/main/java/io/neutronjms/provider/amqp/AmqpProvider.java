@@ -682,9 +682,12 @@ public class AmqpProvider extends AbstractProvider implements TransportListener 
                 protonCollector.pop();
             }
 
-            connection.processUpdates();
+            // We have to do this to pump SASL bytes in as SASL is not event driven yet.
+            if (connection != null) {
+                connection.processUpdates();
+            }
         } catch (Exception ex) {
-            LOG.warn("Caught Exception during update processing: {}", ex.getMessage());
+            LOG.warn("Caught Exception during update processing: {}", ex.getMessage(), ex);
             fireProviderException(ex);
         }
     }
