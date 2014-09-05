@@ -684,9 +684,11 @@ public class AmqpProvider extends AbstractAsyncProvider implements TransportList
                 protonCollector.pop();
             }
 
-            connection.processUpdates();
+            if (connection != null) {
+                connection.processUpdates();
+            }
         } catch (Exception ex) {
-            LOG.warn("Caught Exception during update processing: {}", ex.getMessage());
+            LOG.warn("Caught Exception during update processing: {}", ex.getMessage(), ex);
             fireProviderException(ex);
         }
     }
