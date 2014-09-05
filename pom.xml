@@ -79,7 +79,7 @@
   </scm>
 
   <modules>
-    <module>neutronjms-core</module>
+    <module>neutronjms-client</module>
     <module>neutronjms-discovery</module>
     <module>neutronjms-interop-tests</module>
   </modules>
@@ -91,7 +91,7 @@
       <!-- =============================== -->
       <dependency>
         <groupId>io.neutronjms</groupId>
-        <artifactId>neutronjms-core</artifactId>
+        <artifactId>neutronjms-client</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

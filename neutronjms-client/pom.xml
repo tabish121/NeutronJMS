@@ -23,10 +23,10 @@
     <version>1.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>neutronjms-core</artifactId>
+  <artifactId>neutronjms-client</artifactId>
   <packaging>jar</packaging>
-  <name>NeutronJMS Core</name>
-  <description>The core JMS Framework implementation for NeutronJMS</description>
+  <name>NeutronJMS Client</name>
+  <description>The core JMS Client implementation for NeutronJMS</description>
 
   <dependencies>
     <!-- =================================== -->
