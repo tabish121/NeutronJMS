@@ -52,13 +52,11 @@ import javax.jms.JMSException;
 
 import org.apache.qpid.proton.engine.Collector;
 import org.apache.qpid.proton.engine.Connection;
-import org.apache.qpid.proton.engine.EngineFactory;
 import org.apache.qpid.proton.engine.Event;
 import org.apache.qpid.proton.engine.Event.Type;
 import org.apache.qpid.proton.engine.Sasl;
 import org.apache.qpid.proton.engine.Transport;
 import org.apache.qpid.proton.engine.impl.CollectorImpl;
-import org.apache.qpid.proton.engine.impl.EngineFactoryImpl;
 import org.apache.qpid.proton.engine.impl.ProtocolTracer;
 import org.apache.qpid.proton.engine.impl.TransportImpl;
 import org.apache.qpid.proton.framing.TransportFrame;
@@ -98,8 +96,7 @@ public class AmqpProvider extends AbstractAsyncProvider implements TransportList
     private long sendTimeout = JmsConnectionInfo.DEFAULT_SEND_TIMEOUT;
 
     private final JmsDefaultMessageFactory messageFactory = new JmsDefaultMessageFactory();
-    private final EngineFactory engineFactory = new EngineFactoryImpl();
-    private final Transport protonTransport = engineFactory.createTransport();
+    private final Transport protonTransport = Transport.Factory.create();
     private final Collector protonCollector = new CollectorImpl();
 
     /**
@@ -238,7 +235,7 @@ public class AmqpProvider extends AbstractAsyncProvider implements TransportList
                             sendTimeout = connectionInfo.getSendTimeout();
                             requestTimeout = connectionInfo.getRequestTimeout();
 
-                            Connection protonConnection = engineFactory.createConnection();
+                            Connection protonConnection = Connection.Factory.create();
                             protonTransport.setMaxFrameSize(getMaxFrameSize());
                             protonTransport.bind(protonConnection);
                             protonConnection.collect(protonCollector);
@@ -657,15 +654,18 @@ public class AmqpProvider extends AbstractAsyncProvider implements TransportList
 
                 AmqpResource amqpResource = null;
                 switch (protonEvent.getType()) {
-                    case CONNECTION_REMOTE_STATE:
+                    case CONNECTION_REMOTE_CLOSE:
+                    case CONNECTION_REMOTE_OPEN:
                         AmqpConnection connection = (AmqpConnection) protonEvent.getConnection().getContext();
                         connection.processStateChange();
                         break;
-                    case SESSION_REMOTE_STATE:
+                    case SESSION_REMOTE_CLOSE:
+                    case SESSION_REMOTE_OPEN:
                         AmqpSession session = (AmqpSession) protonEvent.getSession().getContext();
                         session.processStateChange();
                         break;
-                    case LINK_REMOTE_STATE:
+                    case LINK_REMOTE_CLOSE:
+                    case LINK_REMOTE_OPEN:
                         AmqpResource resource = (AmqpResource) protonEvent.getLink().getContext();
                         resource.processStateChange();
                         break;

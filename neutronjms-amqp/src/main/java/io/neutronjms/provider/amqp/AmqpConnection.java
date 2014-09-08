@@ -31,20 +31,15 @@ import java.util.Map;
 import javax.jms.JMSSecurityException;
 import javax.jms.Session;
 
-import org.apache.qpid.proton.ProtonFactoryLoader;
 import org.apache.qpid.proton.engine.Connection;
 import org.apache.qpid.proton.engine.EndpointState;
 import org.apache.qpid.proton.engine.Sasl;
-import org.apache.qpid.proton.message.MessageFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class AmqpConnection extends AbstractAmqpResource<JmsConnectionInfo, Connection> {
 
     private static final Logger LOG = LoggerFactory.getLogger(AmqpConnection.class);
-
-    private static final ProtonFactoryLoader<MessageFactory> protonFactoryLoader =
-        new ProtonFactoryLoader<MessageFactory>(MessageFactory.class);
 
     private final AmqpJmsMessageFactory amqpMessageFactory;
 
@@ -55,7 +50,6 @@ public class AmqpConnection extends AbstractAmqpResource<JmsConnectionInfo, Conn
     private boolean connected;
     private AmqpSaslAuthenticator authenticator;
     private final AmqpSession connectionSession;
-    private final MessageFactory messageFactory = protonFactoryLoader.loadFactory();
 
     private String queuePrefix;
     private String topicPrefix;
@@ -262,13 +256,6 @@ public class AmqpConnection extends AbstractAmqpResource<JmsConnectionInfo, Conn
             return (AmqpSession) sessionId.getProviderHint();
         }
         return this.sessions.get(sessionId);
-    }
-
-    /**
-     * @return the loaded Proton MessageFactory used to create message objects.
-     */
-    public MessageFactory getMessageFactory() {
-        return this.messageFactory;
     }
 
     /**
