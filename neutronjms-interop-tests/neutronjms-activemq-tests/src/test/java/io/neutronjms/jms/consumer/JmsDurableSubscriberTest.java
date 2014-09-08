@@ -105,7 +105,16 @@ public class JmsDurableSubscriberTest extends AmqpTestSupport {
         assertNotNull(session);
         Topic topic = session.createTopic(name.getMethodName());
         TopicSubscriber subscriber = session.createDurableSubscriber(topic, name.getMethodName() + "-subscriber");
+
+        TopicViewMBean proxy = getProxyToTopic(name.getMethodName());
+        assertEquals(0, proxy.getQueueSize());
+        assertEquals(1, brokerService.getAdminView().getDurableTopicSubscribers().length);
+        assertEquals(0, brokerService.getAdminView().getInactiveDurableTopicSubscribers().length);
+
         subscriber.close();
+
+        assertEquals(0, brokerService.getAdminView().getDurableTopicSubscribers().length);
+        assertEquals(1, brokerService.getAdminView().getInactiveDurableTopicSubscribers().length);
 
         MessageProducer producer = session.createProducer(topic);
         for (int i = 0; i < MSG_COUNT; i++) {
@@ -113,7 +122,12 @@ public class JmsDurableSubscriberTest extends AmqpTestSupport {
         }
         producer.close();
 
+        LOG.info("Bringing offline subscription back online.");
         subscriber = session.createDurableSubscriber(topic, name.getMethodName() + "-subscriber");
+
+        assertEquals(1, brokerService.getAdminView().getDurableTopicSubscribers().length);
+        assertEquals(0, brokerService.getAdminView().getInactiveDurableTopicSubscribers().length);
+
         final CountDownLatch messages = new CountDownLatch(MSG_COUNT);
         subscriber.setMessageListener(new MessageListener() {
 

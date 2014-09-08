@@ -42,14 +42,13 @@ public class JmsDefaultObjectMessageFacade extends JmsDefaultMessageFacade imple
     public JmsDefaultObjectMessageFacade copy() throws JMSException {
         JmsDefaultObjectMessageFacade copy = new JmsDefaultObjectMessageFacade();
         copyInto(copy);
-        return copy;
-    }
+        // TODO - We don't snapshot the object when set although we really should be.
+        //      if (!isEmpty()) {
+        //      target.object = object.deepCopy();
+        //  }
+        copy.object = object;
 
-    protected void copyInto(JmsDefaultObjectMessageFacade target) throws JMSException {
-//        if (!isEmpty()) {
-//            target.object = object.deepCopy();
-//        }
-        target.object = object;
+        return copy;
     }
 
     @Override
