@@ -314,6 +314,7 @@ public class JmsClientAckTest extends AmqpTestSupport {
         producer.send(sent4);
 
         Message rec4 = consumer.receive(5000);
+        assertNotNull(rec4);
         assertTrue(rec4.equals(sent4));
         consumerSession.recover();
         rec4 = consumer.receive(5000);
