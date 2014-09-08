@@ -36,16 +36,15 @@ public final class JmsDefaultTextMessageFacade extends JmsDefaultMessageFacade i
     public JmsDefaultTextMessageFacade copy() throws JMSException {
         JmsDefaultTextMessageFacade copy = new JmsDefaultTextMessageFacade();
         copyInto(copy);
+        if (text != null) {
+            copy.setText(text);
+        }
         return copy;
     }
 
     @Override
     public void clearBody() {
         this.text = null;
-    }
-
-    protected void copyInto(JmsDefaultTextMessageFacade target) throws JMSException {
-        target.setText(text);
     }
 
     @Override
