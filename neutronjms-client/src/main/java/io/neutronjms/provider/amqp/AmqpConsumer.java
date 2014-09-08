@@ -316,6 +316,9 @@ public class AmqpConsumer extends AbstractAmqpResource<JmsConsumerInfo, Receiver
             LOG.warn("Error on transform: {}", e.getMessage());
             // TODO - We could signal provider error but not sure we want to fail
             //        the connection just because we can't convert the message.
+            //        In the future once the JMS mapping is complete we should be
+            //        able to convert everything to some message even if its just
+            //        a bytes messages as a fall back.
             deliveryFailed(incoming, true);
             return;
         }
@@ -325,7 +328,7 @@ public class AmqpConsumer extends AbstractAmqpResource<JmsConsumerInfo, Receiver
         } catch (JMSException e) {
             LOG.warn("Error on transform: {}", e.getMessage());
             // TODO - We could signal provider error but not sure we want to fail
-            //        the connection just because we can't convert the message.
+            //        the connection just because we can't convert the destination.
             deliveryFailed(incoming, true);
             return;
         }

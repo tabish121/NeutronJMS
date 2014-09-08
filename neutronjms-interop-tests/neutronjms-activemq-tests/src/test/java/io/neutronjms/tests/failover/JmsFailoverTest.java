@@ -184,11 +184,10 @@ public class JmsFailoverTest extends AmqpTestSupport {
         connection.close();
     }
 
-    // TODO - FIXME
-    @Ignore("Test currently not working")
     @Test(timeout=90000)
     public void testBadFirstURIConnectsAndProducerWorks() throws Exception {
-        URI brokerURI = new URI("failover://(amqp://localhost:61616)?maxReconnectDelay=1000");
+        URI brokerURI = new URI("failover://(amqp://localhost:61616," +
+                                             getBrokerAmqpConnectionURI() + ")?maxReconnectDelay=1000");
 
         Connection connection = createAmqpConnection(brokerURI);
         connection.start();

@@ -34,6 +34,7 @@ import java.util.Set;
 import javax.jms.JMSException;
 
 import org.apache.qpid.proton.Proton;
+import org.apache.qpid.proton.amqp.Symbol;
 import org.apache.qpid.proton.amqp.UnsignedByte;
 import org.apache.qpid.proton.amqp.UnsignedInteger;
 import org.apache.qpid.proton.amqp.messaging.ApplicationProperties;
@@ -52,7 +53,7 @@ public class AmqpJmsMessageFacade implements JmsMessageFacade {
     protected final AmqpConnection connection;
 
     private MessageAnnotations annotations;
-    private Map<Object,Object> annotationsMap;
+    private Map<Symbol,Object> annotationsMap;
     private Map<String,Object> propertiesMap;
 
     private JmsDestination replyTo;
@@ -593,7 +594,7 @@ public class AmqpJmsMessageFacade implements JmsMessageFacade {
 
     private void lazyCreateAnnotations() {
         if (annotationsMap == null) {
-            annotationsMap = new HashMap<Object,Object>();
+            annotationsMap = new HashMap<Symbol,Object>();
             annotations = new MessageAnnotations(annotationsMap);
             message.setMessageAnnotations(annotations);
         }
