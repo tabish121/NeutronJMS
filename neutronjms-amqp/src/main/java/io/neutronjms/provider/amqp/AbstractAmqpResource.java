@@ -129,6 +129,8 @@ public abstract class AbstractAmqpResource<R extends JmsResource, E extends Endp
             this.closeRequest.onSuccess();
             this.closeRequest = null;
         }
+
+        this.endpoint.free();
     }
 
     @Override
