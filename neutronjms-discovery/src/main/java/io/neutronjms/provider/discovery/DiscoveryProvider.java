@@ -127,14 +127,14 @@ public class DiscoveryProvider extends AsyncProviderWrapper<FailoverProvider> im
     //------------------- Connection State Handlers --------------------------//
 
     @Override
-    public void onConnectionInterrupted() {
+    public void onConnectionInterrupted(URI remoteURI) {
         this.discoveryAgent.resume();
-        super.onConnectionInterrupted();
+        super.onConnectionInterrupted(remoteURI);
     }
 
     @Override
-    public void onConnectionRestored() {
+    public void onConnectionRestored(URI remoteURI) {
         this.discoveryAgent.suspend();
-        super.onConnectionRestored();
+        super.onConnectionRestored(remoteURI);
     }
 }

@@ -997,13 +997,13 @@ public class JmsConnection implements Connection, TopicConnection, QueueConnecti
     }
 
     @Override
-    public void onConnectionInterrupted() {
+    public void onConnectionInterrupted(URI remoteURI) {
         for (JmsSession session : sessions) {
             session.onConnectionInterrupted();
         }
 
         for (JmsConnectionListener listener : connectionListeners) {
-            listener.onConnectionInterrupted();
+            listener.onConnectionInterrupted(remoteURI);
         }
     }
 
@@ -1038,13 +1038,13 @@ public class JmsConnection implements Connection, TopicConnection, QueueConnecti
     }
 
     @Override
-    public void onConnectionRestored() {
+    public void onConnectionRestored(URI remoteURI) {
         for (JmsSession session : sessions) {
             session.onConnectionRestored();
         }
 
         for (JmsConnectionListener listener : connectionListeners) {
-            listener.onConnectionRestored();
+            listener.onConnectionRestored(remoteURI);
         }
     }
 

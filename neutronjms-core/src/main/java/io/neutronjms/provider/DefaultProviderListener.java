@@ -19,6 +19,7 @@ package io.neutronjms.provider;
 import io.neutronjms.jms.message.JmsInboundMessageDispatch;
 
 import java.io.IOException;
+import java.net.URI;
 
 /**
  * Default implementation that does nothing for all callbacks.
@@ -30,7 +31,7 @@ public class DefaultProviderListener implements ProviderListener {
     }
 
     @Override
-    public void onConnectionInterrupted() {
+    public void onConnectionInterrupted(URI remoteURI) {
     }
 
     @Override
@@ -46,6 +47,6 @@ public class DefaultProviderListener implements ProviderListener {
     }
 
     @Override
-    public void onConnectionRestored() {
+    public void onConnectionRestored(URI remoteURI) {
     }
 }

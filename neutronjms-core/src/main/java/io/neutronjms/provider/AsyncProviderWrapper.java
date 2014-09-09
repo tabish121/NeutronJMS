@@ -146,8 +146,8 @@ public class AsyncProviderWrapper<E extends AsyncProvider> implements AsyncProvi
     }
 
     @Override
-    public void onConnectionInterrupted() {
-        this.listener.onConnectionInterrupted();
+    public void onConnectionInterrupted(URI remoteURI) {
+        this.listener.onConnectionInterrupted(remoteURI);
     }
 
     @Override
@@ -161,13 +161,13 @@ public class AsyncProviderWrapper<E extends AsyncProvider> implements AsyncProvi
     }
 
     @Override
-    public void onConnectionRestored() {
-        this.listener.onConnectionRestored();
+    public void onConnectionRestored(URI remoteURI) {
+        this.listener.onConnectionRestored(remoteURI);
     }
 
     @Override
     public void onConnectionFailure(IOException ex) {
-        this.listener.onConnectionInterrupted();
+        this.listener.onConnectionInterrupted(this.next.getRemoteURI());
     }
 
     /**

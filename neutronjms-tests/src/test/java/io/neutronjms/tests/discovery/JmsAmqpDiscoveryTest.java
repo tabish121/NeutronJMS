@@ -24,6 +24,7 @@ import io.neutronjms.jms.message.JmsInboundMessageDispatch;
 import io.neutronjms.test.support.AmqpTestSupport;
 import io.neutronjms.test.support.Wait;
 
+import java.net.URI;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -147,14 +148,14 @@ public class JmsAmqpDiscoveryTest extends AmqpTestSupport implements JmsConnecti
     }
 
     @Override
-    public void onConnectionInterrupted() {
-        LOG.info("Connection reports interrupted.");
+    public void onConnectionInterrupted(URI remoteURI) {
+        LOG.info("Connection reports interrupted. Lost connection to -> {}", remoteURI);
         interrupted.countDown();
     }
 
     @Override
-    public void onConnectionRestored() {
-        LOG.info("Connection reports restored.");
+    public void onConnectionRestored(URI remoteURI) {
+        LOG.info("Connection reports restored.  Connected to -> {}", remoteURI);
         restored.countDown();
     }
 
