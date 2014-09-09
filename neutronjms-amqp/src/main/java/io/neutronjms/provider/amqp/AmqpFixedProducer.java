@@ -36,6 +36,7 @@ import javax.jms.JMSException;
 
 import org.apache.qpid.proton.amqp.Binary;
 import org.apache.qpid.proton.amqp.messaging.Accepted;
+import org.apache.qpid.proton.amqp.messaging.Outcome;
 import org.apache.qpid.proton.amqp.messaging.Rejected;
 import org.apache.qpid.proton.amqp.messaging.Source;
 import org.apache.qpid.proton.amqp.messaging.Target;
@@ -132,6 +133,11 @@ public class AmqpFixedProducer extends AmqpProducer {
         JmsMessage message = envelope.getMessage();
         message.setReadOnlyBody(true);
 
+        // TODO: why do we need this?
+        // Possibly because AMQP spec "2.7.5 Transfer" says message format MUST be set on at least
+        // the first Transfer frame of a message.  That is on the encoded Transfer frames though and
+        // this property isn't, but rather within the application-properties map.  We should probably
+        // ensure this elsewhere (appears Proton does so itself in TransportImpl#processTransportWorkSender)
         if (!message.getProperties().containsKey(MESSAGE_FORMAT_KEY)) {
             message.setProperty(MESSAGE_FORMAT_KEY, 0);
         }
@@ -240,28 +246,38 @@ public class AmqpFixedProducer extends AmqpProducer {
                 continue;
             }
 
+            Outcome outcome = null;
+            if (state instanceof TransactionalState) {
+                LOG.trace("State of delivery is Transactional, retrieving outcome: {}", state);
+                outcome = ((TransactionalState) state).getOutcome();
+            } else if (state instanceof Outcome) {
+                outcome = (Outcome) state;
+            } else {
+                LOG.warn("Message send updated with unsupported state: {}", state);
+                continue;
+            }
+
             AsyncResult request = (AsyncResult) delivery.getContext();
 
-            if (state instanceof Accepted) {
+            if (outcome instanceof Accepted) {
                 toRemove.add(delivery);
-                LOG.trace("State of delivery accepted: {}", delivery);
+                LOG.trace("Outcome of delivery was accepted: {}", delivery);
                 tagGenerator.returnTag(delivery.getTag());
                 if (request != null && !request.isComplete()) {
                     request.onSuccess();
                 }
-            } else if (state instanceof Rejected) {
+            } else if (outcome instanceof Rejected) {
                 Exception remoteError = getRemoteError();
                 toRemove.add(delivery);
+                LOG.trace("Outcome of delivery was rejected: {}", delivery);
                 tagGenerator.returnTag(delivery.getTag());
                 if (request != null && !request.isComplete()) {
                     request.onFailure(remoteError);
                 } else {
                     connection.getProvider().fireProviderException(remoteError);
                 }
-            } else if (state instanceof TransactionalState) {
-                LOG.info("State of delivery is Transacted: {}", state);
             } else {
-                LOG.warn("Message send updated with unsupported state: {}", state);
+                LOG.warn("Message send updated with unsupported outcome: {}", outcome);
             }
         }
 
