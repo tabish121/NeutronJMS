@@ -164,6 +164,8 @@ public class AmqpProvider extends AbstractAsyncProvider implements TransportList
 
                         if (connection != null) {
                             connection.close(request);
+                        } else {
+                            request.onSuccess();
                         }
 
                         pumpToProtonTransport();
