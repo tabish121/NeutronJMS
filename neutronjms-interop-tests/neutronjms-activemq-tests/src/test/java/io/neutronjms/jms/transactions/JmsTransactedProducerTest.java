@@ -29,7 +29,6 @@ import javax.jms.Queue;
 import javax.jms.Session;
 
 import org.apache.activemq.broker.jmx.QueueViewMBean;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -52,7 +51,6 @@ public class JmsTransactedProducerTest extends AmqpTestSupport {
         assertNotNull(producer);
     }
 
-    @Ignore
     @Test(timeout = 60000)
     public void testTXProducerCommitsAreQueued() throws Exception {
         final int MSG_COUNT = 10;
@@ -76,7 +74,6 @@ public class JmsTransactedProducerTest extends AmqpTestSupport {
         assertEquals(MSG_COUNT, proxy.getQueueSize());
     }
 
-    @Ignore
     @Test(timeout = 60000)
     public void testTXProducerRollbacksNotQueued() throws Exception {
         final int MSG_COUNT = 10;
