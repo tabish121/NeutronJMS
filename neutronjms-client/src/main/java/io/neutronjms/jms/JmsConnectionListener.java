@@ -18,6 +18,8 @@ package io.neutronjms.jms;
 
 import io.neutronjms.jms.message.JmsInboundMessageDispatch;
 
+import java.net.URI;
+
 /**
  * Providers an interface for client's to listener to events related to
  * an JmsConnection.
@@ -34,13 +36,19 @@ public interface JmsConnectionListener {
 
     /**
      * Called when the Connection to the remote peer is lost.
+     *
+     * @param remoteURI
+     *        The URI of the Broker previously connected to.
      */
-    void onConnectionInterrupted();
+    void onConnectionInterrupted(URI remoteURI);
 
     /**
      * Called when normal communication has been restored to a remote peer.
+     *
+     * @param remoteURI
+     *        The URI of the Broker that this client is now connected to.
      */
-    void onConnectionRestored();
+    void onConnectionRestored(URI remoteURI);
 
     /**
      * Called when a Connection is notified that a new Message has arrived for

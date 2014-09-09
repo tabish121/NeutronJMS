@@ -19,6 +19,7 @@ package io.neutronjms.provider;
 import io.neutronjms.jms.message.JmsInboundMessageDispatch;
 
 import java.io.IOException;
+import java.net.URI;
 
 /**
  * Events interface used to update the listener with changes in provider state.
@@ -40,8 +41,11 @@ public interface ProviderListener {
      *
      * It is considered a programming error to allow any exceptions to be thrown from
      * this notification method.
+     *
+     * @param remoteURI
+     *        The URI of the Broker whose connection was lost.
      */
-    void onConnectionInterrupted();
+    void onConnectionInterrupted(URI remoteURI);
 
     /**
      * Called to indicate that a connection to the Broker has been reestablished and
@@ -80,8 +84,11 @@ public interface ProviderListener {
      *
      * It is considered a programming error to allow any exceptions to be thrown from
      * this notification method.
+     *
+     * @param remoteURI
+     *        The URI of the Broker that the client has now connected to.
      */
-    void onConnectionRestored();
+    void onConnectionRestored(URI remoteURI);
 
     /**
      * Called to indicate that the underlying connection to the Broker has been lost and

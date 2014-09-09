@@ -422,6 +422,7 @@ public class FailoverProvider extends DefaultProviderListener implements Provide
         LOG.trace("stack", cause);
 
         this.provider.setProviderListener(closedListener);
+        URI failedURI = this.provider.getRemoteURI();
         try {
             this.provider.close();
         } catch (Throwable error) {
@@ -432,7 +433,7 @@ public class FailoverProvider extends DefaultProviderListener implements Provide
         if (reconnectAllowed()) {
             ProviderListener listener = this.listener;
             if (listener != null) {
-                listener.onConnectionInterrupted();
+                listener.onConnectionInterrupted(failedURI);
             }
             triggerReconnectionAttempt();
         } else {
@@ -477,8 +478,10 @@ public class FailoverProvider extends DefaultProviderListener implements Provide
                         // Stage 2: Restart consumers, send pull commands, etc.
                         listener.onConnectionRecovered(provider);
 
-                        listener.onConnectionRestored();
+                        // Stage 3: Let the client know that connection has restored.
+                        listener.onConnectionRestored(provider.getRemoteURI());
 
+                        // Stage 4: Send pending actions.
                         List<FailoverRequest> pending = new ArrayList<FailoverRequest>(requests.values());
                         for (FailoverRequest request : pending) {
                             request.run();
