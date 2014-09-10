@@ -222,7 +222,6 @@ public class JmsConnection implements Connection, TopicConnection, QueueConnecti
 
         if (isConnected() && !failed.get() && !closing.get()) {
             destroyResource(connectionInfo);
-            connected.set(false);
         }
 
         if (clientIdSet) {
@@ -232,6 +231,7 @@ public class JmsConnection implements Connection, TopicConnection, QueueConnecti
 
         tempDestinations.clear();
         started.set(false);
+        connected.set(false);
     }
 
     /**

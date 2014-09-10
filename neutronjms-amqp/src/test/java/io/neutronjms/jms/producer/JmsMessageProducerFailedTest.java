@@ -17,6 +17,8 @@
 package io.neutronjms.jms.producer;
 
 import static org.junit.Assert.assertTrue;
+import io.neutronjms.jms.JmsConnection;
+import io.neutronjms.test.support.Wait;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -49,6 +51,14 @@ public class JmsMessageProducerFailedTest extends JmsMessageProducerClosedTest {
         connection.start();
         stopPrimaryBroker();
         assertTrue(latch.await(10, TimeUnit.SECONDS));
+        final JmsConnection jmsConnection = (JmsConnection) connection;
+        assertTrue(Wait.waitFor(new Wait.Condition() {
+
+            @Override
+            public boolean isSatisified() throws Exception {
+                return !jmsConnection.isConnected();
+            }
+        }));
         return producer;
     }
 }
