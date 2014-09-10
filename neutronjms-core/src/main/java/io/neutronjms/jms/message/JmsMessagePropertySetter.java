@@ -33,7 +33,7 @@ import javax.jms.JMSException;
  * Utility class used to intercept calls to Message property sets and map the
  * correct OpenWire fields to the property name being set.
  */
-public class JmsMessageFacadePropertySetter {
+public class JmsMessagePropertySetter {
 
     private static final Map<String, PropertySetter> PROPERTY_SETTERS = new HashMap<String, PropertySetter>();
 
@@ -101,7 +101,20 @@ s         */
         PROPERTY_SETTERS.put("JMSDeliveryMode", new PropertySetter() {
             @Override
             public void setProperty(JmsMessageFacade message, Object value) throws JMSException {
-                Integer rc = (Integer) TypeConversionSupport.convert(value, Integer.class);
+                Integer rc = null;
+                try {
+                    rc = (Integer) TypeConversionSupport.convert(value, Integer.class);
+                } catch (NumberFormatException nfe) {
+                    if (value instanceof String) {
+                        if (((String) value).equalsIgnoreCase("PERSISTENT")) {
+                            rc = DeliveryMode.PERSISTENT;
+                        } else if (((String) value).equalsIgnoreCase("NON_PERSISTENT")) {
+                            rc = DeliveryMode.NON_PERSISTENT;
+                        } else {
+                            throw nfe;
+                        }
+                    }
+                }
                 if (rc == null) {
                     Boolean bool = (Boolean) TypeConversionSupport.convert(value, Boolean.class);
                     if (bool == null) {
@@ -251,7 +264,7 @@ s         */
      * @param name
      *        the property value that this getter is assigned to lookup.
      */
-    public JmsMessageFacadePropertySetter(String name) {
+    public JmsMessagePropertySetter(String name) {
         this.name = name;
         jmsPropertyExpression = PROPERTY_SETTERS.get(name);
     }
@@ -310,6 +323,6 @@ s         */
         if (o == null || !this.getClass().equals(o.getClass())) {
             return false;
         }
-        return name.equals(((JmsMessageFacadePropertySetter) o).name);
+        return name.equals(((JmsMessagePropertySetter) o).name);
     }
 }

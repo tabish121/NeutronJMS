@@ -30,7 +30,7 @@ import javax.jms.JMSException;
  * Utility class used to intercept calls to Message property gets and map the
  * correct OpenWire fields to the property name being queried.
  */
-public class JmsMessageFacadePropertyGetter {
+public class JmsMessagePropertyGetter {
 
     private static final Map<String, PropertyGetter> PROPERTY_GETTERS = new HashMap<String, PropertyGetter>();
 
@@ -239,7 +239,7 @@ public class JmsMessageFacadePropertyGetter {
      * @param name
      *        the property value that this getter is assigned to lookup.
      */
-    public JmsMessageFacadePropertyGetter(String name) {
+    public JmsMessagePropertyGetter(String name) {
         this.name = name;
         jmsPropertyExpression = PROPERTY_GETTERS.get(name);
     }
@@ -298,6 +298,6 @@ public class JmsMessageFacadePropertyGetter {
         if (o == null || !this.getClass().equals(o.getClass())) {
             return false;
         }
-        return name.equals(((JmsMessageFacadePropertyGetter) o).name);
+        return name.equals(((JmsMessagePropertyGetter) o).name);
     }
 }
