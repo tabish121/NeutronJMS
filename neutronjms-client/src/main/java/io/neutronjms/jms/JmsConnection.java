@@ -172,7 +172,14 @@ public class JmsConnection implements Connection, TopicConnection, QueueConnecti
                 if (isConnected() && !failed.get()) {
                     ProviderFuture request = new ProviderFuture();
                     provider.destroy(connectionInfo, request);
-                    request.sync();
+                    try {
+                        request.sync();
+                    } catch (Exception ex) {
+                        // TODO - Spec is a bit vague here, we don't fail if already closed but
+                        //        in this case we really aren't closed yet so there could be an
+                        //        argument that at this point an exception is still valid.
+                        LOG.debug("Failed detroying Connection resource: {}", ex.getMessage());
+                    }
                 }
 
                 connected.set(false);
