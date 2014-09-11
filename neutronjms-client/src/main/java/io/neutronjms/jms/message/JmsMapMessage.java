@@ -16,12 +16,9 @@
  */
 package io.neutronjms.jms.message;
 
-import io.neutronjms.jms.message.facade.JmsMessageFacade;
+import io.neutronjms.jms.message.facade.JmsMapMessageFacade;
 
-import java.util.Collections;
 import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.jms.JMSException;
 import javax.jms.MapMessage;
@@ -85,22 +82,18 @@ import javax.jms.MessageNotWriteableException;
  */
 public class JmsMapMessage extends JmsMessage implements MapMessage {
 
-    protected transient Map<String, Object> map = new HashMap<String, Object>();
+    JmsMapMessageFacade facade;
 
-    public JmsMapMessage(JmsMessageFacade facade) {
+    public JmsMapMessage(JmsMapMessageFacade facade) {
         super(facade);
+        this.facade = facade;
     }
 
     @Override
-    public JmsMessage copy() throws JMSException {
+    public JmsMapMessage copy() throws JMSException {
         JmsMapMessage other = new JmsMapMessage(facade.copy());
         other.copy(this);
         return other;
-    }
-
-    public void copy(JmsMapMessage other) throws JMSException {
-        super.copy(other);
-        this.map = other.map;
     }
 
     /**
@@ -114,7 +107,7 @@ public class JmsMapMessage extends JmsMessage implements MapMessage {
     @Override
     public void clearBody() throws JMSException {
         super.clearBody();
-        map.clear();
+        facade.clearBody();
     }
 
     /**
@@ -132,7 +125,7 @@ public class JmsMapMessage extends JmsMessage implements MapMessage {
     @Override
     public boolean getBoolean(String name) throws JMSException {
         initializeReading();
-        Object value = map.get(name);
+        Object value = facade.get(name);
         if (value == null) {
             return false;
         }
@@ -161,7 +154,7 @@ public class JmsMapMessage extends JmsMessage implements MapMessage {
     @Override
     public byte getByte(String name) throws JMSException {
         initializeReading();
-        Object value = map.get(name);
+        Object value = facade.get(name);
         if (value == null) {
             return 0;
         }
@@ -190,7 +183,7 @@ public class JmsMapMessage extends JmsMessage implements MapMessage {
     @Override
     public short getShort(String name) throws JMSException {
         initializeReading();
-        Object value = map.get(name);
+        Object value = facade.get(name);
         if (value == null) {
             return 0;
         }
@@ -222,7 +215,7 @@ public class JmsMapMessage extends JmsMessage implements MapMessage {
     @Override
     public char getChar(String name) throws JMSException {
         initializeReading();
-        Object value = map.get(name);
+        Object value = facade.get(name);
         if (value == null) {
             throw new NullPointerException();
         }
@@ -248,7 +241,7 @@ public class JmsMapMessage extends JmsMessage implements MapMessage {
     @Override
     public int getInt(String name) throws JMSException {
         initializeReading();
-        Object value = map.get(name);
+        Object value = facade.get(name);
         if (value == null) {
             return 0;
         }
@@ -283,7 +276,7 @@ public class JmsMapMessage extends JmsMessage implements MapMessage {
     @Override
     public long getLong(String name) throws JMSException {
         initializeReading();
-        Object value = map.get(name);
+        Object value = facade.get(name);
         if (value == null) {
             return 0;
         }
@@ -321,7 +314,7 @@ public class JmsMapMessage extends JmsMessage implements MapMessage {
     @Override
     public float getFloat(String name) throws JMSException {
         initializeReading();
-        Object value = map.get(name);
+        Object value = facade.get(name);
         if (value == null) {
             return 0;
         }
@@ -350,7 +343,7 @@ public class JmsMapMessage extends JmsMessage implements MapMessage {
     @Override
     public double getDouble(String name) throws JMSException {
         initializeReading();
-        Object value = map.get(name);
+        Object value = facade.get(name);
         if (value == null) {
             return 0;
         }
@@ -383,7 +376,7 @@ public class JmsMapMessage extends JmsMessage implements MapMessage {
     @Override
     public String getString(String name) throws JMSException {
         initializeReading();
-        Object value = map.get(name);
+        Object value = facade.get(name);
         if (value == null) {
             return null;
         }
@@ -410,7 +403,7 @@ public class JmsMapMessage extends JmsMessage implements MapMessage {
     @Override
     public byte[] getBytes(String name) throws JMSException {
         initializeReading();
-        Object value = map.get(name);
+        Object value = facade.get(name);
         if (value instanceof byte[]) {
             return (byte[]) value;
         } else {
@@ -442,7 +435,7 @@ public class JmsMapMessage extends JmsMessage implements MapMessage {
     @Override
     public Object getObject(String name) throws JMSException {
         initializeReading();
-        return map.get(name);
+        return facade.get(name);
     }
 
     /**
@@ -455,7 +448,7 @@ public class JmsMapMessage extends JmsMessage implements MapMessage {
     @Override
     public Enumeration<String> getMapNames() throws JMSException {
         initializeReading();
-        return Collections.enumeration(map.keySet());
+        return facade.getMapNames();
     }
 
     protected void put(String name, Object value) throws JMSException {
@@ -465,7 +458,7 @@ public class JmsMapMessage extends JmsMessage implements MapMessage {
         if (name.length() == 0) {
             throw new IllegalArgumentException("The name of the property cannot be an emprty string.");
         }
-        map.put(name, value);
+        facade.put(name, value);
     }
 
     /**
@@ -678,9 +671,11 @@ public class JmsMapMessage extends JmsMessage implements MapMessage {
     public void setBytes(String name, byte[] value) throws JMSException {
         initializeWriting();
         if (value != null) {
-            put(name, value);
+            byte[] data = new byte[value.length];
+            System.arraycopy(value, 0, data, 0, value.length);
+            put(name, data);
         } else {
-            map.remove(name);
+            facade.remove(name);
         }
     }
 
@@ -760,7 +755,7 @@ public class JmsMapMessage extends JmsMessage implements MapMessage {
     @Override
     public boolean itemExists(String name) throws JMSException {
         initializeReading();
-        return map.containsKey(name);
+        return facade.itemExists(name);
     }
 
     /**
@@ -783,6 +778,6 @@ public class JmsMapMessage extends JmsMessage implements MapMessage {
 
     @Override
     public String toString() {
-        return super.toString() + " ActiveMQMapMessage{ " + "theTable = " + map + " }";
+        return super.toString() + " ActiveMQMapMessage{ " + "theTable = " + facade + " }";
     }
 }

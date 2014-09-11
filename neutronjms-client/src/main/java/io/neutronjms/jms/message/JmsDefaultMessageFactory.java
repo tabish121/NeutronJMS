@@ -17,8 +17,10 @@
 package io.neutronjms.jms.message;
 
 import io.neutronjms.jms.message.facade.defaults.JmsDefaultBytesMessageFacade;
+import io.neutronjms.jms.message.facade.defaults.JmsDefaultMapMessageFacade;
 import io.neutronjms.jms.message.facade.defaults.JmsDefaultMessageFacade;
 import io.neutronjms.jms.message.facade.defaults.JmsDefaultObjectMessageFacade;
+import io.neutronjms.jms.message.facade.defaults.JmsDefaultStreamMessageFacade;
 import io.neutronjms.jms.message.facade.defaults.JmsDefaultTextMessageFacade;
 
 import java.io.Serializable;
@@ -60,12 +62,12 @@ public class JmsDefaultMessageFactory implements JmsMessageFactory {
 
     @Override
     public JmsMapMessage createMapMessage() throws UnsupportedOperationException {
-        return new JmsMapMessage(new JmsDefaultMessageFacade());
+        return new JmsMapMessage(new JmsDefaultMapMessageFacade());
     }
 
     @Override
     public JmsStreamMessage createStreamMessage() throws UnsupportedOperationException {
-        return new JmsStreamMessage(new JmsDefaultMessageFacade());
+        return new JmsStreamMessage(new JmsDefaultStreamMessageFacade());
     }
 
     @Override

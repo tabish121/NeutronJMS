@@ -23,8 +23,10 @@ import io.neutronjms.jms.message.JmsMessageFactory;
 import io.neutronjms.jms.message.JmsObjectMessage;
 import io.neutronjms.jms.message.JmsStreamMessage;
 import io.neutronjms.jms.message.JmsTextMessage;
+import io.neutronjms.jms.message.facade.defaults.JmsDefaultMapMessageFacade;
 import io.neutronjms.jms.message.facade.defaults.JmsDefaultMessageFacade;
 import io.neutronjms.jms.message.facade.defaults.JmsDefaultObjectMessageFacade;
+import io.neutronjms.jms.message.facade.defaults.JmsDefaultStreamMessageFacade;
 import io.neutronjms.jms.message.facade.defaults.JmsDefaultTextMessageFacade;
 import io.neutronjms.provider.amqp.AmqpConnection;
 
@@ -84,12 +86,12 @@ public class AmqpJmsMessageFactory implements JmsMessageFactory {
 
     @Override
     public JmsMapMessage createMapMessage() throws UnsupportedOperationException {
-        return new JmsMapMessage(new JmsDefaultMessageFacade());
+        return new JmsMapMessage(new JmsDefaultMapMessageFacade());
     }
 
     @Override
     public JmsStreamMessage createStreamMessage() throws UnsupportedOperationException {
-        return new JmsStreamMessage(new JmsDefaultMessageFacade());
+        return new JmsStreamMessage(new JmsDefaultStreamMessageFacade());
     }
 
     @Override

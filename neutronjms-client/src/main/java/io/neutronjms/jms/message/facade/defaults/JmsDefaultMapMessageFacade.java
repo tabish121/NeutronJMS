@@ -56,13 +56,18 @@ public class JmsDefaultMapMessageFacade extends JmsDefaultMessageFacade implemen
     }
 
     @Override
-    public Object getObject(String key) throws JMSException {
+    public Object get(String key) throws JMSException {
         return map.get(key);
     }
 
     @Override
-    public void setObject(String key, Object value) throws JMSException {
+    public void put(String key, Object value) throws JMSException {
         map.put(key, value);
+    }
+
+    @Override
+    public void remove(String key) throws JMSException {
+        map.remove(key);
     }
 
     @Override
