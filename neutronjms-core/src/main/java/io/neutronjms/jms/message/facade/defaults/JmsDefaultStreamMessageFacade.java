@@ -41,6 +41,7 @@ public class JmsDefaultStreamMessageFacade extends JmsDefaultMessageFacade imple
     public JmsDefaultStreamMessageFacade copy() throws JMSException {
         JmsDefaultStreamMessageFacade copy = new JmsDefaultStreamMessageFacade();
         copyInto(copy);
+        copy.stream.addAll(stream);
         return copy;
     }
 
