@@ -121,7 +121,7 @@ public final class JmsMessageTransformation {
             } else if (message instanceof MapMessage) {
                 MapMessage mapMsg = (MapMessage) message;
                 JmsMapMessage msg = factory.createMapMessage();
-                Enumeration iter = mapMsg.getMapNames();
+                Enumeration<?> iter = mapMsg.getMapNames();
 
                 while (iter.hasMoreElements()) {
                     String name = iter.nextElement().toString();
@@ -187,7 +187,7 @@ public final class JmsMessageTransformation {
         toMessage.setJMSPriority(fromMessage.getJMSPriority());
         toMessage.setJMSTimestamp(fromMessage.getJMSTimestamp());
 
-        Enumeration propertyNames = fromMessage.getPropertyNames();
+        Enumeration<?> propertyNames = fromMessage.getPropertyNames();
 
         while (propertyNames.hasMoreElements()) {
             String name = propertyNames.nextElement().toString();
