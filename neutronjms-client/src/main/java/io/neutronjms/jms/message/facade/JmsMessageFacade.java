@@ -29,6 +29,12 @@ import javax.jms.JMSException;
  * own Message type and the JMS Message types.  A Provider can implement the Facade
  * interface and offer direct access to its message types without the need to
  * copy to / from a more generic JMS message instance.
+ *
+ * TODO - What exceptions if any do we really need to be throwing here.  For get methods
+ *        we should synthesize an answer regardless and for set most of the checking for
+ *        JMS compliance happens in the JMS message level.  Methods like setMessageId and
+ *        setCorrelationId might need to although we should try and validate some at the
+ *        upper level.
  */
 public interface JmsMessageFacade {
 

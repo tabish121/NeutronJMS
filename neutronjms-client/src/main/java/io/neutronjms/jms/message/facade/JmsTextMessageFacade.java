@@ -20,6 +20,8 @@ import javax.jms.JMSException;
 
 /**
  * A Facade around a provider message that behaves like a TextMessage instance.
+ *
+ * TODO - Don't think we really need to throw any exceptions from the methods here.
  */
 public interface JmsTextMessageFacade extends JmsMessageFacade {
 
