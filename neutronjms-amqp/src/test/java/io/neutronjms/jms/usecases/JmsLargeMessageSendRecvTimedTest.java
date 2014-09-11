@@ -21,13 +21,16 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import io.neutronjms.test.support.AmqpTestSupport;
 
+import java.util.Arrays;
+import java.util.Random;
+
+import javax.jms.BytesMessage;
 import javax.jms.Connection;
 import javax.jms.Message;
 import javax.jms.MessageConsumer;
 import javax.jms.MessageProducer;
 import javax.jms.Queue;
 import javax.jms.Session;
-import javax.jms.TextMessage;
 
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -37,15 +40,16 @@ public class JmsLargeMessageSendRecvTimedTest extends AmqpTestSupport {
 
     protected static final Logger LOG = LoggerFactory.getLogger(JmsLargeMessageSendRecvTimedTest.class);
 
-    private String createLargeString(int sizeInBytes) {
-        byte[] base = {1, 2, 3, 4, 5, 6, 7, 8, 9, 0};
-        StringBuilder builder = new StringBuilder();
+    private final Random rand = new Random(System.currentTimeMillis());
+
+    private byte[] createLargePayload(int sizeInBytes) {
+        byte[] payload = new byte[sizeInBytes];
         for (int i = 0; i < sizeInBytes; i++) {
-            builder.append(base[i % base.length]);
+            payload[i] = (byte) rand.nextInt(256);
         }
 
-        LOG.debug("Created string with size : " + builder.toString().getBytes().length + " bytes");
-        return builder.toString();
+        LOG.debug("Created buffer with size : " + sizeInBytes + " bytes");
+        return payload;
     }
 
     @Test(timeout = 2 * 60 * 1000)
@@ -74,8 +78,8 @@ public class JmsLargeMessageSendRecvTimedTest extends AmqpTestSupport {
 
     public void doTestSendLargeMessage(int expectedSize) throws Exception{
         LOG.info("doTestSendLargeMessage called with expectedSize " + expectedSize);
-        String payload = createLargeString(expectedSize);
-        assertEquals(expectedSize, payload.getBytes().length);
+        byte[] payload = createLargePayload(expectedSize);
+        assertEquals(expectedSize, payload.length);
 
         Connection connection = createAmqpConnection();
 
@@ -83,8 +87,8 @@ public class JmsLargeMessageSendRecvTimedTest extends AmqpTestSupport {
         Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
         Queue queue = session.createQueue(name.getMethodName());
         MessageProducer producer = session.createProducer(queue);
-        TextMessage message = session.createTextMessage();
-        message.setText(payload);
+        BytesMessage message = session.createBytesMessage();
+        message.writeBytes(payload);
         producer.send(message);
         long endTime = System.currentTimeMillis();
 
@@ -94,17 +98,17 @@ public class JmsLargeMessageSendRecvTimedTest extends AmqpTestSupport {
         connection.start();
 
         LOG.info("Calling receive");
-        Message receivedMessage = consumer.receive();
-        assertNotNull(receivedMessage);
-        assertTrue(receivedMessage instanceof TextMessage);
-        TextMessage receivedTextMessage = (TextMessage) receivedMessage;
-        assertNotNull(receivedMessage);
+        Message received = consumer.receive();
+        assertNotNull(received);
+        assertTrue(received instanceof BytesMessage);
+        BytesMessage bytesMessage = (BytesMessage) received;
+        assertNotNull(bytesMessage);
         endTime = System.currentTimeMillis();
 
         LOG.info("Returned from receive after {} ms", endTime - startTime);
-        String receivedText = receivedTextMessage.getText();
-        assertEquals(expectedSize, receivedText.getBytes().length);
-        assertEquals(payload, receivedText);
+        byte[] bytesReceived = new byte[expectedSize];
+        assertEquals(expectedSize, bytesMessage.readBytes(bytesReceived, expectedSize));
+        assertTrue(Arrays.equals(payload, bytesReceived));
         connection.close();
     }
 }
