@@ -33,6 +33,15 @@ import javax.jms.JMSException;
 public interface JmsMapMessageFacade extends JmsMessageFacade {
 
     /**
+     * @returns a deep copy of this Message Facade including a complete copy
+     * of the byte contents of the wrapped message.
+     *
+     * @throws JMSException if an error occurs while copying this message.
+     */
+    @Override
+    JmsMapMessageFacade copy() throws JMSException;
+
+    /**
      * Returns an Enumeration of all the names in the MapMessage object.
      *
      * @return an enumeration of all the names in this MapMessage
@@ -62,7 +71,7 @@ public interface JmsMapMessageFacade extends JmsMessageFacade {
      * @throws java.lang.IllegalArgumentException if the name is null or if the name is an empty string.
      * @throws MessageFormatException if the object is invalid.
      */
-    Object getObject(String key) throws JMSException;
+    Object get(String key) throws JMSException;
 
     /**
      * Sets an object value with the specified name into the Map.
@@ -76,6 +85,18 @@ public interface JmsMapMessageFacade extends JmsMessageFacade {
      * @throws java.lang.IllegalArgumentException if the name is null or if the name is an empty string.
      * @throws MessageFormatException if the object is invalid.
      */
-    void setObject(String key, Object value) throws JMSException;
+    void put(String key, Object value) throws JMSException;
+
+    /**
+     * Remove the mapping for this key from the map if present.  If the value is not
+     * present in the map then this method should return without error or modification
+     * to the underlying map.
+     *
+     * @param key
+     *        the key to be removed from the map if present.
+     *
+     * @throws JMSException if the provider fails to write the message due to some internal error.
+     */
+    void remove(String key) throws JMSException;
 
 }
