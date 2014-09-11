@@ -113,8 +113,8 @@ public class JmsBytesMessage extends JmsMessage implements BytesMessage {
 
     @Override
     public void onSend() throws JMSException {
-        super.onSend();
         this.storeContent();
+        super.onSend();
     }
 
     /**
@@ -790,12 +790,6 @@ public class JmsBytesMessage extends JmsMessage implements BytesMessage {
      */
     public void setContent(Buffer content) {
         this.facade.setContent(content);
-    }
-
-    protected void checkWriteOnlyBody() throws MessageNotReadableException {
-        if (!readOnlyBody) {
-            throw new MessageNotReadableException("Message body is write-only");
-        }
     }
 
     private void initializeWriting() throws JMSException {
