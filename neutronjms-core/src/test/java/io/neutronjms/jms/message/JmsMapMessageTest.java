@@ -21,9 +21,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import io.neutronjms.jms.message.JmsDefaultMessageFactory;
-import io.neutronjms.jms.message.JmsMapMessage;
-import io.neutronjms.jms.message.JmsMessageFactory;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -52,6 +49,31 @@ public class JmsMapMessageTest {
     private final JmsMessageFactory factory = new JmsDefaultMessageFactory();
 
     @Rule public TestName name = new TestName();
+
+    @Test
+    public void testGetMapNamesWithNewMapMessageReturnsEmptyEnumeration() throws Exception {
+        JmsMapMessage mapMessage = factory.createMapMessage();
+        Enumeration<?> names = mapMessage.getMapNames();
+        assertFalse("Expected new message to have no map names", names.hasMoreElements());
+    }
+
+    @Test(expected=IllegalArgumentException.class)
+    public void testSetObjectWithNullKeyThrowsIAE() throws Exception {
+        JmsMapMessage mapMessage = factory.createMapMessage();
+        mapMessage.setObject(null, "value");
+    }
+
+    @Test(expected=IllegalArgumentException.class)
+    public void testSetObjectWithEmptyKeyThrowsIAE() throws Exception {
+        JmsMapMessage mapMessage = factory.createMapMessage();
+        mapMessage.setObject("", "value");
+    }
+
+    @Test(expected=MessageFormatException.class)
+    public void testSetObjectWithIllegalTypeThrowsMFE() throws Exception {
+        JmsMapMessage mapMessage = factory.createMapMessage();
+        mapMessage.setObject("myPKey", new Exception());
+    }
 
     // TODO - Big String support.
     @Test
