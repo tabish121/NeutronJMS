@@ -23,6 +23,8 @@ import org.fusesource.hawtbuf.Buffer;
 /**
  * Interface for a Message Facade that wraps a BytesMessage based message
  * instance.
+ *
+ * TODO - Is there any reason for copy to throw an exception?
  */
 public interface JmsBytesMessageFacade extends JmsMessageFacade {
 

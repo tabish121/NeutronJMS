@@ -23,6 +23,12 @@ import javax.jms.JMSException;
 /**
  * Interface for a message Facade that wraps a MapMessage style provider
  * message.
+ *
+ * TODO - It doesn't really have to be the case that we track read-only
+ *        or write-only in the facade, we could just treat the facade as
+ *        an open Map that can be updated at any time, it's really the job
+ *        of the JMS layer message objects to ensure we play nice with all
+ *        the JMS rules.
  */
 public interface JmsMapMessageFacade extends JmsMessageFacade {
 
