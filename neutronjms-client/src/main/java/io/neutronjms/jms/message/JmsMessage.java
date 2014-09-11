@@ -34,6 +34,7 @@ import javax.jms.DeliveryMode;
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.MessageFormatException;
+import javax.jms.MessageNotReadableException;
 import javax.jms.MessageNotWriteableException;
 
 public class JmsMessage implements javax.jms.Message {
@@ -614,6 +615,12 @@ public class JmsMessage implements javax.jms.Message {
     protected void checkReadOnlyBody() throws MessageNotWriteableException {
         if (readOnlyBody) {
             throw new MessageNotWriteableException("Message body is read-only");
+        }
+    }
+
+    protected void checkWriteOnlyBody() throws MessageNotReadableException {
+        if (!readOnlyBody) {
+            throw new MessageNotReadableException("Message body is write-only");
         }
     }
 }

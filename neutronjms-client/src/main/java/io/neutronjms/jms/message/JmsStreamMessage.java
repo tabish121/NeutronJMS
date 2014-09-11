@@ -997,12 +997,6 @@ public class JmsStreamMessage extends JmsMessage implements StreamMessage {
         }
     }
 
-    protected void checkWriteOnlyBody() throws MessageNotReadableException {
-        if (!readOnlyBody) {
-            throw new MessageNotReadableException("Message body is write-only");
-        }
-    }
-
     private void initializeReading() throws MessageNotReadableException {
         checkWriteOnlyBody();
         if (stream == null) {
