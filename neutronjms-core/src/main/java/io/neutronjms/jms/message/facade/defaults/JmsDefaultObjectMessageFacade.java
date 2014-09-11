@@ -33,6 +33,11 @@ public class JmsDefaultObjectMessageFacade extends JmsDefaultMessageFacade imple
     private Serializable object;
 
     @Override
+    public JmsMsgType getMsgType() {
+        return JmsMsgType.OBJECT;
+    }
+
+    @Override
     public boolean isEmpty() {
         // return object != null && !object.isEmpty();
         return object != null;

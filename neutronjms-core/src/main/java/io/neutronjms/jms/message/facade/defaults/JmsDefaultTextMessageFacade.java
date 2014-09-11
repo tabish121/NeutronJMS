@@ -28,6 +28,11 @@ public final class JmsDefaultTextMessageFacade extends JmsDefaultMessageFacade i
     private String text;
 
     @Override
+    public JmsMsgType getMsgType() {
+        return JmsMsgType.TEXT;
+    }
+
+    @Override
     public boolean isEmpty() {
         return text != null && !text.isEmpty();
     }

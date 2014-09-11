@@ -33,6 +33,11 @@ public class JmsDefaultStreamMessageFacade extends JmsDefaultMessageFacade imple
     private int index;
 
     @Override
+    public JmsMsgType getMsgType() {
+        return JmsMsgType.STREAM;
+    }
+
+    @Override
     public JmsDefaultStreamMessageFacade copy() throws JMSException {
         JmsDefaultStreamMessageFacade copy = new JmsDefaultStreamMessageFacade();
         copyInto(copy);

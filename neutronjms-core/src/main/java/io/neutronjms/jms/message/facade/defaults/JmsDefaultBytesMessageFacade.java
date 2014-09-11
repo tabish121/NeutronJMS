@@ -30,6 +30,11 @@ public final class JmsDefaultBytesMessageFacade extends JmsDefaultMessageFacade 
     private Buffer content;
 
     @Override
+    public JmsMsgType getMsgType() {
+        return JmsMsgType.BYTES;
+    }
+
+    @Override
     public JmsDefaultBytesMessageFacade copy() throws JMSException {
         JmsDefaultBytesMessageFacade copy = new JmsDefaultBytesMessageFacade();
         copyInto(copy);
