@@ -22,7 +22,7 @@ import javax.jms.MessageNotReadableException;
 import javax.jms.MessageNotWriteableException;
 
 /**
- * Interface for a Message Facade that wraps a StreamMessage based provider
+ * Interface for a Message Facade that wraps a stream or list based provider
  * message instance.  The interface provides the basic entry points into a
  * stream style message where primitive values are read and written as opaque
  * objects.
@@ -39,16 +39,33 @@ public interface JmsStreamMessageFacade extends JmsMessageFacade {
     JmsStreamMessageFacade copy() throws JMSException;
 
     /**
-     * Reads and returns the next object in the stream.
+     * @returns true if the stream contains another element beyond the current.
      *
-     * @returns the next value in the stream.
+     * @throws MessageNotReadableException if the message is in write-only mode.
+     */
+    boolean hasNext() throws JMSException;
+
+    /**
+     * Peek and return the next element in the stream.  If the stream has been fully read
+     * then this method should throw a MessageEOFException.  Multiple calls to peek should
+     * return the same element.
+     *
+     * @returns the next value in the stream without removing it.
      *
      * @throws JMSException if the provider fails to read the message due to some internal error.
      * @throws MessageEOFException if unexpected end of message stream has been reached.
-     * @throws MessageFormatException if this type conversion is invalid.
      * @throws MessageNotReadableException if the message is in write-only mode.
      */
-    Object readObject() throws JMSException;
+    Object peek() throws JMSException;
+
+    /**
+     * Pops the next element in the stream.
+     *
+     * @throws JMSException if the provider fails to read the message due to some internal error.
+     * @throws MessageEOFException if unexpected end of message stream has been reached.
+     * @throws MessageNotReadableException if the message is in write-only mode.
+     */
+    void pop() throws JMSException;
 
     /**
      * Writes a new object value to the stream.
@@ -60,7 +77,7 @@ public interface JmsStreamMessageFacade extends JmsMessageFacade {
      * @throws MessageFormatException if the object is invalid.
      * @throws MessageNotWriteableException if the message is in read-only mode.
      */
-    void writeObject(Object value) throws JMSException;
+    void put(Object value) throws JMSException;
 
     /**
      * Reset the position of the stream to the beginning.
