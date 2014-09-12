@@ -32,7 +32,7 @@ public class JmsTextMessage extends JmsMessage implements TextMessage {
     }
 
     @Override
-    public JmsMessage copy() throws JMSException {
+    public JmsTextMessage copy() throws JMSException {
         JmsTextMessage other = new JmsTextMessage(facade.copy());
         other.copy(this);
         return other;

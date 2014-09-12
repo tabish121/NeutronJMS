@@ -30,7 +30,7 @@ import javax.jms.JMSException;
  */
 public class JmsDefaultMapMessageFacade extends JmsDefaultMessageFacade implements JmsMapMessageFacade {
 
-    protected transient Map<String, Object> map = new HashMap<String, Object>();
+    protected final Map<String, Object> map = new HashMap<String, Object>();
 
     @Override
     public JmsMsgType getMsgType() {
