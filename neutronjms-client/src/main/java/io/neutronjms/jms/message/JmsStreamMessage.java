@@ -40,7 +40,7 @@ public class JmsStreamMessage extends JmsMessage implements StreamMessage {
     }
 
     @Override
-    public JmsMessage copy() throws JMSException {
+    public JmsStreamMessage copy() throws JMSException {
         JmsStreamMessage other = new JmsStreamMessage(facade.copy());
         other.copy(this);
         return other;

@@ -57,7 +57,7 @@ public class JmsObjectMessage extends JmsMessage implements ObjectMessage {
     }
 
     @Override
-    public JmsMessage copy() throws JMSException {
+    public JmsObjectMessage copy() throws JMSException {
         JmsObjectMessage other = new JmsObjectMessage(facade.copy());
         other.copy(this);
         return other;

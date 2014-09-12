@@ -382,8 +382,16 @@ public class JmsMessage implements javax.jms.Message {
     }
 
     protected void checkValidObject(Object value) throws MessageFormatException {
-        boolean valid = value instanceof Boolean || value instanceof Byte || value instanceof Short || value instanceof Integer || value instanceof Long;
-        valid = valid || value instanceof Float || value instanceof Double || value instanceof Character || value instanceof String || value == null;
+        boolean valid = value instanceof Boolean ||
+                        value instanceof Byte ||
+                        value instanceof Short ||
+                        value instanceof Integer ||
+                        value instanceof Long ||
+                        value instanceof Float ||
+                        value instanceof Double ||
+                        value instanceof Character ||
+                        value instanceof String ||
+                        value == null;
 
         if (!valid) {
             throw new MessageFormatException("Only objectified primitive objects and String types are allowed but was: " + value + " type: " + value.getClass());
