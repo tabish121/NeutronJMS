@@ -52,7 +52,7 @@ public class JmsDefaultStreamMessageFacade extends JmsDefaultMessageFacade imple
 
     @Override
     public Object peek() throws JMSException {
-        if (stream.isEmpty() || index >= stream.size()) {
+        if (stream.isEmpty() || index + 1 >= stream.size()) {
             throw new MessageEOFException("Reached end of stream");
         }
 
