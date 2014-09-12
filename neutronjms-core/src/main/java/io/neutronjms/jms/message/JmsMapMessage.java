@@ -23,62 +23,9 @@ import java.util.Enumeration;
 import javax.jms.JMSException;
 import javax.jms.MapMessage;
 import javax.jms.MessageFormatException;
-import javax.jms.MessageNotWriteableException;
 
 /**
- * A <CODE>MapMessage</CODE> object is used to send a set of name-value pairs.
- * The names are <CODE>String</CODE> objects, and the values are primitive data
- * types in the Java programming language. The names must have a value that is
- * not null, and not an empty string. The entries can be accessed sequentially
- * or randomly by name. The order of the entries is undefined.
- * <CODE>MapMessage</CODE> inherits from the <CODE>Message</CODE> interface and
- * adds a message body that contains a Map.
- * <p/>
- * The primitive types can be read or written explicitly using methods for each
- * type. They may also be read or written generically as objects. For instance,
- * a call to <CODE>MapMessage.setInt("foo", 6)</CODE> is equivalent to
- * <CODE> MapMessage.setObject("foo", new Integer(6))</CODE>. Both forms are
- * provided, because the explicit form is convenient for static programming, and
- * the object form is needed when types are not known at compile time.
- * <p/>
- * When a client receives a <CODE>MapMessage</CODE>, it is in read-only mode. If
- * a client attempts to write to the message at this point, a
- * <CODE>MessageNotWriteableException</CODE> is thrown. If
- * <CODE>clearBody</CODE> is called, the message can now be both read from and
- * written to.
- * <p/>
- * <CODE>MapMessage</CODE> objects support the following conversion table. The
- * marked cases must be supported. The unmarked cases must throw a
- * <CODE>JMSException</CODE>. The <CODE>String</CODE> -to-primitive conversions
- * may throw a runtime exception if the primitive's <CODE>valueOf()</CODE>
- * method does not accept it as a valid <CODE> String</CODE> representation of
- * the primitive.
- * <p/>
- * A value written as the row type can be read as the column type.
- * <p/>
- * <p/>
- *
- * <PRE>
- * | | boolean byte short char int long float double String byte[] |----------------------------------------------------------------------
- * |boolean | X X |byte | X X X X X |short | X X X X |char | X X |int | X X X |long | X X |float | X X X |double | X X
- * |String | X X X X X X X X |byte[] | X |----------------------------------------------------------------------
- * &lt;p/&gt;
- * </PRE>
- * <p/>
- * <p/>
- * <p/>
- * Attempting to read a null value as a primitive type must be treated as
- * calling the primitive's corresponding <code>valueOf(String)</code> conversion
- * method with a null value. Since <code>char</code> does not support a
- * <code>String</code> conversion, attempting to read a null value as a
- * <code>char</code> must throw a <code>NullPointerException</code>.
- *
- * @see javax.jms.Session#createMapMessage()
- * @see javax.jms.BytesMessage
- * @see javax.jms.Message
- * @see javax.jms.ObjectMessage
- * @see javax.jms.StreamMessage
- * @see javax.jms.TextMessage
+ * Implementation of the JMS MapMessage.
  */
 public class JmsMapMessage extends JmsMessage implements MapMessage {
 
@@ -96,650 +43,244 @@ public class JmsMapMessage extends JmsMessage implements MapMessage {
         return other;
     }
 
-    /**
-     * Clears out the message body. Clearing a message's body does not clear its
-     * header values or property entries.
-     * <p/>
-     * If this message body was read-only, calling this method leaves the
-     * message body in the same state as an empty body in a newly created
-     * message.
-     */
     @Override
     public void clearBody() throws JMSException {
         super.clearBody();
         facade.clearBody();
     }
 
-    /**
-     * Returns the <CODE>boolean</CODE> value with the specified name.
-     *
-     * @param name
-     *        the name of the <CODE>boolean</CODE>
-     * @return the <CODE>boolean</CODE> value with the specified name
-     * @throws JMSException
-     *         if the JMS provider fails to read the message due to some
-     *         internal error.
-     * @throws MessageFormatException
-     *         if this type conversion is invalid.
-     */
     @Override
     public boolean getBoolean(String name) throws JMSException {
-        initializeReading();
-        Object value = facade.get(name);
-        if (value == null) {
-            return false;
-        }
+        Object value = getObject(name);
+
         if (value instanceof Boolean) {
             return ((Boolean) value).booleanValue();
-        }
-        if (value instanceof String) {
-            return Boolean.valueOf(value.toString()).booleanValue();
+        } else if (value instanceof String || value == null) {
+            return Boolean.valueOf((String) value).booleanValue();
         } else {
-            throw new MessageFormatException(" cannot read a boolean from " + value.getClass().getName());
+            throw new MessageFormatException("Cannot read a boolean from " + value.getClass().getSimpleName());
         }
     }
 
-    /**
-     * Returns the <CODE>byte</CODE> value with the specified name.
-     *
-     * @param name
-     *        the name of the <CODE>byte</CODE>
-     * @return the <CODE>byte</CODE> value with the specified name
-     * @throws JMSException
-     *         if the JMS provider fails to read the message due to some
-     *         internal error.
-     * @throws MessageFormatException
-     *         if this type conversion is invalid.
-     */
     @Override
     public byte getByte(String name) throws JMSException {
-        initializeReading();
-        Object value = facade.get(name);
-        if (value == null) {
-            return 0;
-        }
+        Object value = getObject(name);
+
         if (value instanceof Byte) {
             return ((Byte) value).byteValue();
-        }
-        if (value instanceof String) {
-            return Byte.valueOf(value.toString()).byteValue();
+        } else if (value instanceof String || value == null) {
+            return Byte.valueOf((String) value).byteValue();
         } else {
-            throw new MessageFormatException(" cannot read a byte from " + value.getClass().getName());
+            throw new MessageFormatException("Cannot read a byte from " + value.getClass().getSimpleName());
         }
     }
 
-    /**
-     * Returns the <CODE>short</CODE> value with the specified name.
-     *
-     * @param name
-     *        the name of the <CODE>short</CODE>
-     * @return the <CODE>short</CODE> value with the specified name
-     * @throws JMSException
-     *         if the JMS provider fails to read the message due to some
-     *         internal error.
-     * @throws MessageFormatException
-     *         if this type conversion is invalid.
-     */
     @Override
     public short getShort(String name) throws JMSException {
-        initializeReading();
-        Object value = facade.get(name);
-        if (value == null) {
-            return 0;
-        }
+        Object value = getObject(name);
+
         if (value instanceof Short) {
             return ((Short) value).shortValue();
-        }
-        if (value instanceof Byte) {
+        } else if (value instanceof Byte) {
             return ((Byte) value).shortValue();
-        }
-        if (value instanceof String) {
-            return Short.valueOf(value.toString()).shortValue();
+        } else if (value instanceof String || value == null) {
+            return Short.valueOf((String) value).shortValue();
         } else {
-            throw new MessageFormatException(" cannot read a short from " + value.getClass().getName());
+            throw new MessageFormatException("Cannot read a short from " + value.getClass().getSimpleName());
         }
     }
 
-    /**
-     * Returns the Unicode character value with the specified name.
-     *
-     * @param name
-     *        the name of the Unicode character
-     * @return the Unicode character value with the specified name
-     * @throws JMSException
-     *         if the JMS provider fails to read the message due to some
-     *         internal error.
-     * @throws MessageFormatException
-     *         if this type conversion is invalid.
-     */
     @Override
     public char getChar(String name) throws JMSException {
-        initializeReading();
-        Object value = facade.get(name);
+        Object value = getObject(name);
+
         if (value == null) {
             throw new NullPointerException();
-        }
-        if (value instanceof Character) {
+        } else if (value instanceof Character) {
             return ((Character) value).charValue();
         } else {
-            throw new MessageFormatException(" cannot read a short from " + value.getClass().getName());
+            throw new MessageFormatException("Cannot read a short from " + value.getClass().getSimpleName());
         }
     }
 
-    /**
-     * Returns the <CODE>int</CODE> value with the specified name.
-     *
-     * @param name
-     *        the name of the <CODE>int</CODE>
-     * @return the <CODE>int</CODE> value with the specified name
-     * @throws JMSException
-     *         if the JMS provider fails to read the message due to some
-     *         internal error.
-     * @throws MessageFormatException
-     *         if this type conversion is invalid.
-     */
     @Override
     public int getInt(String name) throws JMSException {
-        initializeReading();
-        Object value = facade.get(name);
-        if (value == null) {
-            return 0;
-        }
+        Object value = getObject(name);
+
         if (value instanceof Integer) {
             return ((Integer) value).intValue();
-        }
-        if (value instanceof Short) {
+        } else if (value instanceof Short) {
             return ((Short) value).intValue();
-        }
-        if (value instanceof Byte) {
+        } else if (value instanceof Byte) {
             return ((Byte) value).intValue();
-        }
-        if (value instanceof String) {
-            return Integer.valueOf(value.toString()).intValue();
+        } else if (value instanceof String || value == null) {
+            return Integer.valueOf((String) value).intValue();
         } else {
-            throw new MessageFormatException(" cannot read an int from " + value.getClass().getName());
+            throw new MessageFormatException("Cannot read an int from " + value.getClass().getSimpleName());
         }
     }
 
-    /**
-     * Returns the <CODE>long</CODE> value with the specified name.
-     *
-     * @param name
-     *        the name of the <CODE>long</CODE>
-     * @return the <CODE>long</CODE> value with the specified name
-     * @throws JMSException
-     *         if the JMS provider fails to read the message due to some
-     *         internal error.
-     * @throws MessageFormatException
-     *         if this type conversion is invalid.
-     */
     @Override
     public long getLong(String name) throws JMSException {
-        initializeReading();
-        Object value = facade.get(name);
-        if (value == null) {
-            return 0;
-        }
+        Object value = getObject(name);
+
         if (value instanceof Long) {
             return ((Long) value).longValue();
-        }
-        if (value instanceof Integer) {
+        } else if (value instanceof Integer) {
             return ((Integer) value).longValue();
-        }
-        if (value instanceof Short) {
+        } else if (value instanceof Short) {
             return ((Short) value).longValue();
-        }
-        if (value instanceof Byte) {
+        } else if (value instanceof Byte) {
             return ((Byte) value).longValue();
-        }
-        if (value instanceof String) {
-            return Long.valueOf(value.toString()).longValue();
+        } else if (value instanceof String || value == null) {
+            return Long.valueOf((String) value).longValue();
         } else {
-            throw new MessageFormatException(" cannot read a long from " + value.getClass().getName());
+            throw new MessageFormatException("Cannot read a long from " + value.getClass().getSimpleName());
         }
     }
 
-    /**
-     * Returns the <CODE>float</CODE> value with the specified name.
-     *
-     * @param name
-     *        the name of the <CODE>float</CODE>
-     * @return the <CODE>float</CODE> value with the specified name
-     * @throws JMSException
-     *         if the JMS provider fails to read the message due to some
-     *         internal error.
-     * @throws MessageFormatException
-     *         if this type conversion is invalid.
-     */
     @Override
     public float getFloat(String name) throws JMSException {
-        initializeReading();
-        Object value = facade.get(name);
-        if (value == null) {
-            return 0;
-        }
+        Object value = getObject(name);
+
         if (value instanceof Float) {
             return ((Float) value).floatValue();
-        }
-        if (value instanceof String) {
-            return Float.valueOf(value.toString()).floatValue();
+        } else if (value instanceof String || value == null) {
+            return Float.valueOf((String) value).floatValue();
         } else {
-            throw new MessageFormatException(" cannot read a float from " + value.getClass().getName());
+            throw new MessageFormatException("Cannot read a float from " + value.getClass().getSimpleName());
         }
     }
 
-    /**
-     * Returns the <CODE>double</CODE> value with the specified name.
-     *
-     * @param name
-     *        the name of the <CODE>double</CODE>
-     * @return the <CODE>double</CODE> value with the specified name
-     * @throws JMSException
-     *         if the JMS provider fails to read the message due to some
-     *         internal error.
-     * @throws MessageFormatException
-     *         if this type conversion is invalid.
-     */
     @Override
     public double getDouble(String name) throws JMSException {
-        initializeReading();
-        Object value = facade.get(name);
-        if (value == null) {
-            return 0;
-        }
+        Object value = getObject(name);
+
         if (value instanceof Double) {
             return ((Double) value).doubleValue();
-        }
-        if (value instanceof Float) {
+        } else if (value instanceof Float) {
             return ((Float) value).floatValue();
-        }
-        if (value instanceof String) {
-            return Float.valueOf(value.toString()).floatValue();
+        } else if (value instanceof String || value == null) {
+            return Double.valueOf((String) value).doubleValue();
         } else {
-            throw new MessageFormatException(" cannot read a double from " + value.getClass().getName());
+            throw new MessageFormatException("Cannot read a double from " + value.getClass().getSimpleName());
         }
     }
 
-    /**
-     * Returns the <CODE>String</CODE> value with the specified name.
-     *
-     * @param name
-     *        the name of the <CODE>String</CODE>
-     * @return the <CODE>String</CODE> value with the specified name; if there
-     *         is no item by this name, a null value is returned
-     * @throws JMSException
-     *         if the JMS provider fails to read the message due to some
-     *         internal error.
-     * @throws MessageFormatException
-     *         if this type conversion is invalid.
-     */
     @Override
     public String getString(String name) throws JMSException {
-        initializeReading();
-        Object value = facade.get(name);
+        Object value = getObject(name);
+
         if (value == null) {
             return null;
-        }
-        if (value instanceof byte[]) {
+        } else if (value instanceof byte[]) {
             throw new MessageFormatException("Use getBytes to read a byte array");
         } else {
             return value.toString();
         }
     }
 
-    /**
-     * Returns the byte array value with the specified name.
-     *
-     * @param name
-     *        the name of the byte array
-     * @return a copy of the byte array value with the specified name; if there
-     *         is no item by this name, a null value is returned.
-     * @throws JMSException
-     *         if the JMS provider fails to read the message due to some
-     *         internal error.
-     * @throws MessageFormatException
-     *         if this type conversion is invalid.
-     */
     @Override
     public byte[] getBytes(String name) throws JMSException {
-        initializeReading();
-        Object value = facade.get(name);
-        if (value instanceof byte[]) {
+        Object value = getObject(name);
+
+        if (value == null) {
             return (byte[]) value;
+        } else if (value instanceof byte[]) {
+            byte[] original = (byte[]) value;
+            byte[] clone = new byte[original.length];
+            System.arraycopy(original, 0, clone, 0, original.length);
+            return clone;
         } else {
-            throw new MessageFormatException(" cannot read a byte[] from " + value.getClass().getName());
+            throw new MessageFormatException("Cannot read a byte[] from " + value.getClass().getSimpleName());
         }
     }
 
-    /**
-     * Returns the value of the object with the specified name.
-     * <p/>
-     * This method can be used to return, in objectified format, an object in
-     * the Java programming language ("Java object") that had been stored in the
-     * Map with the equivalent <CODE>setObject</CODE> method call, or its
-     * equivalent primitive <CODE>set <I>type </I></CODE> method.
-     * <p/>
-     * Note that byte values are returned as <CODE>byte[]</CODE>, not
-     * <CODE>Byte[]</CODE>.
-     *
-     * @param name
-     *        the name of the Java object
-     * @return a copy of the Java object value with the specified name, in
-     *         objectified format (for example, if the object was set as an
-     *         <CODE>int</CODE>, an <CODE>Integer</CODE> is returned); if there
-     *         is no item by this name, a null value is returned
-     * @throws JMSException
-     *         if the JMS provider fails to read the message due to some
-     *         internal error.
-     */
     @Override
     public Object getObject(String name) throws JMSException {
-        initializeReading();
+        checkKeyNameIsValid(name);
         return facade.get(name);
     }
 
-    /**
-     * Returns an <CODE>Enumeration</CODE> of all the names in the
-     * <CODE>MapMessage</CODE> object.
-     *
-     * @return an enumeration of all the names in this <CODE>MapMessage</CODE>
-     * @throws JMSException
-     */
     @Override
     public Enumeration<String> getMapNames() throws JMSException {
-        initializeReading();
         return facade.getMapNames();
     }
 
-    protected void put(String name, Object value) throws JMSException {
-        if (name == null) {
-            throw new IllegalArgumentException("The name of the property cannot be null.");
-        }
-        if (name.length() == 0) {
-            throw new IllegalArgumentException("The name of the property cannot be an emprty string.");
-        }
-        facade.put(name, value);
-    }
-
-    /**
-     * Sets a <CODE>boolean</CODE> value with the specified name into the Map.
-     *
-     * @param name
-     *        the name of the <CODE>boolean</CODE>
-     * @param value
-     *        the <CODE>boolean</CODE> value to set in the Map
-     * @throws JMSException
-     *         if the JMS provider fails to write the message due to some
-     *         internal error.
-     * @throws IllegalArgumentException
-     *         if the name is null or if the name is an empty string.
-     * @throws MessageNotWriteableException
-     *         if the message is in read-only mode.
-     */
     @Override
     public void setBoolean(String name, boolean value) throws JMSException {
-        initializeWriting();
         put(name, value ? Boolean.TRUE : Boolean.FALSE);
     }
 
-    /**
-     * Sets a <CODE>byte</CODE> value with the specified name into the Map.
-     *
-     * @param name
-     *        the name of the <CODE>byte</CODE>
-     * @param value
-     *        the <CODE>byte</CODE> value to set in the Map
-     * @throws JMSException
-     *         if the JMS provider fails to write the message due to some
-     *         internal error.
-     * @throws IllegalArgumentException
-     *         if the name is null or if the name is an empty string.
-     * @throws MessageNotWriteableException
-     *         if the message is in read-only mode.
-     */
     @Override
     public void setByte(String name, byte value) throws JMSException {
-        initializeWriting();
         put(name, Byte.valueOf(value));
     }
 
-    /**
-     * Sets a <CODE>short</CODE> value with the specified name into the Map.
-     *
-     * @param name
-     *        the name of the <CODE>short</CODE>
-     * @param value
-     *        the <CODE>short</CODE> value to set in the Map
-     * @throws JMSException
-     *         if the JMS provider fails to write the message due to some
-     *         internal error.
-     * @throws IllegalArgumentException
-     *         if the name is null or if the name is an empty string.
-     * @throws MessageNotWriteableException
-     *         if the message is in read-only mode.
-     */
     @Override
     public void setShort(String name, short value) throws JMSException {
-        initializeWriting();
         put(name, Short.valueOf(value));
     }
 
-    /**
-     * Sets a Unicode character value with the specified name into the Map.
-     *
-     * @param name
-     *        the name of the Unicode character
-     * @param value
-     *        the Unicode character value to set in the Map
-     * @throws JMSException
-     *         if the JMS provider fails to write the message due to some
-     *         internal error.
-     * @throws IllegalArgumentException
-     *         if the name is null or if the name is an empty string.
-     * @throws MessageNotWriteableException
-     *         if the message is in read-only mode.
-     */
     @Override
     public void setChar(String name, char value) throws JMSException {
-        initializeWriting();
         put(name, Character.valueOf(value));
     }
 
-    /**
-     * Sets an <CODE>int</CODE> value with the specified name into the Map.
-     *
-     * @param name
-     *        the name of the <CODE>int</CODE>
-     * @param value
-     *        the <CODE>int</CODE> value to set in the Map
-     * @throws JMSException
-     *         if the JMS provider fails to write the message due to some
-     *         internal error.
-     * @throws IllegalArgumentException
-     *         if the name is null or if the name is an empty string.
-     * @throws MessageNotWriteableException
-     *         if the message is in read-only mode.
-     */
     @Override
     public void setInt(String name, int value) throws JMSException {
-        initializeWriting();
         put(name, Integer.valueOf(value));
     }
 
-    /**
-     * Sets a <CODE>long</CODE> value with the specified name into the Map.
-     *
-     * @param name
-     *        the name of the <CODE>long</CODE>
-     * @param value
-     *        the <CODE>long</CODE> value to set in the Map
-     * @throws JMSException
-     *         if the JMS provider fails to write the message due to some
-     *         internal error.
-     * @throws IllegalArgumentException
-     *         if the name is null or if the name is an empty string.
-     * @throws MessageNotWriteableException
-     *         if the message is in read-only mode.
-     */
     @Override
     public void setLong(String name, long value) throws JMSException {
-        initializeWriting();
         put(name, Long.valueOf(value));
     }
 
-    /**
-     * Sets a <CODE>float</CODE> value with the specified name into the Map.
-     *
-     * @param name
-     *        the name of the <CODE>float</CODE>
-     * @param value
-     *        the <CODE>float</CODE> value to set in the Map
-     * @throws JMSException
-     *         if the JMS provider fails to write the message due to some
-     *         internal error.
-     * @throws IllegalArgumentException
-     *         if the name is null or if the name is an empty string.
-     * @throws MessageNotWriteableException
-     *         if the message is in read-only mode.
-     */
     @Override
     public void setFloat(String name, float value) throws JMSException {
-        initializeWriting();
+        checkReadOnlyBody();
         put(name, new Float(value));
     }
 
-    /**
-     * Sets a <CODE>double</CODE> value with the specified name into the Map.
-     *
-     * @param name
-     *        the name of the <CODE>double</CODE>
-     * @param value
-     *        the <CODE>double</CODE> value to set in the Map
-     * @throws JMSException
-     *         if the JMS provider fails to write the message due to some
-     *         internal error.
-     * @throws IllegalArgumentException
-     *         if the name is null or if the name is an empty string.
-     * @throws MessageNotWriteableException
-     *         if the message is in read-only mode.
-     */
     @Override
     public void setDouble(String name, double value) throws JMSException {
-        initializeWriting();
         put(name, new Double(value));
     }
 
-    /**
-     * Sets a <CODE>String</CODE> value with the specified name into the Map.
-     *
-     * @param name
-     *        the name of the <CODE>String</CODE>
-     * @param value
-     *        the <CODE>String</CODE> value to set in the Map
-     * @throws JMSException
-     *         if the JMS provider fails to write the message due to some
-     *         internal error.
-     * @throws IllegalArgumentException
-     *         if the name is null or if the name is an empty string.
-     * @throws MessageNotWriteableException
-     *         if the message is in read-only mode.
-     */
     @Override
     public void setString(String name, String value) throws JMSException {
-        initializeWriting();
         put(name, value);
     }
 
-    /**
-     * Sets a byte array value with the specified name into the Map.
-     *
-     * @param name
-     *        the name of the byte array
-     * @param value
-     *        the byte array value to set in the Map; the array is copied so
-     *        that the value for <CODE>name </CODE> will not be altered by
-     *        future modifications
-     * @throws JMSException
-     *         if the JMS provider fails to write the message due to some
-     *         internal error.
-     * @throws NullPointerException
-     *         if the name is null, or if the name is an empty string.
-     * @throws MessageNotWriteableException
-     *         if the message is in read-only mode.
-     */
     @Override
     public void setBytes(String name, byte[] value) throws JMSException {
-        initializeWriting();
-        if (value != null) {
-            byte[] data = new byte[value.length];
-            System.arraycopy(value, 0, data, 0, value.length);
-            put(name, data);
-        } else {
-            facade.remove(name);
-        }
+        setBytes(name, value, 0, (value != null ? value.length : 0));
     }
 
-    /**
-     * Sets a portion of the byte array value with the specified name into the
-     * Map.
-     *
-     * @param name
-     *        the name of the byte array
-     * @param value
-     *        the byte array value to set in the Map
-     * @param offset
-     *        the initial offset within the byte array
-     * @param length
-     *        the number of bytes to use
-     * @throws JMSException
-     *         if the JMS provider fails to write the message due to some
-     *         internal error.
-     * @throws IllegalArgumentException
-     *         if the name is null or if the name is an empty string.
-     * @throws MessageNotWriteableException
-     *         if the message is in read-only mode.
-     */
     @Override
     public void setBytes(String name, byte[] value, int offset, int length) throws JMSException {
-        initializeWriting();
-        byte[] data = new byte[length];
-        System.arraycopy(value, offset, data, 0, length);
-        put(name, data);
+        // Fail early to avoid unnecessary array copy.
+        checkReadOnlyBody();
+        checkKeyNameIsValid(name);
+
+        byte[] clone = null;
+        if (value != null) {
+            clone = new byte[length];
+            System.arraycopy(value, offset, clone, 0, length);
+        }
+
+        put(name, clone);
     }
 
-    /**
-     * Sets an object value with the specified name into the Map.
-     * <p/>
-     * This method works only for the objectified primitive object types (
-     * <code>Integer</code>,<code>Double</code>, <code>Long</code> &nbsp;...),
-     * <code>String</code> objects, and byte arrays.
-     *
-     * @param name
-     *        the name of the Java object
-     * @param value
-     *        the Java object value to set in the Map
-     * @throws JMSException
-     *         if the JMS provider fails to write the message due to some
-     *         internal error.
-     * @throws IllegalArgumentException
-     *         if the name is null or if the name is an empty string.
-     * @throws MessageFormatException
-     *         if the object is invalid.
-     * @throws MessageNotWriteableException
-     *         if the message is in read-only mode.
-     */
     @Override
     public void setObject(String name, Object value) throws JMSException {
-        initializeWriting();
-        if (value != null) {
-            // byte[] not allowed on properties
-            if (!(value instanceof byte[])) {
-                checkValidObject(value);
-            }
-            put(name, value);
-        } else {
-            put(name, null);
+        // byte[] not allowed on properties so cover that here.
+        if (!(value instanceof byte[])) {
+            checkValidObject(value);
         }
+
+        put(name, value);
     }
 
     /**
@@ -754,30 +295,26 @@ public class JmsMapMessage extends JmsMessage implements MapMessage {
      */
     @Override
     public boolean itemExists(String name) throws JMSException {
-        initializeReading();
         return facade.itemExists(name);
-    }
-
-    /**
-     * Prepares the Message contents for reading.
-     *
-     * @throws JMSException if an error occurs while initializing.
-     */
-    protected void initializeReading() throws JMSException {
-    }
-
-    /**
-     * Prepares the Message for writing.  This method will first check if the
-     * message is in read-only mode and throw an error if so.
-     *
-     * @throws MessageNotWriteableException if the MapMessage is in read-only mode.
-     */
-    protected void initializeWriting() throws MessageNotWriteableException {
-        checkReadOnlyBody();
     }
 
     @Override
     public String toString() {
-        return super.toString() + " ActiveMQMapMessage{ " + "theTable = " + facade + " }";
+        // TODO - better toString implementation.
+        return "JmsMapMessage{ }";
+    }
+
+    private void put(String name, Object value) throws JMSException {
+        checkReadOnlyBody();
+        checkKeyNameIsValid(name);
+        facade.put(name, value);
+    }
+
+    private void checkKeyNameIsValid(String name) throws IllegalArgumentException {
+        if (name == null) {
+            throw new IllegalArgumentException("Map key name must not be null");
+        } else if (name.length() == 0) {
+            throw new IllegalArgumentException("Map key name must not be the empty string");
+        }
     }
 }
