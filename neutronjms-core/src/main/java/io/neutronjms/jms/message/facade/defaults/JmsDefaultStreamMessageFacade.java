@@ -30,7 +30,7 @@ import javax.jms.MessageEOFException;
 public class JmsDefaultStreamMessageFacade extends JmsDefaultMessageFacade implements JmsStreamMessageFacade {
 
     private final List<Object> stream = new ArrayList<Object>();
-    private int index;
+    private int index = -1;
 
     @Override
     public JmsMsgType getMsgType() {
