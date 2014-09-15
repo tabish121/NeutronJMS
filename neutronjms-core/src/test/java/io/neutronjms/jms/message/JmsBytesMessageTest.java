@@ -18,25 +18,272 @@ package io.neutronjms.jms.message;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import io.neutronjms.jms.message.JmsBytesMessage;
-import io.neutronjms.jms.message.JmsDefaultMessageFactory;
-import io.neutronjms.jms.message.JmsMessageFactory;
+import io.neutronjms.jms.message.facade.defaults.JmsDefaultBytesMessageFacade;
 
+import java.util.Arrays;
+
+import javax.jms.BytesMessage;
 import javax.jms.JMSException;
 import javax.jms.MessageFormatException;
 import javax.jms.MessageNotReadableException;
 import javax.jms.MessageNotWriteableException;
 
+import org.fusesource.hawtbuf.Buffer;
 import org.junit.Test;
 
 /**
- *
+ * Test for JMS Spec compliance for the JmsBytesMessage class using the default message facade.
  */
 public class JmsBytesMessageTest {
 
+    private static final int END_OF_STREAM = -1;
+
     private final JmsMessageFactory factory = new JmsDefaultMessageFactory();
+
+    /**
+     * Test that calling {@link BytesMessage#getBodyLength()} on a new message which has been
+     * populated and {@link BytesMessage#reset()} causes the length to be reported correctly.
+     */
+    @Test
+    public void testResetOnNewlyPopulatedBytesMessageUpdatesBodyLength() throws Exception {
+        byte[] bytes = "newResetTestBytes".getBytes();
+        JmsBytesMessage bytesMessage = factory.createBytesMessage();
+        bytesMessage.writeBytes(bytes);
+        bytesMessage.reset();
+        assertEquals("Message reports unexpected length", bytes.length, bytesMessage.getBodyLength());
+    }
+
+    /**
+     * Test that attempting to call {@link BytesMessage#getBodyLength()} on a new message causes
+     * a {@link MessageNotReadableException} to be thrown due to being write-only.
+     */
+    @Test(expected = MessageNotReadableException.class)
+    public void testGetBodyLengthOnNewMessageThrowsMessageNotReadableException() throws Exception {
+        JmsBytesMessage bytesMessage = factory.createBytesMessage();
+        bytesMessage.getBodyLength();
+    }
+
+    @Test
+    public void testReadBytesUsingReceivedMessageWithNoBodyReturnsEOS() throws Exception {
+        JmsBytesMessage bytesMessage = factory.createBytesMessage();
+        bytesMessage.onSend();
+        //verify attempting to read bytes returns -1, i.e EOS
+        assertEquals("Expected input stream to be at end but data was returned", END_OF_STREAM, bytesMessage.readBytes(new byte[1]));
+    }
+
+    @Test
+    public void testReadBytesUsingReceivedMessageWithBodyReturnsBytes() throws Exception {
+        Buffer content = new Buffer("myBytesData".getBytes());
+        JmsDefaultBytesMessageFacade facade = new JmsDefaultBytesMessageFacade();
+        facade.setContent(content);
+
+        JmsBytesMessage bytesMessage = new JmsBytesMessage(facade);
+        bytesMessage.onSend();
+
+        // retrieve the expected bytes, check they match
+        byte[] receivedBytes = new byte[content.length];
+        bytesMessage.readBytes(receivedBytes);
+        assertTrue(Arrays.equals(content.data, receivedBytes));
+
+        // verify no more bytes remain, i.e EOS
+        assertEquals("Expected input stream to be at end but data was returned",
+                     END_OF_STREAM, bytesMessage.readBytes(new byte[1]));
+
+        assertEquals("Message reports unexpected length", content.length, bytesMessage.getBodyLength());
+    }
+
+    /**
+     * Test that attempting to write bytes to a received message (without calling {@link BytesMessage#clearBody()} first)
+     * causes a {@link MessageNotWriteableException} to be thrown due to being read-only.
+     */
+    @Test(expected = MessageNotWriteableException.class)
+    public void testReceivedBytesMessageThrowsMessageNotWriteableExceptionOnWriteBytes() throws Exception {
+        Buffer content = new Buffer("myBytesData".getBytes());
+        JmsDefaultBytesMessageFacade facade = new JmsDefaultBytesMessageFacade();
+        facade.setContent(content);
+
+        JmsBytesMessage bytesMessage = new JmsBytesMessage(facade);
+        bytesMessage.onSend();
+        bytesMessage.writeBytes(content.data);
+    }
+
+    /**
+     * Test that attempting to read bytes from a new message (without calling {@link BytesMessage#reset()} first) causes a
+     * {@link MessageNotReadableException} to be thrown due to being write-only.
+     */
+    @Test(expected = MessageNotReadableException.class)
+    public void testNewBytesMessageThrowsMessageNotReadableOnReadBytes() throws Exception {
+        JmsBytesMessage bytesMessage = factory.createBytesMessage();
+        byte[] receivedBytes = new byte[1];
+        bytesMessage.readBytes(receivedBytes);
+    }
+
+    /**
+     * Test that calling {@link BytesMessage#clearBody()} causes a received
+     * message to become writable
+     */
+    @Test
+    public void testClearBodyOnReceivedBytesMessageMakesMessageWritable() throws Exception {
+        Buffer content = new Buffer("myBytesData".getBytes());
+        JmsDefaultBytesMessageFacade facade = new JmsDefaultBytesMessageFacade();
+        facade.setContent(content);
+
+        JmsBytesMessage bytesMessage = new JmsBytesMessage(facade);
+        bytesMessage.onSend();
+        assertTrue("Message should not be writable", bytesMessage.isReadOnlyBody());
+        bytesMessage.clearBody();
+        assertFalse("Message should be writable", bytesMessage.isReadOnlyBody());
+    }
+
+    /**
+     * Test that calling {@link BytesMessage#clearBody()} of a received message
+     * causes the body of the underlying {@link AmqpBytesMessage} to be emptied.
+     */
+    @Test
+    public void testClearBodyOnReceivedBytesMessageClearsUnderlyingMessageBody() throws Exception {
+        Buffer content = new Buffer("myBytesData".getBytes());
+        JmsDefaultBytesMessageFacade facade = new JmsDefaultBytesMessageFacade();
+        facade.setContent(content);
+
+        JmsBytesMessage bytesMessage = new JmsBytesMessage(facade);
+        bytesMessage.onSend();
+
+        assertNotNull("Expected message content but none was present", facade.getContent());
+        bytesMessage.clearBody();
+        assertNull("Expected no message content but was present", facade.getContent());
+    }
+
+    /**
+     * Test that attempting to call {@link BytesMessage#getBodyLength()} on a received message after calling
+     * {@link BytesMessage#clearBody()} causes {@link MessageNotReadableException} to be thrown due to being write-only.
+     */
+    @Test
+    public void testGetBodyLengthOnClearedReceivedMessageThrowsMessageNotReadableException() throws Exception {
+        Buffer content = new Buffer("myBytesData".getBytes());
+        JmsDefaultBytesMessageFacade facade = new JmsDefaultBytesMessageFacade();
+        facade.setContent(content);
+
+        JmsBytesMessage bytesMessage = new JmsBytesMessage(facade);
+        bytesMessage.onSend();
+        assertEquals("Unexpected message length", content.length, bytesMessage.getBodyLength());
+        bytesMessage.clearBody();
+
+        try {
+            bytesMessage.getBodyLength();
+            fail("expected exception to be thrown");
+        } catch (MessageNotReadableException mnre) {
+            // expected
+        }
+    }
+
+    /**
+     * Test that calling {@link BytesMessage#reset()} causes a write-only
+     * message to become read-only
+     */
+    @Test
+    public void testResetOnReceivedBytesMessageResetsMarker() throws Exception {
+        Buffer content = new Buffer("resetTestBytes".getBytes());
+        JmsDefaultBytesMessageFacade facade = new JmsDefaultBytesMessageFacade();
+        facade.setContent(content);
+
+        JmsBytesMessage bytesMessage = new JmsBytesMessage(facade);
+        bytesMessage.onSend();
+
+        // retrieve a few bytes, check they match the first few expected bytes
+        byte[] partialBytes = new byte[3];
+        bytesMessage.readBytes(partialBytes);
+        byte[] partialOriginalBytes = Arrays.copyOf(content.data, 3);
+        assertTrue(Arrays.equals(partialOriginalBytes, partialBytes));
+
+        bytesMessage.reset();
+
+        // retrieve all the expected bytes, check they match
+        byte[] resetBytes = new byte[content.length];
+        bytesMessage.readBytes(resetBytes);
+        assertTrue(Arrays.equals(content.data, resetBytes));
+    }
+
+    /**
+     * Test that calling {@link BytesMessage#reset()} on a new message which has been populated
+     * causes the marker to be reset and makes the message read-only
+     */
+    @Test
+    public void testResetOnNewlyPopulatedBytesMessageResetsMarkerAndMakesReadable() throws Exception {
+        Buffer content = new Buffer("newResetTestBytes".getBytes());
+        JmsDefaultBytesMessageFacade facade = new JmsDefaultBytesMessageFacade();
+        facade.setContent(content);
+
+        JmsBytesMessage bytesMessage = new JmsBytesMessage(facade);
+
+        assertFalse("Message should be writable", bytesMessage.isReadOnlyBody());
+        bytesMessage.writeBytes(content.data);
+        bytesMessage.reset();
+        assertTrue("Message should not be writable", bytesMessage.isReadOnlyBody());
+
+        // retrieve the bytes, check they match
+        byte[] resetBytes = new byte[content.length];
+        bytesMessage.readBytes(resetBytes);
+        assertTrue(Arrays.equals(content.data, resetBytes));
+    }
+
+    /**
+     * Verify that nothing is read when {@link BytesMessage#readBytes(byte[])} is
+     * called with a zero length destination array.
+     */
+    @Test
+    public void testReadBytesWithZeroLengthDestination() throws Exception {
+        JmsBytesMessage bytesMessage = factory.createBytesMessage();
+        bytesMessage.reset();
+        assertEquals("Did not expect any bytes to be read", 0, bytesMessage.readBytes(new byte[0]));
+    }
+
+    /**
+     * Verify that when {@link BytesMessage#readBytes(byte[], int))} is called
+     * with a negative length that an {@link IndexOutOfBoundsException} is thrown.
+     */
+    @Test(expected=IndexOutOfBoundsException.class)
+    public void testReadBytesWithNegativeLengthThrowsIOOBE() throws Exception
+    {
+        JmsBytesMessage bytesMessage = factory.createBytesMessage();
+        bytesMessage.reset();
+        bytesMessage.readBytes(new byte[0], -1);
+    }
+
+    /**
+     * Verify that when {@link BytesMessage#readBytes(byte[], int))} is called
+     * with a length that is greater than the size of the provided array,
+     * an {@link IndexOutOfBoundsException} is thrown.
+     */
+    @Test(expected=IndexOutOfBoundsException.class)
+    public void testReadBytesWithLengthGreatThanArraySizeThrowsIOOBE() throws Exception {
+        JmsBytesMessage bytesMessage = factory.createBytesMessage();
+        bytesMessage.reset();
+        bytesMessage.readBytes(new byte[1], 2);
+    }
+
+    /**
+     * Test that writing a null using {@link BytesMessage#writeObject(Object)}
+     * results in a NPE being thrown.
+     */
+    @Test(expected=NullPointerException.class)
+    public void testWriteObjectWithNullThrowsNPE() throws Exception {
+        JmsBytesMessage bytesMessage = factory.createBytesMessage();
+        bytesMessage.writeObject(null);
+    }
+
+    /**
+     * Test that writing a null using {@link BytesMessage#writeObject(Object)}
+     * results in an {@link MessageFormatException} being thrown.
+     */
+    @Test(expected=MessageFormatException.class)
+    public void testWriteObjectWithIllegalTypeThrowsMFE() throws Exception {
+        JmsBytesMessage bytesMessage = factory.createBytesMessage();
+        bytesMessage.writeObject(new Object());
+    }
 
     @Test
     public void testGetBodyLength() {
