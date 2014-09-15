@@ -21,6 +21,7 @@ import io.neutronjms.jms.message.facade.JmsObjectMessageFacade;
 import java.io.Serializable;
 
 import javax.jms.JMSException;
+import javax.jms.MessageFormatException;
 import javax.jms.ObjectMessage;
 
 /**
@@ -81,7 +82,11 @@ public class JmsObjectMessage extends JmsMessage implements ObjectMessage {
     @Override
     public void setObject(Serializable newObject) throws JMSException {
         checkReadOnlyBody();
-        this.facade.setObject(newObject);
+        try {
+            this.facade.setObject(newObject);
+        } catch (Exception e) {
+            throw new MessageFormatException("Failed to serialize object");
+        }
     }
 
     /**
@@ -92,7 +97,11 @@ public class JmsObjectMessage extends JmsMessage implements ObjectMessage {
      */
     @Override
     public Serializable getObject() throws JMSException {
-        return this.facade.getObject();
+        try {
+            return this.facade.getObject();
+        } catch (Exception e) {
+            throw new MessageFormatException("Failed to read object");
+        }
     }
 
     @Override
