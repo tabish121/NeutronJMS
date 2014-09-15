@@ -16,21 +16,34 @@
  */
 package io.neutronjms.jms.message.facade.defaults;
 
+import io.neutronjms.jms.exceptions.JmsExceptionSupport;
 import io.neutronjms.jms.message.facade.JmsObjectMessageFacade;
+import io.neutronjms.util.ClassLoadingAwareObjectInputStream;
 
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 import javax.jms.JMSException;
+
+import org.fusesource.hawtbuf.Buffer;
+import org.fusesource.hawtbuf.DataByteArrayInputStream;
+import org.fusesource.hawtbuf.DataByteArrayOutputStream;
 
 /**
  * Default implementation for a JMS Object Message Facade.
  */
 public class JmsDefaultObjectMessageFacade extends JmsDefaultMessageFacade implements JmsObjectMessageFacade {
 
-    // TODO - Immediate Serialization to comply with JMS Spec.
+    private Buffer object;
 
-    // private Buffer object;
-    private Serializable object;
+    public Buffer getSerializedObject() {
+        return object;
+    }
+
+    public void setSerializedObject(Buffer object) {
+        this.object = object;
+    }
 
     @Override
     public JmsMsgType getMsgType() {
@@ -39,19 +52,16 @@ public class JmsDefaultObjectMessageFacade extends JmsDefaultMessageFacade imple
 
     @Override
     public boolean isEmpty() {
-        // return object != null && !object.isEmpty();
-        return object != null;
+        return object == null || object.isEmpty();
     }
 
     @Override
     public JmsDefaultObjectMessageFacade copy() throws JMSException {
         JmsDefaultObjectMessageFacade copy = new JmsDefaultObjectMessageFacade();
         copyInto(copy);
-        // TODO - We don't snapshot the object when set although we really should be.
-        //      if (!isEmpty()) {
-        //      target.object = object.deepCopy();
-        //  }
-        copy.object = object;
+        if (!isEmpty()) {
+            copy.object = object.deepCopy();
+        }
 
         return copy;
     }
@@ -63,11 +73,44 @@ public class JmsDefaultObjectMessageFacade extends JmsDefaultMessageFacade imple
 
     @Override
     public Serializable getObject() throws JMSException {
-        return this.object;
+
+        if (isEmpty()) {
+            return null;
+        }
+
+        Serializable serialized = null;
+
+        try (DataByteArrayInputStream dataIn = new DataByteArrayInputStream(object);
+             ClassLoadingAwareObjectInputStream objIn = new ClassLoadingAwareObjectInputStream(dataIn)) {
+
+            serialized = (Serializable) objIn.readObject();
+        } catch (ClassNotFoundException ce) {
+            throw JmsExceptionSupport.create("Failed to build body from content. Serializable class not available to client. Reason: " + ce, ce);
+        } catch (IOException ex) {
+            throw JmsExceptionSupport.create(ex);
+        }
+
+        return serialized;
     }
 
     @Override
     public void setObject(Serializable value) throws JMSException {
-        this.object = value;
+        Buffer serialized = null;
+        if (value != null) {
+            DataByteArrayOutputStream baos = new DataByteArrayOutputStream();
+            ObjectOutputStream oos;
+            try {
+                oos = new ObjectOutputStream(baos);
+                oos.writeObject(value);
+                oos.flush();
+                oos.close();
+            } catch (IOException e) {
+                throw JmsExceptionSupport.create(e);
+            }
+
+            serialized = baos.toBuffer();
+        }
+
+        this.object = serialized;
     }
 }

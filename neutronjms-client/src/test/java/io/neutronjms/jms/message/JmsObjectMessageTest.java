@@ -18,20 +18,28 @@ package io.neutronjms.jms.message;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import io.neutronjms.jms.message.JmsDefaultMessageFactory;
-import io.neutronjms.jms.message.JmsMessageFactory;
-import io.neutronjms.jms.message.JmsObjectMessage;
+import io.neutronjms.jms.message.facade.JmsObjectMessageFacade;
+import io.neutronjms.jms.message.facade.defaults.JmsDefaultObjectMessageFacade;
 
 import java.io.IOException;
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.jms.JMSException;
+import javax.jms.MessageFormatException;
 import javax.jms.MessageNotReadableException;
 import javax.jms.MessageNotWriteableException;
+import javax.jms.ObjectMessage;
 
 import org.junit.Test;
+import org.mockito.Mockito;
 
 /**
  *
@@ -40,13 +48,157 @@ public class JmsObjectMessageTest {
 
     private final JmsMessageFactory factory = new JmsDefaultMessageFactory();
 
+    /**
+     * Test that attempting to write bytes to a received message (without calling {@link ObjectMessage#clearBody()} first)
+     * causes a {@link MessageNotWriteableException} to be thrown due to being read-only.
+     */
+    @Test
+    public void testReceivedObjectMessageThrowsMessageNotWriteableExceptionOnSetObject() throws Exception {
+        String content = "myStringContent";
+        JmsObjectMessageFacade facade = new JmsDefaultObjectMessageFacade();
+        facade.setObject(content);
+        JmsObjectMessage objectMessage = new JmsObjectMessage(facade);
+        objectMessage.onSend();
+
+        try {
+            objectMessage.setObject("newObject");
+            fail("Expected exception to be thrown");
+        } catch (MessageNotWriteableException mnwe) {
+            // expected
+        }
+    }
+
+    /**
+     * Test that calling {@link ObjectMessage#clearBody()} causes a received
+     * message to become writable
+     */
+    @Test
+    public void testClearBodyOnReceivedObjectMessageMakesMessageWritable() throws Exception {
+        String content = "myStringContent";
+        JmsObjectMessageFacade facade = new JmsDefaultObjectMessageFacade();
+        facade.setObject(content);
+        JmsObjectMessage objectMessage = new JmsObjectMessage(facade);
+        objectMessage.onSend();
+
+        assertTrue("Message should not be writable", objectMessage.isReadOnlyBody());
+        objectMessage.clearBody();
+        assertFalse("Message should be writable", objectMessage.isReadOnlyBody());
+    }
+
+    /**
+     * Test that calling {@link ObjectMessage#clearBody()} of a received message
+     * causes the body of the underlying {@link AmqpObjectMessage} to be emptied.
+     */
+    @Test
+    public void testClearBodyOnReceivedObjectMessageClearsUnderlyingMessageBody() throws Exception {
+        String content = "myStringContent";
+        JmsDefaultObjectMessageFacade facade = new JmsDefaultObjectMessageFacade();
+        facade.setObject(content);
+        JmsObjectMessage objectMessage = new JmsObjectMessage(facade);
+        objectMessage.onSend();
+
+        assertNotNull("Expected body section but none was present", facade.getSerializedObject());
+        objectMessage.clearBody();
+
+        // check that the returned object is now null
+        assertNull("Unexpected object value", objectMessage.getObject());
+
+        // verify the underlying message facade has no body
+        assertNull("Expected no body section", facade.getSerializedObject());
+    }
+
+    /**
+     * Test that setting an object on a new message and later getting the value, returns an
+     * equal but different object that does not pick up intermediate changes to the set object.
+     */
+    @Test
+    public void testSetThenGetObjectReturnsSnapshot() throws Exception
+    {
+        Map<String,String> origMap = new HashMap<String,String>();
+        origMap.put("key1", "value1");
+
+        JmsDefaultObjectMessageFacade facade = new JmsDefaultObjectMessageFacade();
+        facade.setObject((Serializable) origMap);
+        JmsObjectMessage objectMessage = new JmsObjectMessage(facade);
+        objectMessage.onSend();
+
+        // verify we get a different-but-equal object back
+        Serializable serialized = objectMessage.getObject();
+        assertTrue("Unexpected object type returned", serialized instanceof Map<?,?>);
+        Map<?,?> returnedObject1 = (Map<?,?>) serialized;
+        assertNotSame("Expected different objects, due to snapshot being taken", origMap, returnedObject1);
+        assertEquals("Expected equal objects, due to snapshot being taken", origMap, returnedObject1);
+
+        // mutate the original object
+        origMap.put("key2", "value2");
+
+        // verify we get a different-but-equal object back when compared to the previously retrieved object
+        Serializable serialized2 = objectMessage.getObject();
+        assertTrue("Unexpected object type returned", serialized2 instanceof Map<?,?>);
+        Map<?,?> returnedObject2 = (Map<?,?>) serialized2;
+        assertNotSame("Expected different objects, due to snapshot being taken", origMap, returnedObject2);
+        assertEquals("Expected equal objects, due to snapshot being taken", returnedObject1, returnedObject2);
+
+        // verify the mutated map is a different and not equal object
+        assertNotSame("Expected different objects, due to snapshot being taken", returnedObject1, returnedObject2);
+        assertNotEquals("Expected objects to differ, due to snapshot being taken", origMap, returnedObject2);
+    }
+
+    /**
+     * Test that setting an object on a new message which contains non-serializable content results
+     * in an {@link MessageFormatException} being thrown due to failure to encode the object.
+     */
+    @Test
+    public void testSetObjectWithNonSerializableThrowsJMSMFE() throws Exception {
+        Map<String, Object> origMap = new HashMap<String, Object>();
+        origMap.put("key1", "value1");
+        origMap.put("notSerializable", new NotSerializable());
+
+        JmsObjectMessage objectMessage = factory.createObjectMessage();
+
+        try {
+            objectMessage.setObject((Serializable) origMap);
+            fail("Expected exception to be thrown");
+        } catch (MessageFormatException mfe) {
+            // expected
+        }
+    }
+
+    //Test class
+    private static class NotSerializable
+    {
+        public NotSerializable()
+        {
+        }
+    }
+
+    /**
+     * Test that failure during deserialization of an object in a message results
+     * in an {@link MessageFormatException} being throw.
+     */
+    @Test
+    public void testGetObjectWithFailedDeserialisationThrowsJMSMFE() throws Exception {
+        JmsObjectMessageFacade facade = Mockito.mock(JmsDefaultObjectMessageFacade.class);
+        // TODO - Fix up the Facade interface with better exception definitions
+        // Mockito.when(facade.getObject()).thenThrow(new ClassNotFoundException());
+        Mockito.when(facade.getObject()).thenThrow(new JMSException("Failed to get object"));
+        JmsObjectMessage objectMessage = new JmsObjectMessage(facade);
+
+        try {
+            objectMessage.getObject();
+            fail("Expected exception to be thrown");
+        } catch (MessageFormatException mfe) {
+            // expected
+        }
+    }
+
     @Test
     public void testBytes() throws JMSException, IOException {
         JmsObjectMessage msg = factory.createObjectMessage();
         String str = "testText";
         msg.setObject(str);
 
-        msg = (JmsObjectMessage) msg.copy();
+        msg = msg.copy();
         assertEquals(msg.getObject(), str);
     }
 
@@ -55,7 +207,7 @@ public class JmsObjectMessageTest {
         JmsObjectMessage msg = factory.createObjectMessage();
         String str = "testText";
         msg.setObject(str);
-        assertTrue(msg.getObject() == str);
+        assertEquals(str, msg.getObject());
     }
 
     @Test
