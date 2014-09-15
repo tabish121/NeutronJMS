@@ -461,6 +461,12 @@ public class JmsBytesMessage extends JmsMessage implements BytesMessage {
     @Override
     public int readBytes(byte[] value, int length) throws JMSException {
         initializeReading();
+
+        if (length < 0 || value.length < length) {
+            throw new IndexOutOfBoundsException(
+                "length must not be negative or larger than the size of the provided array");
+        }
+
         try {
             int n = 0;
             while (n < length) {
