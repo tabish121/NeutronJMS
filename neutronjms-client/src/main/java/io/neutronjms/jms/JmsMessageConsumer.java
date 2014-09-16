@@ -44,7 +44,7 @@ import javax.jms.Session;
 /**
  * implementation of a JMS Message Consumer
  */
-public class JmsMessageConsumer implements MessageConsumer, JmsMessageListener, JmsMessageDispatcher {
+public class JmsMessageConsumer implements MessageConsumer, JmsMessageAvailableConsumer, JmsMessageDispatcher {
 
     protected final JmsSession session;
     protected final JmsConnection connection;
@@ -53,6 +53,7 @@ public class JmsMessageConsumer implements MessageConsumer, JmsMessageListener, 
     protected final AtomicBoolean closed = new AtomicBoolean();
     protected boolean started;
     protected MessageListener messageListener;
+    protected JmsMessageAvailableListener availableListener;
     protected final MessageQueue messageQueue;
     protected final Lock lock = new ReentrantLock();
     protected final AtomicBoolean suspendedConnection = new AtomicBoolean();
@@ -310,6 +311,10 @@ public class JmsMessageConsumer implements MessageConsumer, JmsMessageListener, 
                     }
                 }
             });
+        } else {
+            if (availableListener != null) {
+                availableListener.onMessageAvailable(this);
+            }
         }
     }
 
@@ -432,6 +437,16 @@ public class JmsMessageConsumer implements MessageConsumer, JmsMessageListener, 
 
     public boolean isBrowser() {
         return false;
+    }
+
+    @Override
+    public void setAvailableListener(JmsMessageAvailableListener availableListener) {
+        this.availableListener = availableListener;
+    }
+
+    @Override
+    public JmsMessageAvailableListener getAvailableListener() {
+        return availableListener;
     }
 
     protected void onConnectionInterrupted() {
