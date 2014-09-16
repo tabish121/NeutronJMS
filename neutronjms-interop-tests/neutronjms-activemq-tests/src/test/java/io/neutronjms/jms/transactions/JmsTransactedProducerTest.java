@@ -59,14 +59,14 @@ public class JmsTransactedProducerTest extends AmqpTestSupport {
         Session session = connection.createSession(true, Session.SESSION_TRANSACTED);
         Session nonTxSession = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
         Queue queue = session.createQueue(name.getMethodName());
+        MessageConsumer consumer = nonTxSession.createConsumer(queue);
         MessageProducer producer = session.createProducer(queue);
 
         for (int i = 0; i < MSG_COUNT; ++i) {
             producer.send(session.createTextMessage());
         }
 
-        MessageConsumer consumer = nonTxSession.createConsumer(queue);
-        Message msg = consumer.receive(5000);
+        Message msg = consumer.receive(2000);
         assertNull(msg);
 
         QueueViewMBean proxy = getProxyToQueue(name.getMethodName());
