@@ -48,15 +48,15 @@ public class AmqpSaslAuthenticator {
     }
 
     /**
-     * Process the SASL authentication cycle until such time as an outcome is
-     * determine.  This method must be called by the managing entity until the
-     * return value is true indicating a successful authentication or a
-     * JMSSecurityException is thrown indicating that the handshake failed.
+     * Process the SASL authentication cycle until such time as an outcome is determine. This
+     * method must be called by the managing entity until the return value is true indicating a
+     * successful authentication or a JMSSecurityException is thrown indicating that the
+     * handshake failed.
      *
      * @throws JMSSecurityException
      */
     public boolean authenticate() throws JMSSecurityException {
-        switch(sasl.getState()) {
+        switch (sasl.getState()) {
             case PN_SASL_IDLE:
                 handleSaslInit();
                 break;
@@ -75,8 +75,7 @@ public class AmqpSaslAuthenticator {
     }
 
     private void handleSaslInit() throws JMSSecurityException {
-        try
-        {
+        try {
             String[] remoteMechanisms = sasl.getRemoteMechanisms();
             if (remoteMechanisms != null && remoteMechanisms.length != 0) {
                 mechanism = SaslMechanismFinder.findMatchingMechanism(remoteMechanisms);
@@ -96,9 +95,7 @@ public class AmqpSaslAuthenticator {
                     throw new JMSSecurityException("Could not find a matching SASL mechanism for the remote peer.");
                 }
             }
-        }
-        catch(SaslException se)
-        {
+        } catch (SaslException se) {
             // TODO - Better error message.
             JMSSecurityException jmsse = new JMSSecurityException("Exception while processing SASL init.");
             jmsse.setLinkedException(se);
@@ -108,17 +105,14 @@ public class AmqpSaslAuthenticator {
     }
 
     private void handleSaslStep() throws JMSSecurityException {
-        try
-        {
+        try {
             if (sasl.pending() != 0) {
                 byte[] challenge = new byte[sasl.pending()];
                 sasl.recv(challenge, 0, challenge.length);
                 byte[] response = mechanism.getChallengeResponse(challenge);
                 sasl.send(response, 0, response.length);
             }
-        }
-        catch(SaslException se)
-        {
+        } catch (SaslException se) {
             // TODO - Better error message.
             JMSSecurityException jmsse = new JMSSecurityException("Exception while processing SASL step.");
             jmsse.setLinkedException(se);
