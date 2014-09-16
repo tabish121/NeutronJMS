@@ -23,12 +23,6 @@ import javax.jms.JMSException;
 /**
  * Interface for a message Facade that wraps a MapMessage style provider
  * message.
- *
- * TODO - It doesn't really have to be the case that we track read-only
- *        or write-only in the facade, we could just treat the facade as
- *        an open Map that can be updated at any time, it's really the job
- *        of the JMS layer message objects to ensure we play nice with all
- *        the JMS rules.
  */
 public interface JmsMapMessageFacade extends JmsMessageFacade {
 
@@ -45,19 +39,15 @@ public interface JmsMapMessageFacade extends JmsMessageFacade {
      * Returns an Enumeration of all the names in the MapMessage object.
      *
      * @return an enumeration of all the names in this MapMessage
-     *
-     * @throws JMSException if an internal error occurs.
      */
-    Enumeration<String> getMapNames() throws JMSException;
+    Enumeration<String> getMapNames();
 
     /**
      * Determines whether an item exists in this Map based message.
      *
      * @returns true if the item exists in the Map, false otherwise.
-     *
-     * @throws JMSException if an internal error occurs.
      */
-    boolean itemExists(String key) throws JMSException;
+    boolean itemExists(String key);
 
     /**
      * Gets the value stored in the Map at the specified key.
@@ -66,12 +56,8 @@ public interface JmsMapMessageFacade extends JmsMessageFacade {
      *        the key to use to access a value in the Map.
      *
      * @returns the item associated with the given key, or null if not present.
-     *
-     * @throws JMSException if the provider fails to write the message due to some internal error.
-     * @throws java.lang.IllegalArgumentException if the name is null or if the name is an empty string.
-     * @throws MessageFormatException if the object is invalid.
      */
-    Object get(String key) throws JMSException;
+    Object get(String key);
 
     /**
      * Sets an object value with the specified name into the Map.
@@ -80,12 +66,8 @@ public interface JmsMapMessageFacade extends JmsMessageFacade {
      *        the key to use to store the value into the Map.
      * @param value
      *        the new value to store in the element defined by the key.
-     *
-     * @throws JMSException if the provider fails to write the message due to some internal error.
-     * @throws java.lang.IllegalArgumentException if the name is null or if the name is an empty string.
-     * @throws MessageFormatException if the object is invalid.
      */
-    void put(String key, Object value) throws JMSException;
+    void put(String key, Object value);
 
     /**
      * Remove the mapping for this key from the map if present.  If the value is not
@@ -95,8 +77,8 @@ public interface JmsMapMessageFacade extends JmsMessageFacade {
      * @param key
      *        the key to be removed from the map if present.
      *
-     * @throws JMSException if the provider fails to write the message due to some internal error.
+     * @returns the object previously stored in the Map or null if none present.
      */
-    void remove(String key) throws JMSException;
+    Object remove(String key);
 
 }

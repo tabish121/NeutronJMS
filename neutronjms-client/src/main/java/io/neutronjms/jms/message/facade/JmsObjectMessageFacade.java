@@ -24,10 +24,6 @@ import javax.jms.JMSException;
 /**
  * Interface for a message Facade that wraps an ObjectMessage based
  * provider message.
- *
- * TODO - Don't think we really need to throw any exceptions from the methods here
- *        other than the get which might not be able to de-serialize the object.
- *        Probably don't need to track r/w access at this level.
  */
 public interface JmsObjectMessageFacade extends JmsMessageFacade {
 

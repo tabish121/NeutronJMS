@@ -23,8 +23,6 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.jms.JMSException;
-
 /**
  * Simple implementation of the JmsMapMessageFacade used for testing.
  */
@@ -46,28 +44,28 @@ public class JmsDefaultMapMessageFacade extends JmsDefaultMessageFacade implemen
     }
 
     @Override
-    public Enumeration<String> getMapNames() throws JMSException {
+    public Enumeration<String> getMapNames() {
         return Collections.enumeration(map.keySet());
     }
 
     @Override
-    public boolean itemExists(String key) throws JMSException {
+    public boolean itemExists(String key) {
         return map.containsKey(key);
     }
 
     @Override
-    public Object get(String key) throws JMSException {
+    public Object get(String key) {
         return map.get(key);
     }
 
     @Override
-    public void put(String key, Object value) throws JMSException {
+    public void put(String key, Object value) {
         map.put(key, value);
     }
 
     @Override
-    public void remove(String key) throws JMSException {
-        map.remove(key);
+    public Object remove(String key) {
+        return map.remove(key);
     }
 
     @Override
