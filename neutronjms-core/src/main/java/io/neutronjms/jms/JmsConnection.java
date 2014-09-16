@@ -623,11 +623,6 @@ public class JmsConnection implements Connection, TopicConnection, QueueConnecti
     void destroyResource(JmsResource resource) throws JMSException {
         connect();
 
-        // TODO - We don't currently have a way to say that an operation
-        //        should be done asynchronously.  For a resource dispose
-        //        we only care that the request hits the wire, not that
-        //        any response comes back.
-
         try {
             ProviderFuture request = new ProviderFuture();
             provider.destroy(resource, request);
@@ -643,7 +638,14 @@ public class JmsConnection implements Connection, TopicConnection, QueueConnecti
 
         // TODO - We don't currently have a way to say that an operation
         //        should be done asynchronously.  A send can be done async
-        //        in many cases, such as non-persistent delivery.
+        //        in many cases, such as non-persistent delivery.  We probably
+        //        don't need to do anything here though just have a way to
+        //        configure the provider for async sends which we do in the
+        //        JmsConnectionInfo.  Here we just need to register a listener
+        //        on the request to know when it completes if we want to do
+        //        JMS 2.0 style async sends where we signal a callback, then
+        //        we can manage order of callback events to async senders at
+        //        this level.
         try {
             ProviderFuture request = new ProviderFuture();
             provider.send(envelope, request);
@@ -657,10 +659,6 @@ public class JmsConnection implements Connection, TopicConnection, QueueConnecti
         checkClosedOrFailed();
         connect();
 
-        // TODO - We don't currently have a way to say that an operation
-        //        should be done asynchronously.  For a some acknowledgments
-        //        we only care that the request hits the wire, not that
-        //        any response comes back.
         try {
             ProviderFuture request = new ProviderFuture();
             provider.acknowledge(envelope, ackType, request);
@@ -674,10 +672,6 @@ public class JmsConnection implements Connection, TopicConnection, QueueConnecti
         checkClosedOrFailed();
         connect();
 
-        // TODO - We don't currently have a way to say that an operation
-        //        should be done asynchronously.  For a some acknowledgments
-        //        we only care that the request hits the wire, not that
-        //        any response comes back.
         try {
             ProviderFuture request = new ProviderFuture();
             provider.acknowledge(sessionId, request);
