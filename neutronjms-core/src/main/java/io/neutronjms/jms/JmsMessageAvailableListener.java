@@ -16,16 +16,20 @@
  */
 package io.neutronjms.jms;
 
+import javax.jms.MessageConsumer;
+
+
 /**
  * Internal JmsMessage available listener.
  */
-public interface JmsMessageListener {
+public interface JmsMessageAvailableListener {
 
     /**
-     * Called when a Message is available to be processes
+     * Called when a Message is available to be received by a client
      *
-     * @param message
+     * @param consumer
+     *        the MessageConsumer instance that has message available.
      */
-    //public void onMessage(JmsMessage message);
-    // TODO
+    public void onMessageAvailable(MessageConsumer consumer);
+
 }

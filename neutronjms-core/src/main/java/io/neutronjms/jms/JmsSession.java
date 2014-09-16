@@ -80,7 +80,7 @@ import org.apache.activemq.apollo.selector.SelectorParser;
  * JMS Session implementation
  */
 @SuppressWarnings("static-access")
-public class JmsSession implements Session, QueueSession, TopicSession, JmsMessageListener, JmsMessageDispatcher {
+public class JmsSession implements Session, QueueSession, TopicSession, JmsMessageDispatcher {
 
     private final JmsConnection connection;
     private final int acknowledgementMode;
