@@ -16,6 +16,7 @@
  */
 package io.neutronjms.util;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -50,13 +51,17 @@ public final class ThreadPoolUtils {
      * @see java.util.concurrent.ExecutorService#shutdownNow()
      */
     public static List<Runnable> shutdownNow(ExecutorService executorService) {
+        if (executorService == null) {
+            return Collections.emptyList();
+        }
+
         List<Runnable> answer = null;
         if (!executorService.isShutdown()) {
             LOG.debug("Forcing shutdown of ExecutorService: {}", executorService);
             answer = executorService.shutdownNow();
             if (LOG.isTraceEnabled()) {
-                LOG.trace("Shutdown of ExecutorService: {} is shutdown: {} and terminated: {}.", new Object[] { executorService, executorService.isShutdown(),
-                    executorService.isTerminated() });
+                LOG.trace("Shutdown of ExecutorService: {} is shutdown: {} and terminated: {}.",
+                    new Object[] { executorService, executorService.isShutdown(), executorService.isTerminated() });
             }
         }
 
@@ -64,28 +69,26 @@ public final class ThreadPoolUtils {
     }
 
     /**
-     * Shutdown the given executor service graceful at first, and then
-     * aggressively if the await termination timeout was hit.
+     * Shutdown the given executor service graceful at first, and then aggressively if the await
+     * termination timeout was hit.
      * <p/>
      * This implementation invokes the
-     * {@link #shutdownGraceful(java.util.concurrent.ExecutorService, long)}
-     * with a timeout value of {@link #DEFAULT_SHUTDOWN_AWAIT_TERMINATION}
-     * millis.
+     * {@link #shutdownGraceful(java.util.concurrent.ExecutorService, long)} with a timeout
+     * value of {@link #DEFAULT_SHUTDOWN_AWAIT_TERMINATION} millis.
      */
     public static void shutdownGraceful(ExecutorService executorService) {
         doShutdown(executorService, DEFAULT_SHUTDOWN_AWAIT_TERMINATION);
     }
 
     /**
-     * Shutdown the given executor service graceful at first, and then
-     * aggressively if the await termination timeout was hit.
+     * Shutdown the given executor service graceful at first, and then aggressively if the await
+     * termination timeout was hit.
      * <p/>
-     * Will try to perform an orderly shutdown by giving the running threads
-     * time to complete tasks, before going more aggressively by doing a
-     * {@link #shutdownNow(java.util.concurrent.ExecutorService)} which forces a
-     * shutdown. The parameter <tt>shutdownAwaitTermination</tt> is used as
-     * timeout value waiting for orderly shutdown to complete normally, before
-     * going aggressively.
+     * Will try to perform an orderly shutdown by giving the running threads time to complete
+     * tasks, before going more aggressively by doing a
+     * {@link #shutdownNow(java.util.concurrent.ExecutorService)} which forces a shutdown. The
+     * parameter <tt>shutdownAwaitTermination</tt> is used as timeout value waiting for orderly
+     * shutdown to complete normally, before going aggressively.
      *
      * @param executorService
      *        the executor service to shutdown
@@ -149,20 +152,25 @@ public final class ThreadPoolUtils {
     /**
      * Awaits the termination of the thread pool.
      * <p/>
-     * This implementation will log every 2nd second at INFO level that we are
-     * waiting, so the end user can see we are not hanging in case it takes
-     * longer time to terminate the pool.
+     * This implementation will log every 2nd second at INFO level that we are waiting, so the
+     * end user can see we are not hanging in case it takes longer time to terminate the pool.
      *
      * @param executorService
      *        the thread pool
      * @param shutdownAwaitTermination
      *        time in millis to use as timeout
-     * @return <tt>true</tt> if the pool is terminated, or <tt>false</tt> if we
-     *         timed out
+     *
+     * @return <tt>true</tt> if the pool is terminated, or <tt>false</tt> if we timed out
+     *
      * @throws InterruptedException
      *         is thrown if we are interrupted during the waiting
      */
     public static boolean awaitTermination(ExecutorService executorService, long shutdownAwaitTermination) throws InterruptedException {
+
+        if (executorService == null) {
+            return true;
+        }
+
         // log progress every 5th second so end user is aware of we are shutting down
         StopWatch watch = new StopWatch();
         long interval = Math.min(2000, shutdownAwaitTermination);

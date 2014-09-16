@@ -194,9 +194,7 @@ public class JmsConnection implements Connection, TopicConnection, QueueConnecti
             throw JmsExceptionSupport.create(e);
         } finally {
             try {
-                if (executor != null) {
-                    ThreadPoolUtils.shutdown(executor);
-                }
+                ThreadPoolUtils.shutdown(executor);
             } catch (Throwable e) {
                 LOG.warn("Error shutting down thread pool: " + executor + ". This exception will be ignored.", e);
             }
