@@ -87,81 +87,75 @@ public interface JmsMessageFacade {
     void onSend() throws JMSException;
 
     /**
-     * Clears the contents of this Message.
+     * This method should provide a quick check on the message to determine if
+     * there is any content actually contained within.
      *
-     * @throws JMSException if an error occurs while accessing the message body.
+     * @return true if the message content is non-empty.
      */
-    void clearBody() throws JMSException;
+    boolean isEmpty();
+
+    /**
+     * Clears the contents of this Message.
+     */
+    void clearBody();
 
     /**
      * Clears any Message properties that exist for this Message instance.
      *
      * @throws JMSException if an error occurs while accessing the message properties.
      */
-    void clearProperties() throws JMSException;
+    void clearProperties();
 
     /**
      * Create a new instance and perform a deep copy of this object's
      * contents.
      */
-    JmsMessageFacade copy() throws JMSException;
+    JmsMessageFacade copy();
 
     /**
      * Return the internal message Id as a JmsMessageId wrapped value.
      *
      * @return a JmsMessageId that wraps the internal message Id.
-     *
-     * @throws JMSException if an error occurs while accessing the property.
      */
-    JmsMessageId getMessageId() throws JMSException;
+    JmsMessageId getMessageId();
 
     /**
      * Updates the message Id using the value of the given JmsMessageId.
      *
      * @param messageId
      *        the new JmsMessageId value to assign as the message Id.
-     *
-     * @throws JMSException if an error occurs while accessing the property.
      */
-    void setMessageId(JmsMessageId messageId) throws JMSException;
+    void setMessageId(JmsMessageId messageId);
 
     /**
      * Gets the timestamp assigned to the message when it was sent.
      *
      * @return the message timestamp value.
-     *
-     * @throws JMSException if an error occurs while accessing the property.
      */
-    long getTimestamp() throws JMSException;
+    long getTimestamp();
 
     /**
      * Sets the timestamp value of this message.
      *
      * @param timestamp
      *        the time that the message was sent by the provider.
-     *
-     * @throws JMSException if an error occurs while accessing the property.
      */
-    void setTimestamp(long timestamp) throws JMSException;
+    void setTimestamp(long timestamp);
 
     /**
      * Returns the correlation ID set on this message if one exists, null otherwise.
      *
      * @return the set correlation ID or null if not set.
-     *
-     * @throws JMSException if an error occurs while accessing the property.
      */
-    String getCorrelationId() throws JMSException;
+    String getCorrelationId();
 
     /**
      * Sets the correlation ID for this message.
      *
      * @param correlationId
      *        The correlation ID to set on this message, or null to clear.
-     *
-     * @throws JMSException if an error occurs while accessing the property.
      */
-    void setCorrelationId(String correlationId) throws JMSException;
+    void setCorrelationId(String correlationId);
 
     /**
      * Gets the set correlation ID of the message in raw bytes form.  If no ID was
@@ -171,7 +165,7 @@ public interface JmsMessageFacade {
      *
      * @throws JMSException if an error occurs while accessing the property.
      */
-    byte[] getCorrelationIdBytes() throws JMSException;
+    byte[] getCorrelationIdBytes();
 
     /**
      * Sets the correlation ID of the message in raw byte form.  Setting the value
@@ -181,38 +175,29 @@ public interface JmsMessageFacade {
      *
      * @param correlationId
      *        the byte array to use to set the message correlation ID.
-     *
-     * @throws JMSException if an error occurs setting the bytes as the protocol's
-     *                      correlation ID value.
      */
-    void setCorrelationIdBytes(byte[] correlationId) throws JMSException;
+    void setCorrelationIdBytes(byte[] correlationId);
 
     /**
      * @return true if this message is tagged as being persistent.
-     *
-     * @throws JMSException if an error occurs while accessing the property.
      */
-    boolean isPersistent() throws JMSException;
+    boolean isPersistent();
 
     /**
      * Sets the persistent flag on this message.
      *
      * @param value
      *        true if the message is to be marked as persistent.
-     *
-     * @throws JMSException if an error occurs while accessing the property.
      */
-    void setPersistent(boolean value) throws JMSException;
+    void setPersistent(boolean value);
 
     /**
      * Returns the current redelivery count of the Message as set in the underlying
      * message instance.
      *
      * @return the current redelivery count.
-     *
-     * @throws JMSException if an error occurs while accessing the property.
      */
-    int getRedeliveryCounter() throws JMSException;
+    int getRedeliveryCounter();
 
     /**
      * Used to update the message redelivery after a local redelivery of the Message
@@ -220,19 +205,15 @@ public interface JmsMessageFacade {
      *
      * @param redeliveryCount
      *        the new redelivery count to assign the Message.
-     *
-     * @throws JMSException if an error occurs while accessing the property.
      */
-    void setRedeliveryCounter(int redeliveryCount) throws JMSException;
+    void setRedeliveryCounter(int redeliveryCount);
 
     /**
      * Used to quickly check if a message has been redelivered.
      *
      * @returns true if the message was redelivered, false otherwise.
-     *
-     * @throws JMSException if an error occurs while accessing the property.
      */
-    boolean isRedelivered() throws JMSException;
+    boolean isRedelivered();
 
     /**
      * Used to set the redelivered state of a message.  This can serve to clear
@@ -240,29 +221,23 @@ public interface JmsMessageFacade {
      *
      * @param redelivered
      *        true if the message is to be marked as redelivered, false otherwise.
-     *
-     * @throws JMSException if an error occurs while accessing the property.
      */
-    void setRedelivered(boolean redelivered) throws JMSException;
+    void setRedelivered(boolean redelivered);
 
     /**
      * Returns the Type values as defined by the provider or set by the sending client.
      *
      * @return a String value that defines the message type.
-     *
-     * @throws JMSException if an error occurs while accessing the property.
      */
-    String getType() throws JMSException;
+    String getType();
 
     /**
      * Sets the String value used to define the Message type by the client.
      *
      * @param type
      *        the type value the client assigns to this message.
-     *
-     * @throws JMSException if an error occurs while accessing the property.
      */
-    void setType(String type) throws JMSException;
+    void setType(String type);
 
     /**
      * Returns the assigned priority value of this message in JMS ranged scoping.
@@ -272,20 +247,16 @@ public interface JmsMessageFacade {
      * value of 4.
      *
      * @return the priority value assigned to this message.
-     *
-     * @throws JMSException if an error occurs while accessing the property.
      */
-    byte getPriority() throws JMSException;
+    byte getPriority();
 
     /**
      * Sets the message priority for this message using a JMS priority scoped value.
      *
      * @param priority
      *        the new priority value to set on this message.
-     *
-     * @throws JMSException if an error occurs while accessing the property.
      */
-    void setPriority(byte priority) throws JMSException;
+    void setPriority(byte priority);
 
     /**
      * Returns the set expiration time for this message.
@@ -293,10 +264,8 @@ public interface JmsMessageFacade {
      * The value should be returned as an absolute time given in GMT time.
      *
      * @return the time that this message expires or zero if it never expires.
-     *
-     * @throws JMSException if an error occurs while accessing the property.
      */
-    long getExpiration() throws JMSException;
+    long getExpiration();
 
     /**
      * Sets an expiration time on this message.
@@ -305,113 +274,83 @@ public interface JmsMessageFacade {
      *
      * @param expiration
      *        the time that this message should be considered as expired.
-     *
-     * @throws JMSException if an error occurs while accessing the property.
      */
-    void setExpiration(long expiration) throws JMSException;
+    void setExpiration(long expiration);
 
     /**
      * Gets the Destination value that was assigned to this message at the time it was
      * sent.
      *
      * @return the destination to which this message was originally sent.
-     *
-     * @throws JMSException if an error occurs while accessing the property.
      */
-    JmsDestination getDestination() throws JMSException;
+    JmsDestination getDestination();
 
     /**
      * Sets the Destination that this message is being sent to.
      *
      * @param destination
      *        the destination that this message is being sent to.
-     *
-     * @throws JMSException if an error occurs while accessing the property.
      */
-    void setDestination(JmsDestination destination) throws JMSException;
+    void setDestination(JmsDestination destination);
 
     /**
      * Gets the Destination where replies for this Message are to be sent to.
      *
      * @return the reply to destination for this message or null if none set.
-     *
-     * @throws JMSException if an error occurs while accessing the property.
      */
-    JmsDestination getReplyTo() throws JMSException;
+    JmsDestination getReplyTo();
 
     /**
      * Sets the Destination where replies to this Message are to be sent.
      *
      * @param replyTo
      *        the Destination where replies should be sent, or null to clear.
-     *
-     * @throws JMSException if an error occurs while accessing the property.
      */
-    void setReplyTo(JmsDestination replyTo) throws JMSException;
+    void setReplyTo(JmsDestination replyTo);
 
     /**
      * Returns the ID of the user that sent this message if available.
      *
      * @return the user ID that was in use when this message was sent or null if not set.
-     *
-     * @throws JMSException if an error occurs while accessing the property.
      */
-    String getUserId() throws JMSException;
+    String getUserId();
 
     /**
      * Sets the User ID for the connection that is being used to send this message.
      *
      * @param userId
      *        the user ID that sent this message or null to clear.
-     *
-     * @throws JMSException if an error occurs while accessing the property.
      */
-    void setUserId(String userId) throws JMSException;
+    void setUserId(String userId);
 
     /**
      * Gets the Group ID that this message is assigned to.
      *
      * @return the Group ID this message was sent in.
-     *
-     * @throws JMSException if an error occurs while accessing the property.
      */
-    String getGroupId() throws JMSException;
+    String getGroupId();
 
     /**
      * Sets the Group ID to use for this message.
      *
      * @param groupId
      *        the Group ID that this message is assigned to.
-     *
-     * @throws JMSException if an error occurs while accessing the property.
      */
-    void setGroupId(String groupId) throws JMSException;
+    void setGroupId(String groupId);
 
     /**
      * Gets the assigned group sequence of this message.
      *
      * @return the assigned group sequence of this message.
-     *
-     * @throws JMSException if an error occurs while accessing the property.
      */
-    int getGroupSequence() throws JMSException;
+    int getGroupSequence();
 
     /**
      * Sets the group sequence value for this message.
      *
      * @param groupSequence
      *        the group sequence value to assign this message.
-     *
-     * @throws JMSException if an error occurs while accessing the property.
      */
-    void setGroupSequence(int groupSequence) throws JMSException;
-
-    /**
-     * This method should provide a quick check on the message to determine if
-     * there is any content actually contained within.
-     *
-     * @return true if the message content is non-empty.
-     */
-    boolean isEmpty();
+    void setGroupSequence(int groupSequence);
 
 }

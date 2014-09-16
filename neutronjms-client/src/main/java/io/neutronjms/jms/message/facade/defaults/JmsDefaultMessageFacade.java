@@ -77,13 +77,13 @@ public class JmsDefaultMessageFacade implements JmsMessageFacade {
     }
 
     @Override
-    public JmsDefaultMessageFacade copy() throws JMSException {
+    public JmsDefaultMessageFacade copy() {
         JmsDefaultMessageFacade copy = new JmsDefaultMessageFacade();
         copyInto(copy);
         return copy;
     }
 
-    protected void copyInto(JmsDefaultMessageFacade target) throws JMSException {
+    protected void copyInto(JmsDefaultMessageFacade target) {
         target.priority = this.priority;
         target.groupSequence = this.groupSequence;
         target.groupId = this.groupId;
@@ -212,12 +212,12 @@ public class JmsDefaultMessageFacade implements JmsMessageFacade {
     }
 
     @Override
-    public boolean isRedelivered() throws JMSException {
+    public boolean isRedelivered() {
         return redeliveryCount > 0;
     }
 
     @Override
-    public void setRedelivered(boolean redelivered) throws JMSException {
+    public void setRedelivered(boolean redelivered) {
         if (redelivered) {
             if (!isRedelivered()) {
                 setRedeliveryCounter(1);
@@ -260,7 +260,7 @@ public class JmsDefaultMessageFacade implements JmsMessageFacade {
     }
 
     @Override
-    public JmsDestination getDestination() throws JMSException {
+    public JmsDestination getDestination() {
         return this.destination;
     }
 
@@ -270,7 +270,7 @@ public class JmsDefaultMessageFacade implements JmsMessageFacade {
     }
 
     @Override
-    public JmsDestination getReplyTo() throws JMSException {
+    public JmsDestination getReplyTo() {
         return this.replyTo;
     }
 

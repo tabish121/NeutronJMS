@@ -334,11 +334,7 @@ public class AmqpConsumer extends AbstractAmqpResource<JmsConsumerInfo, Receiver
         }
 
         // Store link to delivery in the hint for use in acknowledge requests.
-        try {
-            message.getFacade().getMessageId().setProviderHint(incoming);
-        } catch (JMSException e) {
-            throw IOExceptionSupport.create(e);
-        }
+        message.getFacade().getMessageId().setProviderHint(incoming);
 
         // We need to signal to the create message that it's being dispatched and for now
         // the transformer creates the message in write mode, onSend will reset it to read

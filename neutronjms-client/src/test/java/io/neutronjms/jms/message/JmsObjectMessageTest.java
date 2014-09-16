@@ -176,20 +176,12 @@ public class JmsObjectMessageTest {
      * Test that failure during deserialization of an object in a message results
      * in an {@link MessageFormatException} being throw.
      */
-    @Test
+    @Test(expected=MessageFormatException.class)
     public void testGetObjectWithFailedDeserialisationThrowsJMSMFE() throws Exception {
         JmsObjectMessageFacade facade = Mockito.mock(JmsDefaultObjectMessageFacade.class);
-        // TODO - Fix up the Facade interface with better exception definitions
-        // Mockito.when(facade.getObject()).thenThrow(new ClassNotFoundException());
-        Mockito.when(facade.getObject()).thenThrow(new JMSException("Failed to get object"));
+        Mockito.when(facade.getObject()).thenThrow(new ClassCastException("Failed to get object"));
         JmsObjectMessage objectMessage = new JmsObjectMessage(facade);
-
-        try {
-            objectMessage.getObject();
-            fail("Expected exception to be thrown");
-        } catch (MessageFormatException mfe) {
-            // expected
-        }
+        objectMessage.getObject();
     }
 
     @Test

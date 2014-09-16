@@ -65,7 +65,8 @@ public class JmsStreamMessage extends JmsMessage implements StreamMessage {
         checkBytesInFlight();
 
         Boolean result = null;
-        Object value = facade.peek();
+        Object value;
+        value = facade.peek();
 
         if (value instanceof Boolean) {
             result = (Boolean) value;

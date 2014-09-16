@@ -180,12 +180,12 @@ public class AmqpJmsMessageFacade implements JmsMessageFacade {
     }
 
     @Override
-    public void clearBody() throws JMSException {
+    public void clearBody() {
         message.setBody(null);
     }
 
     @Override
-    public void clearProperties() throws JMSException {
+    public void clearProperties() {
         clearProperties();
         //_propJMS_AMQP_TTL = null;
         message.setReplyToGroupId(null);
@@ -197,7 +197,7 @@ public class AmqpJmsMessageFacade implements JmsMessageFacade {
     }
 
     @Override
-    public JmsMessageFacade copy() throws JMSException {
+    public JmsMessageFacade copy() {
         AmqpJmsMessageFacade copy = new AmqpJmsMessageFacade(connection, message);
         copyInto(copy);
         return copy;
@@ -208,13 +208,14 @@ public class AmqpJmsMessageFacade implements JmsMessageFacade {
     }
 
     @Override
-    public JmsMessageId getMessageId() throws JMSException {
+    public JmsMessageId getMessageId() {
         Object result = message.getMessageId();
         if (result != null) {
             if (result instanceof String) {
                 return new JmsMessageId((String) result);
             } else {
-                throw new JMSException("No support for non-String IDs yet.");
+                // TODO
+                throw new RuntimeException("No support for non-String IDs yet.");
             }
         }
 
@@ -222,7 +223,7 @@ public class AmqpJmsMessageFacade implements JmsMessageFacade {
     }
 
     @Override
-    public void setMessageId(JmsMessageId messageId) throws JMSException {
+    public void setMessageId(JmsMessageId messageId) {
         if (messageId != null) {
             message.setMessageId(messageId.toString());
         } else {
@@ -231,7 +232,7 @@ public class AmqpJmsMessageFacade implements JmsMessageFacade {
     }
 
     @Override
-    public long getTimestamp() throws JMSException {
+    public long getTimestamp() {
         if (message.getProperties() != null) {
             Date timestamp = message.getProperties().getCreationTime();
             if (timestamp != null) {
@@ -243,7 +244,7 @@ public class AmqpJmsMessageFacade implements JmsMessageFacade {
     }
 
     @Override
-    public void setTimestamp(long timestamp) throws JMSException {
+    public void setTimestamp(long timestamp) {
         if (message.getProperties() != null) {
             if (timestamp != 0) {
                 message.setCreationTime(timestamp);
@@ -254,41 +255,41 @@ public class AmqpJmsMessageFacade implements JmsMessageFacade {
     }
 
     @Override
-    public String getCorrelationId() throws JMSException {
+    public String getCorrelationId() {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public void setCorrelationId(String correlationId) throws JMSException {
+    public void setCorrelationId(String correlationId) {
         // TODO Auto-generated method stub
 
     }
 
     @Override
-    public byte[] getCorrelationIdBytes() throws JMSException {
+    public byte[] getCorrelationIdBytes() {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public void setCorrelationIdBytes(byte[] correlationId) throws JMSException {
+    public void setCorrelationIdBytes(byte[] correlationId) {
         // TODO Auto-generated method stub
 
     }
 
     @Override
-    public boolean isPersistent() throws JMSException {
+    public boolean isPersistent() {
         return message.isDurable();
     }
 
     @Override
-    public void setPersistent(boolean value) throws JMSException {
+    public void setPersistent(boolean value) {
         this.message.setDurable(value);
     }
 
     @Override
-    public int getRedeliveryCounter() throws JMSException {
+    public int getRedeliveryCounter() {
         if (message.getHeader() != null) {
             UnsignedInteger count = message.getHeader().getDeliveryCount();
             if (count != null) {
@@ -300,7 +301,7 @@ public class AmqpJmsMessageFacade implements JmsMessageFacade {
     }
 
     @Override
-    public void setRedeliveryCounter(int redeliveryCount) throws JMSException {
+    public void setRedeliveryCounter(int redeliveryCount) {
         if (redeliveryCount == 0) {
             if (message.getHeader() != null) {
                 message.getHeader().setDeliveryCount(null);
@@ -311,12 +312,12 @@ public class AmqpJmsMessageFacade implements JmsMessageFacade {
     }
 
     @Override
-    public boolean isRedelivered() throws JMSException {
+    public boolean isRedelivered() {
         return getRedeliveryCounter() > 0;
     }
 
     @Override
-    public void setRedelivered(boolean redelivered) throws JMSException {
+    public void setRedelivered(boolean redelivered) {
         if (redelivered) {
             if (!isRedelivered()) {
                 setRedeliveryCounter(1);
@@ -329,17 +330,17 @@ public class AmqpJmsMessageFacade implements JmsMessageFacade {
     }
 
     @Override
-    public String getType() throws JMSException {
+    public String getType() {
         return (String) getAnnotation(JMS_MSG_TYPE);
     }
 
     @Override
-    public void setType(String type) throws JMSException {
+    public void setType(String type) {
         setAnnotation(JMS_MSG_TYPE, type);
     }
 
     @Override
-    public byte getPriority() throws JMSException {
+    public byte getPriority() {
         if (message.getHeader() != null) {
             UnsignedByte priority = message.getHeader().getPriority();
             if (priority != null) {
@@ -351,7 +352,7 @@ public class AmqpJmsMessageFacade implements JmsMessageFacade {
     }
 
     @Override
-    public void setPriority(byte priority) throws JMSException {
+    public void setPriority(byte priority) {
         if (priority == DEFAULT_PRIORITY) {
             if (message.getHeader() == null) {
                 return;
@@ -364,7 +365,7 @@ public class AmqpJmsMessageFacade implements JmsMessageFacade {
     }
 
     @Override
-    public long getExpiration() throws JMSException {
+    public long getExpiration() {
         Long absoluteExpiry = getAbsoluteExpiryTime();
         if (absoluteExpiry != null) {
             return absoluteExpiry;
@@ -378,7 +379,7 @@ public class AmqpJmsMessageFacade implements JmsMessageFacade {
     }
 
     @Override
-    public void setExpiration(long expiration) throws JMSException {
+    public void setExpiration(long expiration) {
         syntheticTTL = null;
 
         if (expiration != 0) {
@@ -389,30 +390,30 @@ public class AmqpJmsMessageFacade implements JmsMessageFacade {
     }
 
     @Override
-    public JmsDestination getDestination() throws JMSException {
+    public JmsDestination getDestination() {
         return destination;
     }
 
     @Override
-    public void setDestination(JmsDestination destination) throws JMSException {
+    public void setDestination(JmsDestination destination) {
         this.destination = destination;
 
         // TODO
     }
 
     @Override
-    public JmsDestination getReplyTo() throws JMSException {
+    public JmsDestination getReplyTo() {
         return replyTo;
     }
 
     @Override
-    public void setReplyTo(JmsDestination replyTo) throws JMSException {
+    public void setReplyTo(JmsDestination replyTo) {
         this.replyTo = replyTo;
         // TODO Auto-generated method stub
     }
 
     @Override
-    public String getUserId() throws JMSException {
+    public String getUserId() {
         String userId = null;
         byte[] userIdBytes = message.getUserId();
 
@@ -424,22 +425,22 @@ public class AmqpJmsMessageFacade implements JmsMessageFacade {
     }
 
     @Override
-    public void setUserId(String userId) throws JMSException {
+    public void setUserId(String userId) {
         message.setUserId(userId.getBytes(UTF8));
     }
 
     @Override
-    public String getGroupId() throws JMSException {
+    public String getGroupId() {
         return message.getGroupId();
     }
 
     @Override
-    public void setGroupId(String groupId) throws JMSException {
+    public void setGroupId(String groupId) {
         message.setGroupId(groupId);
     }
 
     @Override
-    public int getGroupSequence() throws JMSException {
+    public int getGroupSequence() {
         if (message.getProperties() != null) {
             UnsignedInteger sequence = message.getProperties().getGroupSequence();
             if (sequence != null) {
@@ -451,7 +452,7 @@ public class AmqpJmsMessageFacade implements JmsMessageFacade {
     }
 
     @Override
-    public void setGroupSequence(int groupSequence) throws JMSException {
+    public void setGroupSequence(int groupSequence) {
         if (groupSequence < 0 && message.getProperties() != null) {
             message.getProperties().setGroupSequence(null);
         } else if (groupSequence > 0) {

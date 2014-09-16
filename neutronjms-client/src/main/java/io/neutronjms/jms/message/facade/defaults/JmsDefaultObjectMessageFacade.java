@@ -16,15 +16,12 @@
  */
 package io.neutronjms.jms.message.facade.defaults;
 
-import io.neutronjms.jms.exceptions.JmsExceptionSupport;
 import io.neutronjms.jms.message.facade.JmsObjectMessageFacade;
 import io.neutronjms.util.ClassLoadingAwareObjectInputStream;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-
-import javax.jms.JMSException;
 
 import org.fusesource.hawtbuf.Buffer;
 import org.fusesource.hawtbuf.DataByteArrayInputStream;
@@ -56,7 +53,7 @@ public class JmsDefaultObjectMessageFacade extends JmsDefaultMessageFacade imple
     }
 
     @Override
-    public JmsDefaultObjectMessageFacade copy() throws JMSException {
+    public JmsDefaultObjectMessageFacade copy() {
         JmsDefaultObjectMessageFacade copy = new JmsDefaultObjectMessageFacade();
         copyInto(copy);
         if (!isEmpty()) {
@@ -72,7 +69,7 @@ public class JmsDefaultObjectMessageFacade extends JmsDefaultMessageFacade imple
     }
 
     @Override
-    public Serializable getObject() throws JMSException {
+    public Serializable getObject() throws IOException, ClassNotFoundException {
 
         if (isEmpty()) {
             return null;
@@ -84,31 +81,24 @@ public class JmsDefaultObjectMessageFacade extends JmsDefaultMessageFacade imple
              ClassLoadingAwareObjectInputStream objIn = new ClassLoadingAwareObjectInputStream(dataIn)) {
 
             serialized = (Serializable) objIn.readObject();
-        } catch (ClassNotFoundException ce) {
-            throw JmsExceptionSupport.create("Failed to build body from content. Serializable class not available to client. Reason: " + ce, ce);
-        } catch (IOException ex) {
-            throw JmsExceptionSupport.create(ex);
         }
 
         return serialized;
     }
 
     @Override
-    public void setObject(Serializable value) throws JMSException {
+    public void setObject(Serializable value) throws IOException {
         Buffer serialized = null;
         if (value != null) {
-            DataByteArrayOutputStream baos = new DataByteArrayOutputStream();
-            ObjectOutputStream oos;
-            try {
-                oos = new ObjectOutputStream(baos);
+            try (DataByteArrayOutputStream baos = new DataByteArrayOutputStream();
+                 ObjectOutputStream oos = new ObjectOutputStream(baos)) {
+
                 oos.writeObject(value);
                 oos.flush();
                 oos.close();
-            } catch (IOException e) {
-                throw JmsExceptionSupport.create(e);
-            }
 
-            serialized = baos.toBuffer();
+                serialized = baos.toBuffer();
+            }
         }
 
         this.object = serialized;

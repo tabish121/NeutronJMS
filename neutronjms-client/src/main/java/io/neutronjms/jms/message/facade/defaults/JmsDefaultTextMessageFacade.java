@@ -18,8 +18,6 @@ package io.neutronjms.jms.message.facade.defaults;
 
 import io.neutronjms.jms.message.facade.JmsTextMessageFacade;
 
-import javax.jms.JMSException;
-
 /**
  * Default implementation of the JmsTextMessageFacade.
  */
@@ -38,7 +36,7 @@ public final class JmsDefaultTextMessageFacade extends JmsDefaultMessageFacade i
     }
 
     @Override
-    public JmsDefaultTextMessageFacade copy() throws JMSException {
+    public JmsDefaultTextMessageFacade copy() {
         JmsDefaultTextMessageFacade copy = new JmsDefaultTextMessageFacade();
         copyInto(copy);
         if (text != null) {
@@ -53,12 +51,12 @@ public final class JmsDefaultTextMessageFacade extends JmsDefaultMessageFacade i
     }
 
     @Override
-    public String getText() throws JMSException {
+    public String getText() {
         return text;
     }
 
     @Override
-    public void setText(String text) throws JMSException {
+    public void setText(String text) {
         this.text = text;
     }
 }

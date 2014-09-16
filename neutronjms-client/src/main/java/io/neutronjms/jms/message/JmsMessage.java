@@ -90,11 +90,10 @@ public class JmsMessage implements javax.jms.Message {
         JmsMessage msg = (JmsMessage) o;
         JmsMessageId oMsg = null;
         JmsMessageId thisMsg = null;
-        try {
-            thisMsg = facade.getMessageId();
-            oMsg = msg.facade.getMessageId();
-        } catch (JMSException e) {
-        }
+
+        thisMsg = facade.getMessageId();
+        oMsg = msg.facade.getMessageId();
+
         return thisMsg != null && oMsg != null && oMsg.equals(thisMsg);
     }
 
@@ -588,10 +587,7 @@ public class JmsMessage implements javax.jms.Message {
     }
 
     public void incrementRedeliveryCount() {
-         try {
-            facade.setRedeliveryCounter(facade.getRedeliveryCounter() + 1);
-        } catch (JMSException e) {
-        }
+         facade.setRedeliveryCounter(facade.getRedeliveryCounter() + 1);
     }
 
     public JmsMessageFacade getFacade() {

@@ -16,8 +16,6 @@
  */
 package io.neutronjms.jms.message.facade;
 
-import javax.jms.JMSException;
-
 import org.fusesource.hawtbuf.Buffer;
 
 /**
@@ -31,11 +29,9 @@ public interface JmsBytesMessageFacade extends JmsMessageFacade {
     /**
      * @returns a deep copy of this Message Facade including a complete copy
      * of the byte contents of the wrapped message.
-     *
-     * @throws JMSException if an error occurs while copying this message.
      */
     @Override
-    JmsBytesMessageFacade copy() throws JMSException;
+    JmsBytesMessageFacade copy();
 
     /**
      * Retrieves the contents of this message either wrapped in or copied

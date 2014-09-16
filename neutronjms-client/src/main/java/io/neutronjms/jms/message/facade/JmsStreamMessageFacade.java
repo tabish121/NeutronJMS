@@ -16,41 +16,27 @@
  */
 package io.neutronjms.jms.message.facade;
 
-import javax.jms.JMSException;
 import javax.jms.MessageEOFException;
-import javax.jms.MessageNotReadableException;
-import javax.jms.MessageNotWriteableException;
 
 /**
  * Interface for a Message Facade that wraps a stream or list based provider
  * message instance.  The interface provides the basic entry points into a
  * stream style message where primitive values are read and written as opaque
  * objects.
- *
- * TODO - It doesn't really have to be the case that we track read-only
- *        or write-only in the facade, we could just treat the facade as
- *        an open list that can be updated at any time, it's really the job
- *        of the JMS layer message objects to ensure we play nice with all
- *        the JMS rules.  We could be reading from the list and appending
- *        to the end here without issue.
  */
 public interface JmsStreamMessageFacade extends JmsMessageFacade {
 
     /**
      * @returns a deep copy of this Message Facade including a complete copy
      * of the byte contents of the wrapped message.
-     *
-     * @throws JMSException if an error occurs while copying this message.
      */
     @Override
-    JmsStreamMessageFacade copy() throws JMSException;
+    JmsStreamMessageFacade copy();
 
     /**
      * @returns true if the stream contains another element beyond the current.
-     *
-     * @throws MessageNotReadableException if the message is in write-only mode.
      */
-    boolean hasNext() throws JMSException;
+    boolean hasNext();
 
     /**
      * Peek and return the next element in the stream.  If the stream has been fully read
@@ -59,38 +45,28 @@ public interface JmsStreamMessageFacade extends JmsMessageFacade {
      *
      * @returns the next value in the stream without removing it.
      *
-     * @throws JMSException if the provider fails to read the message due to some internal error.
-     * @throws MessageEOFException if unexpected end of message stream has been reached.
-     * @throws MessageNotReadableException if the message is in write-only mode.
+     * @throws MessageEOFException if end of message stream has been reached.
      */
-    Object peek() throws JMSException;
+    Object peek() throws MessageEOFException;
 
     /**
      * Pops the next element in the stream.
      *
-     * @throws JMSException if the provider fails to read the message due to some internal error.
-     * @throws MessageEOFException if unexpected end of message stream has been reached.
-     * @throws MessageNotReadableException if the message is in write-only mode.
+     * @throws MessageEOFException if end of message stream has been reached.
      */
-    void pop() throws JMSException;
+    void pop() throws MessageEOFException;
 
     /**
      * Writes a new object value to the stream.
      *
      * @param value
      *        The object value to be written to the stream.
-     *
-     * @throws JMSException if the provider fails to write the message due to some internal error.
-     * @throws MessageFormatException if the object is invalid.
-     * @throws MessageNotWriteableException if the message is in read-only mode.
      */
-    void put(Object value) throws JMSException;
+    void put(Object value);
 
     /**
      * Reset the position of the stream to the beginning.
-     *
-     * @throws JMSException if an internal error occurs.
      */
-    void reset() throws JMSException;
+    void reset();
 
 }

@@ -21,7 +21,6 @@ import io.neutronjms.jms.message.facade.JmsStreamMessageFacade;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.jms.JMSException;
 import javax.jms.MessageEOFException;
 
 /**
@@ -38,7 +37,7 @@ public class JmsDefaultStreamMessageFacade extends JmsDefaultMessageFacade imple
     }
 
     @Override
-    public JmsDefaultStreamMessageFacade copy() throws JMSException {
+    public JmsDefaultStreamMessageFacade copy() {
         JmsDefaultStreamMessageFacade copy = new JmsDefaultStreamMessageFacade();
         copyInto(copy);
         copy.stream.addAll(stream);
@@ -46,26 +45,30 @@ public class JmsDefaultStreamMessageFacade extends JmsDefaultMessageFacade imple
     }
 
     @Override
-    public boolean hasNext() throws JMSException {
+    public boolean hasNext() {
         return !stream.isEmpty() && index < stream.size();
     }
 
     @Override
-    public Object peek() throws JMSException {
+    public Object peek() throws MessageEOFException {
         if (stream.isEmpty() || index + 1 >= stream.size()) {
-            throw new MessageEOFException("Reached end of stream");
+            throw new MessageEOFException("Attempted to read past the end of the stream");
         }
 
         return stream.get(index + 1);
     }
 
     @Override
-    public void pop() throws JMSException {
+    public void pop() throws MessageEOFException {
+        if (stream.isEmpty() || index + 1 >= stream.size()) {
+            throw new MessageEOFException("Attempted to read past the end of the stream");
+        }
+
         index++;
     }
 
     @Override
-    public void put(Object value) throws JMSException {
+    public void put(Object value) {
         stream.add(value);
     }
 
@@ -76,7 +79,7 @@ public class JmsDefaultStreamMessageFacade extends JmsDefaultMessageFacade imple
     }
 
     @Override
-    public void reset() throws JMSException {
+    public void reset() {
         index = -1;
     }
 }

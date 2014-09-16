@@ -39,7 +39,7 @@ public interface JmsMapMessageFacade extends JmsMessageFacade {
      * @throws JMSException if an error occurs while copying this message.
      */
     @Override
-    JmsMapMessageFacade copy() throws JMSException;
+    JmsMapMessageFacade copy();
 
     /**
      * Returns an Enumeration of all the names in the MapMessage object.

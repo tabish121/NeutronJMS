@@ -16,12 +16,8 @@
  */
 package io.neutronjms.jms.message.facade;
 
-import javax.jms.JMSException;
-
 /**
  * A Facade around a provider message that behaves like a TextMessage instance.
- *
- * TODO - Don't think we really need to throw any exceptions from the methods here.
  */
 public interface JmsTextMessageFacade extends JmsMessageFacade {
 
@@ -30,20 +26,16 @@ public interface JmsTextMessageFacade extends JmsMessageFacade {
      * provider message instance.
      *
      * @returns a new JmsTextMessageFacade that wraps a duplicate message.
-     *
-     * @throws JMSException if an error occurs while copying this Message.
      */
     @Override
-    JmsTextMessageFacade copy() throws JMSException;
+    JmsTextMessageFacade copy();
 
     /**
      * Returns the String payload of the Message or null if none set.
      *
      * @return the String value contained in the message.
-     *
-     * @throws JMSException if an error occurs accessing the message.
      */
-    String getText() throws JMSException;
+    String getText();
 
     /**
      * Sets the new String payload of the wrapped message, or clears the old value
@@ -51,9 +43,7 @@ public interface JmsTextMessageFacade extends JmsMessageFacade {
      *
      * @param value
      *        the new String payload, or null to clear the contents.
-     *
-     * @throws JMSException if an error occurs writing the new message payload.
      */
-    void setText(String value) throws JMSException;
+    void setText(String value);
 
 }

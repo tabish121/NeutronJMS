@@ -18,8 +18,6 @@ package io.neutronjms.jms.message.facade.defaults;
 
 import io.neutronjms.jms.message.facade.JmsBytesMessageFacade;
 
-import javax.jms.JMSException;
-
 import org.fusesource.hawtbuf.Buffer;
 
 /**
@@ -35,7 +33,7 @@ public final class JmsDefaultBytesMessageFacade extends JmsDefaultMessageFacade 
     }
 
     @Override
-    public JmsDefaultBytesMessageFacade copy() throws JMSException {
+    public JmsDefaultBytesMessageFacade copy() {
         JmsDefaultBytesMessageFacade copy = new JmsDefaultBytesMessageFacade();
         copyInto(copy);
         if (this.content != null) {

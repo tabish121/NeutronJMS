@@ -16,10 +16,10 @@
  */
 package io.neutronjms.jms.message.facade;
 
+import java.io.IOException;
 import java.io.Serializable;
 
 import javax.jms.JMSException;
-import javax.jms.MessageNotWriteableException;
 
 /**
  * Interface for a message Facade that wraps an ObjectMessage based
@@ -38,7 +38,7 @@ public interface JmsObjectMessageFacade extends JmsMessageFacade {
      * @throws JMSException if an error occurs while copying this message.
      */
     @Override
-    JmsObjectMessageFacade copy() throws JMSException;
+    JmsObjectMessageFacade copy();
 
     /**
      * Gets the Object value that is contained in the provider message.
@@ -48,10 +48,11 @@ public interface JmsObjectMessageFacade extends JmsMessageFacade {
      *
      * @return the de-serialized version of the contained object.
      *
-     * @throws JMSException if the provider fails to get the object due to some internal error.
-     * @throws MessageFormatException if object de-serialization fails.
+     * @throws IOException if the provider fails to get the object due to some internal error.
+     * @throws ClassNotFoundException if object de-serialization fails because the ClassLoader
+     *                                cannot find the Class locally.
      */
-    Serializable getObject() throws JMSException;
+    Serializable getObject() throws IOException, ClassNotFoundException;
 
     /**
      * Stores the given object into the provider Message.
@@ -63,10 +64,8 @@ public interface JmsObjectMessageFacade extends JmsMessageFacade {
      * @param value
      *        the new value to write to the provider message.
      *
-     * @throws JMSException if the provider fails to set the object due to some internal error.
-     * @throws MessageFormatException if object serialization fails.
-     * @throws MessageNotWriteableException if the message is in read-only mode.
+     * @throws IOException if the provider fails to store the object due to some internal error.
      */
-    void setObject(Serializable value) throws JMSException;
+    void setObject(Serializable value) throws IOException;
 
 }

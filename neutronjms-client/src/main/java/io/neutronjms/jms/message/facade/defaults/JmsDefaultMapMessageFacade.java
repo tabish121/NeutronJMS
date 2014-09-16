@@ -38,7 +38,7 @@ public class JmsDefaultMapMessageFacade extends JmsDefaultMessageFacade implemen
     }
 
     @Override
-    public JmsDefaultMapMessageFacade copy() throws JMSException {
+    public JmsDefaultMapMessageFacade copy() {
         JmsDefaultMapMessageFacade copy = new JmsDefaultMapMessageFacade();
         copyInto(copy);
         copy.map.putAll(map);
