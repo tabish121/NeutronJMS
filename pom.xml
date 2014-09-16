@@ -89,6 +89,7 @@
     <module>neutronjms-client</module>
     <module>neutronjms-discovery</module>
     <module>neutronjms-interop-tests</module>
+    <module>neutronjms-examples</module>
   </modules>
 
   <dependencyManagement>
