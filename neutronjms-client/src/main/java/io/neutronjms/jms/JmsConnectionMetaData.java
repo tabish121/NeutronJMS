@@ -40,7 +40,7 @@ public final class JmsConnectionMetaData implements ConnectionMetaData {
         int major = 0;
         int minor = 0;
         try {
-            Package p = Package.getPackage("org.fusesource.amqpjms.jms");
+            Package p = Package.getPackage("io.neutronjns");
             if (p != null) {
                 version = p.getImplementationVersion();
                 Pattern pattern = Pattern.compile("(\\d+)\\.(\\d+).*");
@@ -96,7 +96,7 @@ public final class JmsConnectionMetaData implements ConnectionMetaData {
      */
     @Override
     public String getJMSProviderName() {
-        return "AmqpJMS";
+        return "NeutronJMS";
     }
 
     /**
@@ -141,7 +141,6 @@ public final class JmsConnectionMetaData implements ConnectionMetaData {
         jmxProperties.add("JMSXGroupID");
         jmxProperties.add("JMSXGroupSeq");
         jmxProperties.add("JMSXDeliveryCount");
-        jmxProperties.add("JMSXProducerTXID");
         return jmxProperties.elements();
     }
 }
