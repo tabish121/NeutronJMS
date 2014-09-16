@@ -31,8 +31,7 @@
   <dependencies>
     <dependency>
       <groupId>io.neutronjms</groupId>
-      <artifactId>neutronjms-client</artifactId>
-      <version>${project.version}</version>
+      <artifactId>neutronjms-core</artifactId>
     </dependency>
   </dependencies>
 </project>
