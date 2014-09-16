@@ -18,6 +18,8 @@ package io.neutronjms.sasl;
 
 import java.util.Map;
 
+import javax.security.sasl.SaslException;
+
 /**
  * Interface for all SASL authentication mechanism implementations.
  */
@@ -58,8 +60,9 @@ public interface Mechanism extends Comparable<Mechanism> {
 
     /**
      * @return the response buffer used to answer the initial SASL cycle.
+     * @throws SaslException if an error occurs computing the response.
      */
-    byte[] getInitialResponse();
+    byte[] getInitialResponse() throws SaslException;
 
     /**
      * Create a response based on a given challenge from the remote peer.
@@ -68,8 +71,9 @@ public interface Mechanism extends Comparable<Mechanism> {
      *        the challenge that this Mechanism should response to.
      *
      * @return the response that answers the given challenge.
+     * @throws SaslException if an error occurs computing the response.
      */
-    byte[] getChallengeResponse(byte[] challenge);
+    byte[] getChallengeResponse(byte[] challenge) throws SaslException;
 
     /**
      * Sets the user name value for this Mechanism.  The Mechanism can ignore this

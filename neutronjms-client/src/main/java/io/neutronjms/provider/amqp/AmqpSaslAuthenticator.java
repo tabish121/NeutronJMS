@@ -21,6 +21,7 @@ import io.neutronjms.sasl.Mechanism;
 import io.neutronjms.sasl.SaslMechanismFinder;
 
 import javax.jms.JMSSecurityException;
+import javax.security.sasl.SaslException;
 
 import org.apache.qpid.proton.engine.Sasl;
 
@@ -74,33 +75,55 @@ public class AmqpSaslAuthenticator {
     }
 
     private void handleSaslInit() throws JMSSecurityException {
-        String[] remoteMechanisms = sasl.getRemoteMechanisms();
-        if (remoteMechanisms != null && remoteMechanisms.length != 0) {
-            mechanism = SaslMechanismFinder.findMatchingMechanism(remoteMechanisms);
-            if (mechanism != null) {
-                mechanism.setUsername(info.getUsername());
-                mechanism.setPassword(info.getPassword());
-                // TODO - set additional options from URI.
-                // TODO - set a host value.
+        try
+        {
+            String[] remoteMechanisms = sasl.getRemoteMechanisms();
+            if (remoteMechanisms != null && remoteMechanisms.length != 0) {
+                mechanism = SaslMechanismFinder.findMatchingMechanism(remoteMechanisms);
+                if (mechanism != null) {
+                    mechanism.setUsername(info.getUsername());
+                    mechanism.setPassword(info.getPassword());
+                    // TODO - set additional options from URI.
+                    // TODO - set a host value.
 
-                sasl.setMechanisms(mechanism.getName());
-                byte[] response = mechanism.getInitialResponse();
-                if (response != null && response.length != 0) {
-                    sasl.send(response, 0, response.length);
+                    sasl.setMechanisms(mechanism.getName());
+                    byte[] response = mechanism.getInitialResponse();
+                    if (response != null && response.length != 0) {
+                        sasl.send(response, 0, response.length);
+                    }
+                } else {
+                    // TODO - Better error message.
+                    throw new JMSSecurityException("Could not find a matching SASL mechanism for the remote peer.");
                 }
-            } else {
-                // TODO - Better error message.
-                throw new JMSSecurityException("Could not find a matching SASL mechanism for the remote peer.");
             }
+        }
+        catch(SaslException se)
+        {
+            // TODO - Better error message.
+            JMSSecurityException jmsse = new JMSSecurityException("Exception while processing SASL init.");
+            jmsse.setLinkedException(se);
+            jmsse.initCause(se);
+            throw jmsse;
         }
     }
 
-    private void handleSaslStep() {
-        if (sasl.pending() != 0) {
-            byte[] challenge = new byte[sasl.pending()];
-            sasl.recv(challenge, 0, challenge.length);
-            byte[] response = mechanism.getChallengeResponse(challenge);
-            sasl.send(response, 0, response.length);
+    private void handleSaslStep() throws JMSSecurityException {
+        try
+        {
+            if (sasl.pending() != 0) {
+                byte[] challenge = new byte[sasl.pending()];
+                sasl.recv(challenge, 0, challenge.length);
+                byte[] response = mechanism.getChallengeResponse(challenge);
+                sasl.send(response, 0, response.length);
+            }
+        }
+        catch(SaslException se)
+        {
+            // TODO - Better error message.
+            JMSSecurityException jmsse = new JMSSecurityException("Exception while processing SASL step.");
+            jmsse.setLinkedException(se);
+            jmsse.initCause(se);
+            throw jmsse;
         }
     }
 
