@@ -52,10 +52,8 @@ public class CramMD5Mechanism extends AbstractMechanism {
 
     @Override
     public byte[] getChallengeResponse(byte[] challenge) throws SaslException {
-        if(!_sentResponse && challenge != null && challenge.length != 0)
-        {
-            try
-            {
+        if (!_sentResponse && challenge != null && challenge.length != 0) {
+            try {
                 SecretKeySpec key = new SecretKeySpec(getPassword().getBytes(ASCII), HMACMD5);
                 Mac mac = Mac.getInstance(HMACMD5);
                 mac.init(key);
@@ -64,11 +62,9 @@ public class CramMD5Mechanism extends AbstractMechanism {
 
                 StringBuffer hash = new StringBuffer(getUsername());
                 hash.append(' ');
-                for (int i = 0; i < bytes.length; i++)
-                {
+                for (int i = 0; i < bytes.length; i++) {
                     String hex = Integer.toHexString(0xFF & bytes[i]);
-                    if (hex.length() == 1)
-                    {
+                    if (hex.length() == 1) {
                         hash.append('0');
                     }
                     hash.append(hex);
@@ -76,22 +72,14 @@ public class CramMD5Mechanism extends AbstractMechanism {
 
                 _sentResponse = true;
                 return hash.toString().getBytes(ASCII);
-            }
-            catch (UnsupportedEncodingException e)
-            {
+            } catch (UnsupportedEncodingException e) {
                 throw new SaslException("Unable to utilise required encoding", e);
-            }
-            catch (InvalidKeyException e)
-            {
+            } catch (InvalidKeyException e) {
                 throw new SaslException("Unable to utilise key", e);
-            }
-            catch (NoSuchAlgorithmException e)
-            {
+            } catch (NoSuchAlgorithmException e) {
                 throw new SaslException("Unable to utilise required algorithm", e);
             }
-        }
-        else
-        {
+        } else {
             return EMPTY;
         }
     }
