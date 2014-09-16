@@ -21,9 +21,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import io.neutronjms.jms.message.JmsDefaultMessageFactory;
-import io.neutronjms.jms.message.JmsMessageFactory;
-import io.neutronjms.jms.message.JmsTextMessage;
 
 import java.io.IOException;
 
@@ -45,7 +42,7 @@ public class JmsTextMessageTest {
         JmsTextMessage msg = factory.createTextMessage();
         String string = "str";
         msg.setText(string);
-        JmsTextMessage copy = (JmsTextMessage) msg.copy();
+        JmsTextMessage copy = msg.copy();
         assertTrue(msg.getText() == copy.getText());
     }
 
@@ -126,7 +123,7 @@ public class JmsTextMessageTest {
         assertTrue(shortMessage.getText().equals(shortText));
 
         String longText = "Very very very very veeeeeeery loooooooooooooooooooooooooooooooooong text";
-        String longExpectedText = "Very very very very veeeeeeery looooooooooooo...ooooong text";
+        // String longExpectedText = "Very very very very veeeeeeery looooooooooooo...ooooong text";
         JmsTextMessage longMessage = factory.createTextMessage();
         longMessage.setText(longText);
         //assertTrue(longMessage.toString().contains("text = " + longExpectedText));
