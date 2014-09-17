@@ -301,12 +301,17 @@ public class AmqpProvider extends AbstractProvider implements TransportListener 
 
     @Override
     public void destroy(final JmsResource resource, final AsyncResult request) throws IOException {
+        //TODO: improve or delete this logging
+        LOG.debug("Destroy called");
+
         checkClosed();
         serializer.execute(new Runnable() {
 
             @Override
             public void run() {
                 try {
+                    //TODO: improve or delete this logging
+                    LOG.debug("Processing resource destroy request");
                     checkClosed();
                     resource.visit(new JmsDefaultResourceVisitor() {
 
@@ -610,17 +615,19 @@ public class AmqpProvider extends AbstractProvider implements TransportListener 
      */
     @Override
     public void onTransportError(final Throwable error) {
-        if (!closed.get()) {
-            serializer.execute(new Runnable() {
-                @Override
-                public void run() {
-                    LOG.info("Transport failed: {}", error.getMessage());
-                    if (!closed.get()) {
-                        fireProviderException(error);
+        serializer.execute(new Runnable() {
+            @Override
+            public void run() {
+                LOG.info("Transport failed: {}", error.getMessage());
+                if (!closed.get()) {
+                    fireProviderException(error);
+                    if(connection != null)
+                    {
+                        connection.closed();
                     }
                 }
-            });
-        }
+            }
+        });
     }
 
     /**
@@ -631,17 +638,21 @@ public class AmqpProvider extends AbstractProvider implements TransportListener 
      */
     @Override
     public void onTransportClosed() {
-        if (!closed.get()) {
-            serializer.execute(new Runnable() {
-                @Override
-                public void run() {
-                    LOG.debug("Transport connection remotely closed:");
-                    if (!closed.get()) {
-                        fireProviderException(new IOException("Connection remotely closed."));
+        //TODO: improve or delete this logging
+        LOG.debug("onTransportClosed listener called");
+        serializer.execute(new Runnable() {
+            @Override
+            public void run() {
+                LOG.debug("Transport connection remotely closed");
+                if (!closed.get()) {
+                    fireProviderException(new IOException("Connection remotely closed."));
+                    if(connection != null)
+                    {
+                        connection.closed();
                     }
                 }
-            });
-        }
+            }
+        });
     }
 
     private void processUpdates() {

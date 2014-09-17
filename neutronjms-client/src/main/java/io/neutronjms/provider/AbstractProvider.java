@@ -109,9 +109,9 @@ public abstract class AbstractProvider implements Provider {
         }
     }
 
-    protected void checkClosed() throws IOException {
+    protected void checkClosed() throws ProviderClosedException {
         if (closed.get()) {
-            throw new IOException("The Provider is already closed");
+            throw new ProviderClosedException("The Provider is already closed");
         }
     }
 }
