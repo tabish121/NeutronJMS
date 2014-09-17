@@ -21,6 +21,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import io.neutronjms.jms.JmsMessageAvailableListener;
+import io.neutronjms.jms.JmsMessageConsumer;
 import io.neutronjms.test.support.AmqpTestSupport;
 import io.neutronjms.test.support.Wait;
 
@@ -118,6 +120,53 @@ public class JmsMessageConsumerTest extends AmqpTestSupport {
         assertNotNull("Failed to receive any message.", consumer.receive(2000));
 
         assertTrue("Published message not consumed.", Wait.waitFor(new Wait.Condition() {
+
+            @Override
+            public boolean isSatisified() throws Exception {
+                return proxy.getQueueSize() == 0;
+            }
+        }));
+    }
+
+    @Test(timeout = 60000)
+    public void testMessageAvailableConsumer() throws Exception {
+        connection = createAmqpConnection();
+        connection.start();
+
+        final int MSG_COUNT = 10;
+        final AtomicInteger available = new AtomicInteger();
+
+        Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+        assertNotNull(session);
+        Queue queue = session.createQueue(name.getMethodName());
+        MessageConsumer consumer = session.createConsumer(queue);
+        ((JmsMessageConsumer) consumer).setAvailableListener(new JmsMessageAvailableListener() {
+
+            @Override
+            public void onMessageAvailable(MessageConsumer consumer) {
+                available.incrementAndGet();
+            }
+        });
+
+        sendToAmqQueue(MSG_COUNT);
+
+        final QueueViewMBean proxy = getProxyToQueue(name.getMethodName());
+        assertEquals(MSG_COUNT, proxy.getQueueSize());
+
+        assertTrue("Listener not notified of correct number of messages.", Wait.waitFor(new Wait.Condition() {
+
+            @Override
+            public boolean isSatisified() throws Exception {
+                return available.get() == MSG_COUNT;
+            }
+        }));
+
+        // All should be immediately ready for consume.
+        for (int i = 0; i < MSG_COUNT; ++i) {
+            assertNotNull(consumer.receiveNoWait());
+        }
+
+        assertTrue("Queued message not consumed.", Wait.waitFor(new Wait.Condition() {
 
             @Override
             public boolean isSatisified() throws Exception {
