@@ -16,25 +16,37 @@
  */
 package io.neutronjms.provider.amqp.message;
 
+import static io.neutronjms.provider.amqp.message.AmqpMessageSupport.JMS_MSG_TYPE;
+import static io.neutronjms.provider.amqp.message.AmqpMessageSupport.JMS_OBJECT_MESSAGE;
 import io.neutronjms.jms.message.facade.JmsObjectMessageFacade;
 import io.neutronjms.provider.amqp.AmqpConnection;
 
 import java.io.IOException;
 import java.io.Serializable;
 
+import javax.jms.MessageEOFException;
+
 import org.apache.qpid.proton.message.Message;
 
 /**
- *
+ * Wrapper around an AMQP Message instance that will be treated as a JMS ObjectMessage
+ * type.
  */
 public class AmqpJmsObjectMessageFacade extends AmqpJmsMessageFacade implements JmsObjectMessageFacade {
 
     /**
-     * @param connection
+     * Peek and return the next element in the stream.  If the stream has been fully read
+     * then this method should throw a MessageEOFException.  Multiple calls to peek should
+     * return the same element.
+     *
+     * @returns the next value in the stream without removing it.
+     *
+     * @throws MessageEOFException if end of message stream has been reached.
      */
     public AmqpJmsObjectMessageFacade(AmqpConnection connection) {
         super(connection);
-        // TODO Auto-generated constructor stub
+        //setContentType(AmqpObjectMessageSerializedDelegate.CONTENT_TYPE);
+        setAnnotation(JMS_MSG_TYPE, JMS_OBJECT_MESSAGE);
     }
 
     /**
@@ -69,6 +81,11 @@ public class AmqpJmsObjectMessageFacade extends AmqpJmsMessageFacade implements 
     @Override
     public void setObject(Serializable value) throws IOException {
         // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void clearBody() {
 
     }
 }

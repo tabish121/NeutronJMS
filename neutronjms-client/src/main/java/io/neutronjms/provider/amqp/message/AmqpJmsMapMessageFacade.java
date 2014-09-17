@@ -33,7 +33,7 @@ import org.apache.qpid.proton.amqp.messaging.Section;
 import org.apache.qpid.proton.message.Message;
 
 /**
- * Wrapper around an AMQP Message instance that will be treated as a JMS ObjectMessage
+ * Wrapper around an AMQP Message instance that will be treated as a JMS MapMessage
  * type.
  */
 public class AmqpJmsMapMessageFacade extends AmqpJmsMessageFacade implements JmsMapMessageFacade {
