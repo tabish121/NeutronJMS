@@ -60,6 +60,9 @@ public interface JmsStreamMessageFacade extends JmsMessageFacade {
     /**
      * Writes a new object value to the stream.
      *
+     * If the value provided is a byte[] its entry then it is assumed that it was
+     * copied by the caller and its value will not be altered by the provider.
+     *
      * @param value
      *        The object value to be written to the stream.
      */
