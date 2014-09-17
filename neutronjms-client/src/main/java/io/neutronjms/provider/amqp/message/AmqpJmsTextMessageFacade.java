@@ -121,4 +121,9 @@ public class AmqpJmsTextMessageFacade extends AmqpJmsMessageFacade implements Jm
         AmqpValue body = new AmqpValue(value);
         getAmqpMessage().setBody(body);
     }
+
+    @Override
+    public void clearBody() {
+        setText(null);
+    }
 }

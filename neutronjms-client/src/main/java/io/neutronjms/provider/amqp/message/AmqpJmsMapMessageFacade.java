@@ -127,6 +127,11 @@ public class AmqpJmsMapMessageFacade extends AmqpJmsMessageFacade implements Jms
         return messageBodyMap.remove(key);
     }
 
+    @Override
+    public void clearBody() {
+        messageBodyMap.clear();
+    }
+
     private void initializeEmptyBody() {
         // Using LinkedHashMap because AMQP map equality considers order,
         // so we should behave in as predictable a manner as possible
