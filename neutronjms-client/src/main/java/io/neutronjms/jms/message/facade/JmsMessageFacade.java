@@ -109,8 +109,10 @@ public interface JmsMessageFacade {
     /**
      * Create a new instance and perform a deep copy of this object's
      * contents.
+     *
+     * @throws JMSException if an error occurs while copying the message.
      */
-    JmsMessageFacade copy();
+    JmsMessageFacade copy() throws JMSException;
 
     /**
      * Return the internal message Id as a JmsMessageId wrapped value.

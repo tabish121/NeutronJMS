@@ -197,7 +197,7 @@ public class AmqpJmsMessageFacade implements JmsMessageFacade {
     }
 
     @Override
-    public JmsMessageFacade copy() {
+    public JmsMessageFacade copy() throws JMSException {
         AmqpJmsMessageFacade copy = new AmqpJmsMessageFacade(connection, message);
         copyInto(copy);
         return copy;

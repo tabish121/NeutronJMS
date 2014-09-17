@@ -55,7 +55,14 @@ public class JmsTextMessage extends JmsMessage implements TextMessage {
 
     @Override
     public String toString() {
+
+        String text = "";
+        try {
+            text = facade.getText();
+        } catch (JMSException e) {
+        }
+
         // TODO - Better toString implementation
-        return super.toString() + ":text=" + facade.getText();
+        return super.toString() + ":text=" + text;
     }
 }

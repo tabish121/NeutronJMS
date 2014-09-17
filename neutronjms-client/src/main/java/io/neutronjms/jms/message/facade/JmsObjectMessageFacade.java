@@ -34,7 +34,7 @@ public interface JmsObjectMessageFacade extends JmsMessageFacade {
      * @throws JMSException if an error occurs while copying this message.
      */
     @Override
-    JmsObjectMessageFacade copy();
+    JmsObjectMessageFacade copy() throws JMSException;
 
     /**
      * Gets the Object value that is contained in the provider message.

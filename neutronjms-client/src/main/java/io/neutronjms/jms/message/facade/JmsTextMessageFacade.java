@@ -16,6 +16,8 @@
  */
 package io.neutronjms.jms.message.facade;
 
+import javax.jms.JMSException;
+
 /**
  * A Facade around a provider message that behaves like a TextMessage instance.
  */
@@ -28,14 +30,16 @@ public interface JmsTextMessageFacade extends JmsMessageFacade {
      * @returns a new JmsTextMessageFacade that wraps a duplicate message.
      */
     @Override
-    JmsTextMessageFacade copy();
+    JmsTextMessageFacade copy() throws JMSException;
 
     /**
      * Returns the String payload of the Message or null if none set.
      *
      * @return the String value contained in the message.
+     *
+     * @throws JMSException if an error occurs while decoding text payload.
      */
-    String getText();
+    String getText() throws JMSException;
 
     /**
      * Sets the new String payload of the wrapped message, or clears the old value

@@ -16,6 +16,7 @@
  */
 package io.neutronjms.jms.message.facade;
 
+import javax.jms.JMSException;
 import javax.jms.MessageEOFException;
 
 /**
@@ -31,7 +32,7 @@ public interface JmsStreamMessageFacade extends JmsMessageFacade {
      * of the byte contents of the wrapped message.
      */
     @Override
-    JmsStreamMessageFacade copy();
+    JmsStreamMessageFacade copy() throws JMSException;
 
     /**
      * @returns true if the stream contains another element beyond the current.
