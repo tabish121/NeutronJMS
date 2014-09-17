@@ -97,7 +97,7 @@ public final class AmqpMessageSupport {
      * Value mapping for JMS_MSG_TYPE which indicates the message is a JMS ObjectMessage
      * which has an Object value serialized in its message body.
      */
-    public static final byte JMS_OBJECT_MESSSAGE = 1;
+    public static final byte JMS_OBJECT_MESSAGE = 1;
 
     /**
      * Value mapping for JMS_MSG_TYPE which indicates the message is a JMS MapMessage
