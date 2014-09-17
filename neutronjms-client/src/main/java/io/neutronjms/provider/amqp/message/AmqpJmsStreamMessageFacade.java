@@ -16,25 +16,41 @@
  */
 package io.neutronjms.provider.amqp.message;
 
+import static io.neutronjms.provider.amqp.message.AmqpMessageSupport.JMS_MSG_TYPE;
+import static io.neutronjms.provider.amqp.message.AmqpMessageSupport.JMS_STREAM_MESSAGE;
 import io.neutronjms.jms.message.facade.JmsStreamMessageFacade;
 import io.neutronjms.provider.amqp.AmqpConnection;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import javax.jms.MessageEOFException;
 
+import org.apache.qpid.proton.amqp.Binary;
+import org.apache.qpid.proton.amqp.messaging.AmqpValue;
+import org.apache.qpid.proton.amqp.messaging.Section;
 import org.apache.qpid.proton.message.Message;
 
 /**
- *
+ * Wrapper around an AMQP Message instance that will be treated as a JMS StreamMessage
+ * type.
  */
 public class AmqpJmsStreamMessageFacade extends AmqpJmsMessageFacade implements JmsStreamMessageFacade {
 
+    private List<Object> list;
+    private int position = 0;
 
     /**
+     * Create a new facade ready for sending.
+     *
      * @param connection
+     *        the connection instance that created this facade.
      */
     public AmqpJmsStreamMessageFacade(AmqpConnection connection) {
         super(connection);
-        // TODO Auto-generated constructor stub
+        initializeEmptyList();
+        setAnnotation(JMS_MSG_TYPE, JMS_STREAM_MESSAGE);
     }
 
     /**
@@ -46,47 +62,89 @@ public class AmqpJmsStreamMessageFacade extends AmqpJmsMessageFacade implements 
      * @param message
      *        the incoming Message instance that is being wrapped.
      */
+    @SuppressWarnings("unchecked")
     public AmqpJmsStreamMessageFacade(AmqpConnection connection, Message message) {
         super(connection, message);
+
+        Section body = getAmqpMessage().getBody();
+        if (body == null) {
+            initializeEmptyList();
+        } else if (body instanceof AmqpValue) {
+            Object value = ((AmqpValue) body).getValue();
+
+            if (value == null) {
+                initializeEmptyList();
+            } else if (value instanceof List) {
+                list = (List<Object>) value;
+            } else {
+                throw new IllegalStateException("Unexpected amqp-value body content type: " + value.getClass().getSimpleName());
+            }
+        } else {
+            throw new IllegalStateException("Unexpected message body type: " + body.getClass().getSimpleName());
+        }
     }
 
     @Override
     public JmsStreamMessageFacade copy() {
         AmqpJmsStreamMessageFacade copy = new AmqpJmsStreamMessageFacade(connection);
         copyInto(copy);
-
-        // TODO - Copy stream
-
+        copy.list.addAll(list);
         return copy;
     }
 
     @Override
     public boolean hasNext() {
-        // TODO Auto-generated method stub
-        return false;
+        return !list.isEmpty() && position < list.size();
     }
 
     @Override
     public Object peek() throws MessageEOFException {
-        // TODO Auto-generated method stub
-        return null;
+        if (list.isEmpty() || position >= list.size()) {
+            throw new MessageEOFException("Attempt to read past end of stream");
+        }
+
+        Object object = list.get(position);
+        if (object instanceof Binary) {
+            // Copy to a byte[], ensure we copy only the required portion.
+            Binary bin = ((Binary) object);
+            object = Arrays.copyOfRange(bin.getArray(), bin.getArrayOffset(), bin.getLength());
+        }
+
+        return object;
     }
 
     @Override
     public void pop() throws MessageEOFException {
-        // TODO Auto-generated method stub
+        if (list.isEmpty() || position >= list.size()) {
+            throw new MessageEOFException("Attempt to read past end of stream");
+        }
 
+        position++;
     }
 
     @Override
     public void put(Object value) {
-        // TODO Auto-generated method stub
+        Object entry = value;
+        if (entry instanceof byte[]) {
+            entry = new Binary((byte[]) value);
+        }
 
+        list.add(entry);
     }
 
     @Override
     public void reset() {
-        // TODO Auto-generated method stub
+        position = 0;
+    }
 
+    @Override
+    public void clearBody() {
+        list.clear();
+        position = 0;
+    }
+
+    private void initializeEmptyList() {
+        List<Object> list = new ArrayList<Object>();
+        message.setBody(new AmqpValue(list));
     }
 }

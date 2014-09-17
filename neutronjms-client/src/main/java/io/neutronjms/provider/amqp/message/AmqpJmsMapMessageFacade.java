@@ -106,10 +106,10 @@ public class AmqpJmsMapMessageFacade extends AmqpJmsMessageFacade implements Jms
         if (value instanceof Binary) {
             // Copy to a byte[], ensure we copy only the required portion.
             Binary bin = ((Binary) value);
-            return Arrays.copyOfRange(bin.getArray(), bin.getArrayOffset(), bin.getLength());
-        } else {
-            return value;
+            value = Arrays.copyOfRange(bin.getArray(), bin.getArrayOffset(), bin.getLength());
         }
+
+        return value;
     }
 
     @Override
