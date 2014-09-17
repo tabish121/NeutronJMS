@@ -727,6 +727,7 @@ public class AmqpProvider extends AbstractProvider implements TransportListener 
 
     public void setTraceFrames(boolean trace) {
         this.traceFrames = trace;
+        updateTracer();
     }
 
     public boolean isTraceFrames() {
