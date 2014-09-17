@@ -62,6 +62,12 @@ public interface JmsMapMessageFacade extends JmsMessageFacade {
     /**
      * Sets an object value with the specified name into the Map.
      *
+     * If a previous mapping for the key exists, the old value is replaced by the
+     * specified value.
+     *
+     * If the value provided is a byte[] its entry then it is assumed that it was
+     * copied by the caller and its value will not be altered by the provider.
+     *
      * @param key
      *        the key to use to store the value into the Map.
      * @param value

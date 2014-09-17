@@ -16,24 +16,40 @@
  */
 package io.neutronjms.provider.amqp.message;
 
+import static io.neutronjms.provider.amqp.message.AmqpMessageSupport.JMS_MAP_MESSAGE;
+import static io.neutronjms.provider.amqp.message.AmqpMessageSupport.JMS_MSG_TYPE;
 import io.neutronjms.jms.message.facade.JmsMapMessageFacade;
 import io.neutronjms.provider.amqp.AmqpConnection;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Enumeration;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
+import org.apache.qpid.proton.amqp.Binary;
+import org.apache.qpid.proton.amqp.messaging.AmqpValue;
+import org.apache.qpid.proton.amqp.messaging.Section;
 import org.apache.qpid.proton.message.Message;
 
 /**
- *
+ * Wrapper around an AMQP Message instance that will be treated as a JMS ObjectMessage
+ * type.
  */
 public class AmqpJmsMapMessageFacade extends AmqpJmsMessageFacade implements JmsMapMessageFacade {
 
+    private Map<String,Object> messageBodyMap;
+
     /**
+     * Create a new facade ready for sending.
+     *
      * @param connection
+     *        the connection instance that created this facade.
      */
     public AmqpJmsMapMessageFacade(AmqpConnection connection) {
         super(connection);
-        // TODO Auto-generated constructor stub
+        initializeEmptyBody();
+        setAnnotation(JMS_MSG_TYPE, JMS_MAP_MESSAGE);
     }
 
     /**
@@ -45,47 +61,76 @@ public class AmqpJmsMapMessageFacade extends AmqpJmsMessageFacade implements Jms
      * @param message
      *        the incoming Message instance that is being wrapped.
      */
+    @SuppressWarnings("unchecked")
     public AmqpJmsMapMessageFacade(AmqpConnection connection, Message message) {
         super(connection, message);
+
+        Section body = getAmqpMessage().getBody();
+        if (body == null) {
+            initializeEmptyBody();
+        } else if (body instanceof AmqpValue) {
+            Object o = ((AmqpValue) body).getValue();
+            if (o == null) {
+                initializeEmptyBody();
+            } else if (o instanceof Map) {
+                messageBodyMap = (Map<String, Object>) o;
+            } else {
+                throw new IllegalStateException("Unexpected message body type: " + body.getClass().getSimpleName());
+            }
+        } else {
+            throw new IllegalStateException("Unexpected message body type: " + body.getClass().getSimpleName());
+        }
     }
 
     @Override
     public JmsMapMessageFacade copy() {
         AmqpJmsMapMessageFacade copy = new AmqpJmsMapMessageFacade(connection);
         copyInto(copy);
-
-        // TODO - Copy the map
-
+        copy.messageBodyMap.putAll(messageBodyMap);
         return copy;
     }
 
     @Override
     public Enumeration<String> getMapNames() {
-        // TODO Auto-generated method stub
-        return null;
+        return Collections.enumeration(messageBodyMap.keySet());
     }
 
     @Override
     public boolean itemExists(String key) {
-        // TODO Auto-generated method stub
-        return false;
+        return messageBodyMap.containsKey(key);
     }
 
     @Override
     public Object get(String key) {
-        // TODO Auto-generated method stub
-        return null;
+        Object value = messageBodyMap.get(key);
+        if (value instanceof Binary) {
+            // Copy to a byte[], ensure we copy only the required portion.
+            Binary bin = ((Binary) value);
+            return Arrays.copyOfRange(bin.getArray(), bin.getArrayOffset(), bin.getLength());
+        } else {
+            return value;
+        }
     }
 
     @Override
     public void put(String key, Object value) {
-        // TODO Auto-generated method stub
+        Object entry = value;
+        if (value instanceof byte[]) {
+            entry = new Binary((byte[]) value);
+        }
 
+        messageBodyMap.put(key, entry);
     }
 
     @Override
     public Object remove(String key) {
-        // TODO Auto-generated method stub
-        return null;
+        return messageBodyMap.remove(key);
+    }
+
+    private void initializeEmptyBody() {
+        // Using LinkedHashMap because AMQP map equality considers order,
+        // so we should behave in as predictable a manner as possible
+        messageBodyMap = new LinkedHashMap<String, Object>();
+        getAmqpMessage().setBody(new AmqpValue(messageBodyMap));
     }
 }
