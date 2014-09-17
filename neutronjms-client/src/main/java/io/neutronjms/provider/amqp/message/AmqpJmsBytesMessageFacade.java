@@ -24,6 +24,7 @@ import org.apache.qpid.proton.amqp.Binary;
 import org.apache.qpid.proton.amqp.messaging.AmqpValue;
 import org.apache.qpid.proton.amqp.messaging.Data;
 import org.apache.qpid.proton.amqp.messaging.Section;
+import org.apache.qpid.proton.message.Message;
 import org.fusesource.hawtbuf.Buffer;
 
 /**
@@ -45,22 +46,27 @@ public class AmqpJmsBytesMessageFacade extends AmqpJmsMessageFacade implements J
         super(connection);
     }
 
+    /**
+     * Creates a new Facade around an incoming AMQP Message for dispatch to the
+     * JMS Consumer instance.
+     *
+     * @param connection
+     *        the connection that created this Facade.
+     * @param message
+     *        the incoming Message instance that is being wrapped.
+     */
+    public AmqpJmsBytesMessageFacade(AmqpConnection connection, Message message) {
+        super(connection, message);
+    }
+
     @Override
     public JmsBytesMessageFacade copy() {
         AmqpJmsBytesMessageFacade copy = new AmqpJmsBytesMessageFacade(connection);
         copyInto(copy);
-        return copy;
-    }
 
-    /**
-     * Copies the Buffer contained in this message to the target message.
-     *
-     * @param target
-     *        the target message that will receive a copy of this message's content.
-     */
-    protected void copyInto(AmqpJmsBytesMessageFacade target) {
-        super.copyInto(target);
-        target.setContent(getContent().deepCopy());
+        copy.setContent(getContent().deepCopy());
+
+        return copy;
     }
 
     @Override
