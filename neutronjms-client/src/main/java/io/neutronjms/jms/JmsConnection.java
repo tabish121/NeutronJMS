@@ -186,8 +186,7 @@ public class JmsConnection implements Connection, TopicConnection, QueueConnecti
                             }
                             LOG.debug("Failed destroying Connection resource: {}", ex.getMessage());
                         }
-                    }
-                    catch(ProviderClosedException pce) {
+                    } catch(ProviderClosedException pce) {
                         LOG.debug("Ignoring provider closed exception during connection close");
                     }
                 }

@@ -53,11 +53,6 @@ public class AmqpTemporaryDestination extends AbstractAmqpResource<JmsDestinatio
     }
 
     @Override
-    public void processUpdates() {
-        // TODO remove one event processing is complete.
-    }
-
-    @Override
     public void processStateChange() {
         // TODO - We might want to check on our producer to see if it becomes closed
         //        which might indicate that the broker purged the temporary destination.

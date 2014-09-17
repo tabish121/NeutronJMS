@@ -156,8 +156,7 @@ public class AmqpConnection extends AbstractAmqpResource<JmsConnectionInfo, Conn
         }
     }
 
-    @Override
-    public void processUpdates() {
+    public void processSaslAuthentication() {
         if (connected || authenticator == null) {
             return;
         }

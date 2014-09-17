@@ -236,10 +236,6 @@ public abstract class AbstractAmqpResource<R extends JmsResource, E extends Endp
     public void processFlowUpdates() throws IOException {
     }
 
-    @Override
-    public void processUpdates() throws IOException {
-    }
-
     protected abstract void doOpen();
 
     protected abstract void doClose();

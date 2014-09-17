@@ -16,8 +16,6 @@
  */
 package io.neutronjms.provider;
 
-import io.neutronjms.jms.meta.JmsConsumerId;
-import io.neutronjms.jms.meta.JmsSessionId;
 import io.neutronjms.util.IOExceptionSupport;
 
 import java.io.IOException;
@@ -26,8 +24,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicBoolean;
-
-import javax.jms.JMSException;
 
 /**
  * Base class used to implement the most common features of a Provider instance..
@@ -65,26 +61,6 @@ public abstract class AbstractProvider implements Provider {
         if (listener == null) {
             throw new IllegalStateException("No ProviderListener registered.");
         }
-    }
-
-    @Override
-    public void commit(JmsSessionId sessionId, AsyncResult request) throws IOException, JMSException, UnsupportedOperationException {
-        throw new UnsupportedOperationException("Provider does not support Transactions");
-    }
-
-    @Override
-    public void rollback(JmsSessionId sessionId, AsyncResult request) throws IOException, JMSException, UnsupportedOperationException {
-        throw new UnsupportedOperationException("Provider does not support Transactions");
-    }
-
-    @Override
-    public void unsubscribe(String subscription, AsyncResult request) throws IOException, JMSException, UnsupportedOperationException {
-        throw new UnsupportedOperationException("Provider does not support unsubscribe operations");
-    }
-
-    @Override
-    public void pull(JmsConsumerId consumerId, long timeout, AsyncResult request) throws IOException, UnsupportedOperationException {
-        throw new UnsupportedOperationException("Provider does not support message pull");
     }
 
     @Override

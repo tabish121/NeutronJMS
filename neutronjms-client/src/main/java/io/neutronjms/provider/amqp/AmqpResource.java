@@ -118,15 +118,6 @@ public interface AmqpResource {
     void processFlowUpdates() throws IOException;
 
     /**
-     * Called when data has been read from the remote peer.  The resource should
-     * check the status of any pending work and complete or update the state to
-     * match the new remote state.
-     *
-     * @throws IOException if an error occurs while processing the update.
-     */
-    void processUpdates() throws IOException;
-
-    /**
      * @return an Exception derived from the error state of the endpoint's Remote Condition.
      */
     Exception getRemoteError();

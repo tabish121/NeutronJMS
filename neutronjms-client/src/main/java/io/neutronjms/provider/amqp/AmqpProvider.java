@@ -621,8 +621,7 @@ public class AmqpProvider extends AbstractProvider implements TransportListener 
                 LOG.info("Transport failed: {}", error.getMessage());
                 if (!closed.get()) {
                     fireProviderException(error);
-                    if(connection != null)
-                    {
+                    if (connection != null) {
                         connection.closed();
                     }
                 }
@@ -646,8 +645,7 @@ public class AmqpProvider extends AbstractProvider implements TransportListener 
                 LOG.debug("Transport connection remotely closed");
                 if (!closed.get()) {
                     fireProviderException(new IOException("Connection remotely closed."));
-                    if(connection != null)
-                    {
+                    if (connection != null) {
                         connection.closed();
                     }
                 }
@@ -697,7 +695,7 @@ public class AmqpProvider extends AbstractProvider implements TransportListener 
 
             // We have to do this to pump SASL bytes in as SASL is not event driven yet.
             if (connection != null) {
-                connection.processUpdates();
+                connection.processSaslAuthentication();
             }
         } catch (Exception ex) {
             LOG.warn("Caught Exception during update processing: {}", ex.getMessage(), ex);

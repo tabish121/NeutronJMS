@@ -39,6 +39,11 @@ import javax.jms.Topic;
 
 import org.apache.qpid.proton.jms.JMSVendor;
 
+/**
+ * Vendor instance used with Proton-J JMS Transformer bits.
+ *
+ * TODO - This can go once we have our own message wrappers all working.
+ */
 public class AmqpJMSVendor extends JMSVendor {
 
     public static final AmqpJMSVendor INSTANCE = new AmqpJMSVendor();
