@@ -338,23 +338,25 @@ public class TestAmqpPeer implements AutoCloseable
                 .withIncomingWindow(notNullValue())
                 .withOutgoingWindow(notNullValue());
 
-        // the response will have its remote channel dynamically set based on incoming value
+        // The response will have its remoteChannel field dynamically set based on incoming value
         final BeginFrame beginResponse = new BeginFrame()
             .setNextOutgoingId(UnsignedInteger.ZERO)
             .setIncomingWindow(UnsignedInteger.ZERO)
             .setOutgoingWindow(UnsignedInteger.ZERO);
 
-        beginMatcher.onSuccess(
-                new FrameSender(this, FrameType.AMQP, 0, beginResponse, null)
-                    .setValueProvider(new ValueProvider()
-                        {
-                            @Override
-                            public void setValues()
-                            {
-                                beginResponse.setRemoteChannel(
-                                        UnsignedShort.valueOf((short) beginMatcher.getActualChannel()));
-                            }
-                        }));
+        // The response frame channel will be dynamically set based on the incoming frame. Using the -1 is an illegal placeholder.
+        final FrameSender beginResponseSender = new FrameSender(this, FrameType.AMQP, -1, beginResponse, null);
+        beginResponseSender.setValueProvider(new ValueProvider()
+        {
+            @Override
+            public void setValues()
+            {
+                beginResponseSender.setChannel(beginMatcher.getActualChannel());
+                beginResponse.setRemoteChannel(
+                        UnsignedShort.valueOf((short) beginMatcher.getActualChannel()));
+            }
+        });
+        beginMatcher.onSuccess(beginResponseSender);
 
         addHandler(beginMatcher);
 
