@@ -23,16 +23,17 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 
 import org.apache.qpid.proton.amqp.Binary;
 import org.apache.qpid.proton.amqp.Symbol;
 import org.apache.qpid.proton.amqp.UnsignedLong;
 import org.hamcrest.Matcher;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class AbstractFrameFieldAndPayloadMatchingHandler extends FrameMatchingHandler
 {
-    private final Logger _logger = Logger.getLogger(getClass().getName());
+    private final Logger _logger = LoggerFactory.getLogger(getClass());
 
     private final Map<Enum<?>, Matcher<?>> _fieldMatchers;
     private Map<Enum<?>, Object> _receivedFields;
@@ -87,7 +88,7 @@ public abstract class AbstractFrameFieldAndPayloadMatchingHandler extends FrameM
 
         _receivedFields = valueMap;
 
-        _logger.fine("About to check the fields of the described type."
+        _logger.debug("About to check the fields of the described type."
                 + "\n  Received:" + valueMap
                 + "\n  Expectations: " + _fieldMatchers);
         for(Map.Entry<Enum<?>, Matcher<?>> entry : _fieldMatchers.entrySet())

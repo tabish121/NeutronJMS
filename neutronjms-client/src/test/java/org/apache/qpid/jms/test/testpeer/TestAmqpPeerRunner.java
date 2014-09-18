@@ -24,13 +24,14 @@ import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.ByteBuffer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 import org.apache.qpid.proton.amqp.Binary;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 class TestAmqpPeerRunner implements Runnable
 {
-    private static final Logger _logger = Logger.getLogger(TestAmqpPeerRunner.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(TestAmqpPeerRunner.class);
 
     private final ServerSocket _serverSocket;
 
@@ -65,7 +66,7 @@ class TestAmqpPeerRunner implements Runnable
             int bytesRead;
             byte[] networkInputBytes = new byte[1024];
 
-            _logger.finest("Attempting read");
+            LOGGER.trace("Attempting read");
             while((bytesRead = networkInputStream.read(networkInputBytes)) != -1)
             {
                 //prevent stop() from killing the socket while the frame parser might be using it handling input
@@ -73,25 +74,25 @@ class TestAmqpPeerRunner implements Runnable
                 {
                     ByteBuffer networkInputByteBuffer = ByteBuffer.wrap(networkInputBytes, 0, bytesRead);
 
-                    _logger.finer("Read: " + new Binary(networkInputBytes, 0, bytesRead));
+                    LOGGER.debug("Read: {}", new Binary(networkInputBytes, 0, bytesRead));
 
                     _testFrameParser.input(networkInputByteBuffer);
                 }
-                _logger.finest("Attempting read");
+                LOGGER.trace("Attempting read");
             }
 
-            _logger.finest("Exited read loop");
+            LOGGER.trace("Exited read loop");
         }
         catch (Throwable t)
         {
             if(!_serverSocket.isClosed())
             {
-                _logger.log(Level.SEVERE, "Problem in peer", t);
+                LOGGER.error("Problem in peer", t);
                 _throwable = t;
             }
             else
             {
-                _logger.fine("Caught throwable, ignoring as socket is closed: " + t);
+                LOGGER.debug("Caught throwable, ignoring as socket is closed: " + t);
             }
         }
         finally
@@ -102,7 +103,7 @@ class TestAmqpPeerRunner implements Runnable
             }
             catch (IOException e)
             {
-                _logger.log(Level.SEVERE, "Unable to close server socket", e);
+                LOGGER.error("Unable to close server socket", e);
             }
         }
     }
@@ -133,7 +134,7 @@ class TestAmqpPeerRunner implements Runnable
 
     public void sendBytes(byte[] bytes)
     {
-        _logger.finer("Sending: " + new Binary(bytes));
+        LOGGER.debug("Sending: {}", new Binary(bytes));
         try
         {
             _networkOutputStream.write(bytes);

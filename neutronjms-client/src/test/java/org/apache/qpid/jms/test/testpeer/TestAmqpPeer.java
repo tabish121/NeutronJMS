@@ -28,7 +28,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
 
 import org.apache.qpid.jms.test.testpeer.describedtypes.Accepted;
 import org.apache.qpid.jms.test.testpeer.describedtypes.AttachFrame;
@@ -68,11 +67,13 @@ import org.apache.qpid.proton.engine.impl.AmqpHeader;
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 // TODO should expectXXXYYYZZZ methods just be expect(matcher)?
 public class TestAmqpPeer implements AutoCloseable
 {
-    private static final Logger _logger = Logger.getLogger(TestAmqpPeer.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(TestAmqpPeer.class.getName());
 
     /** Roles are represented as booleans - see AMQP spec 2.8.1*/
     private static final boolean SENDER_ROLE = false;
@@ -191,7 +192,7 @@ public class TestAmqpPeer implements AutoCloseable
             {
                 _handlersCompletedLatch.countDown();
             }
-            _logger.finest("Removed completed handler: " + h);
+            LOGGER.trace("Removed completed handler: {}", h);
         }
     }
 
@@ -200,7 +201,7 @@ public class TestAmqpPeer implements AutoCloseable
         synchronized(_handlersLock)
         {
             _handlers.add(handler);
-            _logger.fine("Added handler " + handler);
+            LOGGER.trace("Added handler: {}", handler);
         }
     }
 
@@ -231,7 +232,7 @@ public class TestAmqpPeer implements AutoCloseable
 
     void sendHeader(byte[] header)
     {
-        _logger.fine("About to send header "+ new Binary(header));
+        LOGGER.debug("About to send header: {}", new Binary(header));
         _driverRunnable.sendBytes(header);
     }
 
@@ -242,7 +243,7 @@ public class TestAmqpPeer implements AutoCloseable
             throw new IllegalArgumentException("Frame must be sent on a channel >= 0");
         }
 
-        _logger.fine("About to send "+ describedType);
+        LOGGER.debug("About to send: {}", describedType);
         byte[] output = AmqpDataFramer.encodeFrame(type, channel, describedType, payload);
         _driverRunnable.sendBytes(output);
     }

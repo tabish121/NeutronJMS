@@ -20,17 +20,17 @@ package org.apache.qpid.jms.test.testpeer;
 
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.apache.qpid.proton.amqp.Binary;
 import org.apache.qpid.proton.amqp.DescribedType;
 import org.apache.qpid.proton.amqp.Symbol;
 import org.apache.qpid.proton.amqp.UnsignedLong;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 abstract class FrameMatchingHandler implements FrameHandler
 {
-    private static final Logger _logger = Logger.getLogger(FrameMatchingHandler.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(FrameMatchingHandler.class);
 
     public static int ANY_CHANNEL = -1;
 
@@ -102,7 +102,7 @@ abstract class FrameMatchingHandler implements FrameHandler
         }
         else
         {
-            _logger.log(Level.INFO, "No onSuccess action, doing nothing.");
+            LOGGER.debug("No onSuccess action, doing nothing.");
         }
 
         _isComplete = true;

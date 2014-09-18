@@ -21,7 +21,6 @@ package org.apache.qpid.jms.test.testpeer.matchers.sections;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.util.Map;
-import java.util.logging.Logger;
 
 import org.apache.qpid.proton.Proton;
 import org.apache.qpid.proton.amqp.Binary;
@@ -30,10 +29,12 @@ import org.apache.qpid.proton.amqp.Symbol;
 import org.apache.qpid.proton.amqp.UnsignedLong;
 import org.apache.qpid.proton.codec.Data;
 import org.hamcrest.Matcher;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class AbstractMessageSectionMatcher
 {
-    private final Logger _logger = Logger.getLogger(getClass().getName());
+    private final Logger _logger = LoggerFactory.getLogger(getClass());
 
     private final UnsignedLong _numericDescriptor;
     private final Symbol _symbolicDescriptor;
@@ -115,7 +116,7 @@ public abstract class AbstractMessageSectionMatcher
     {
         _receivedFields = valueMap;
 
-        _logger.fine("About to check the fields of the section."
+        _logger.debug("About to check the fields of the section."
                 + "\n  Received:" + valueMap
                 + "\n  Expectations: " + _fieldMatchers);
         for(Map.Entry<Object, Matcher<?>> entry : _fieldMatchers.entrySet())

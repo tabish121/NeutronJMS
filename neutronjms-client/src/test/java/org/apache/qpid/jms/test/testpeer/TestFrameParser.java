@@ -21,7 +21,6 @@ package org.apache.qpid.jms.test.testpeer;
 import static org.apache.qpid.proton.engine.TransportResultFactory.error;
 
 import java.nio.ByteBuffer;
-import java.util.logging.Logger;
 
 import org.apache.qpid.proton.amqp.Binary;
 import org.apache.qpid.proton.amqp.DescribedType;
@@ -29,10 +28,12 @@ import org.apache.qpid.proton.codec.Data;
 import org.apache.qpid.proton.codec.DecodeException;
 import org.apache.qpid.proton.engine.TransportResult;
 import org.apache.qpid.proton.engine.TransportResultFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 class TestFrameParser
 {
-    private static final Logger _logger = Logger.getLogger(TestFrameParser.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(TestFrameParser.class);
 
     private enum State
     {
@@ -314,7 +315,7 @@ class TestFrameParser
                             }
 
                             DescribedType describedType = data.getDescribedType();
-                            _logger.finer("Received described type: " + describedType);
+                            LOGGER.debug("Received described type: {}", describedType);
 
                             Binary payload;
 
@@ -333,7 +334,7 @@ class TestFrameParser
                         }
                         else
                         {
-                            _logger.finest("Ignored empty frame");
+                            LOGGER.debug("Ignored empty frame");
                         }
                         _size = 0;
                         currentInput = nextFramesInput;
