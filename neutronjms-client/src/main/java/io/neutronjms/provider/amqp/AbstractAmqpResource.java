@@ -207,23 +207,23 @@ public abstract class AbstractAmqpResource<R extends JmsResource, E extends Endp
 
         if (remoteState == EndpointState.ACTIVE) {
             if (isAwaitingOpen()) {
-                LOG.debug("Link {} is now open: ", this);
+                LOG.debug("{} is now open: ", this);
                 opened();
             }
 
             // Should not receive an ACTIVE event if not awaiting the open state.
         } else if (remoteState == EndpointState.CLOSED) {
             if (isAwaitingClose()) {
-                LOG.debug("Link {} is now closed: ", this);
+                LOG.debug("{} is now closed: ", this);
                 closed();
             } else if (isAwaitingOpen()) {
                 // Error on Open, create exception and signal failure.
-                LOG.warn("Open of link {} failed: ", this);
+                LOG.warn("Open of {} failed: ", this);
                 Exception remoteError = this.getRemoteError();
                 failed(remoteError);
             } else {
                 // TODO - Handle remote asynchronous close.
-                LOG.warn("Link was closed remotely.");
+                LOG.warn("{} was closed remotely.", this);
             }
         }
     }
