@@ -657,24 +657,18 @@ public class JmsStreamMessageTest {
     // TODO - Support Big Strings
     @Ignore
     @Test
-    public void testReadBigString() {
+    public void testReadBigString() throws JMSException {
         JmsStreamMessage msg = factory.createStreamMessage();
-        try {
-            // Test with a 1Meg String
-            StringBuffer bigSB = new StringBuffer(1024 * 1024);
-            for (int i = 0; i < 1024 * 1024; i++) {
-                bigSB.append('a' + i % 26);
-            }
-            String bigString = bigSB.toString();
-
-            msg.writeString(bigString);
-            msg.reset();
-            assertEquals(bigString, msg.readString());
-
-        } catch (JMSException jmsEx) {
-            jmsEx.printStackTrace();
-            assertTrue(false);
+        // Test with a 1Meg String
+        StringBuffer bigSB = new StringBuffer(1024 * 1024);
+        for (int i = 0; i < 1024 * 1024; i++) {
+            bigSB.append('a' + i % 26);
         }
+        String bigString = bigSB.toString();
+
+        msg.writeString(bigString);
+        msg.reset();
+        assertEquals(bigString, msg.readString());
     }
 
     // ========= byte ========

@@ -85,7 +85,7 @@ public class JmsMessageTest {
     }
 
     @Test
-    public void testSetReadOnly() {
+    public void testSetReadOnly() throws JMSException {
         JmsMessage msg = factory.createMessage();
         msg.setReadOnlyProperties(true);
         boolean test = false;

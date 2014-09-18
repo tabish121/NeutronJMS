@@ -47,15 +47,11 @@ public class JmsTextMessageTest {
     }
 
     @Test
-    public void testSetText() {
+    public void testSetText() throws JMSException {
         JmsTextMessage msg = factory.createTextMessage();
         String str = "testText";
-        try {
-            msg.setText(str);
-            assertEquals(msg.getText(), str);
-        } catch (JMSException e) {
-            e.printStackTrace();
-        }
+        msg.setText(str);
+        assertEquals(msg.getText(), str);
     }
 
     @Test

@@ -492,90 +492,48 @@ public class JmsSession implements Session, QueueSession, TopicSession, JmsMessa
     // Message creation
     //////////////////////////////////////////////////////////////////////////
 
-    /**
-     * @return BytesMessage
-     * @throws IllegalStateException
-     * @see javax.jms.Session#createBytesMessage()
-     */
     @Override
-    public BytesMessage createBytesMessage() throws IllegalStateException {
+    public BytesMessage createBytesMessage() throws JMSException {
         checkClosed();
         return init(messageFactory.createBytesMessage());
     }
 
-    /**
-     * @return MapMessage
-     * @throws IllegalStateException
-     * @see javax.jms.Session#createMapMessage()
-     */
     @Override
-    public MapMessage createMapMessage() throws IllegalStateException {
+    public MapMessage createMapMessage() throws JMSException {
         checkClosed();
         return init(messageFactory.createMapMessage());
     }
 
-    /**
-     * @return Message
-     * @throws IllegalStateException
-     * @see javax.jms.Session#createMessage()
-     */
     @Override
-    public Message createMessage() throws IllegalStateException {
+    public Message createMessage() throws JMSException {
         checkClosed();
         return init(messageFactory.createMessage());
     }
 
-    /**
-     * @return ObjectMessage
-     * @throws IllegalStateException
-     * @see javax.jms.Session#createObjectMessage()
-     */
     @Override
-    public ObjectMessage createObjectMessage() throws IllegalStateException {
+    public ObjectMessage createObjectMessage() throws JMSException {
         checkClosed();
         return init(messageFactory.createObjectMessage(null));
     }
 
-    /**
-     * @param object
-     * @return ObjectMessage
-     * @throws JMSException
-     * @see javax.jms.Session#createObjectMessage(java.io.Serializable)
-     */
     @Override
     public ObjectMessage createObjectMessage(Serializable object) throws JMSException {
         checkClosed();
         return init(messageFactory.createObjectMessage(object));
     }
 
-    /**
-     * @return StreamMessage
-     * @throws JMSException
-     * @see javax.jms.Session#createStreamMessage()
-     */
     @Override
     public StreamMessage createStreamMessage() throws JMSException {
         checkClosed();
         return init(messageFactory.createStreamMessage());
     }
 
-    /**
-     * @return TextMessage
-     * @throws JMSException
-     * @see javax.jms.Session#createTextMessage()
-     */
     @Override
     public TextMessage createTextMessage() throws JMSException {
         checkClosed();
         return init(messageFactory.createTextMessage(null));
     }
 
-    /**
-     * @param text
-     * @return TextMessage
-     * @throws JMSException
-     * @see javax.jms.Session#createTextMessage(java.lang.String)
-     */
     @Override
     public TextMessage createTextMessage(String text) throws JMSException {
         checkClosed();

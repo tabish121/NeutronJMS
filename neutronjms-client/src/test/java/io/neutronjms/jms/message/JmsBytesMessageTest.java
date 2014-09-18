@@ -286,187 +286,119 @@ public class JmsBytesMessageTest {
     }
 
     @Test
-    public void testGetBodyLength() {
+    public void testGetBodyLength() throws JMSException {
         JmsBytesMessage msg = factory.createBytesMessage();
         int len = 10;
-        try {
-            for (int i = 0; i < len; i++) {
-                msg.writeLong(5L);
-            }
-        } catch (JMSException ex) {
-            ex.printStackTrace();
+        for (int i = 0; i < len; i++) {
+            msg.writeLong(5L);
         }
-        try {
-            msg.reset();
-            assertTrue(msg.getBodyLength() == (len * 8));
-        } catch (Throwable e) {
-            e.printStackTrace();
-            assertTrue(false);
-        }
+
+        msg.reset();
+        assertTrue(msg.getBodyLength() == (len * 8));
     }
 
     @Test
-    public void testReadBoolean() {
+    public void testReadBoolean() throws JMSException {
         JmsBytesMessage msg = factory.createBytesMessage();
-        try {
-            msg.writeBoolean(true);
-            msg.reset();
-            assertTrue(msg.readBoolean());
-        } catch (JMSException jmsEx) {
-            jmsEx.printStackTrace();
-            assertTrue(false);
-        }
+        msg.writeBoolean(true);
+        msg.reset();
+        assertTrue(msg.readBoolean());
     }
 
     @Test
-    public void testReadByte() {
+    public void testReadByte() throws JMSException {
         JmsBytesMessage msg = factory.createBytesMessage();
-        try {
-            msg.writeByte((byte) 2);
-            msg.reset();
-            assertTrue(msg.readByte() == 2);
-        } catch (JMSException jmsEx) {
-            jmsEx.printStackTrace();
-            assertTrue(false);
-        }
+        msg.writeByte((byte) 2);
+        msg.reset();
+        assertTrue(msg.readByte() == 2);
     }
 
     @Test
-    public void testReadUnsignedByte() {
+    public void testReadUnsignedByte() throws JMSException {
         JmsBytesMessage msg = factory.createBytesMessage();
-        try {
-            msg.writeByte((byte) 2);
-            msg.reset();
-            assertTrue(msg.readUnsignedByte() == 2);
-        } catch (JMSException jmsEx) {
-            jmsEx.printStackTrace();
-            assertTrue(false);
-        }
+        msg.writeByte((byte) 2);
+        msg.reset();
+        assertTrue(msg.readUnsignedByte() == 2);
     }
 
     @Test
-    public void testReadShort() {
+    public void testReadShort() throws JMSException {
         JmsBytesMessage msg = factory.createBytesMessage();
-        try {
-            msg.writeShort((short) 3000);
-            msg.reset();
-            assertTrue(msg.readShort() == 3000);
-        } catch (JMSException jmsEx) {
-            jmsEx.printStackTrace();
-            assertTrue(false);
-        }
+        msg.writeShort((short) 3000);
+        msg.reset();
+        assertTrue(msg.readShort() == 3000);
     }
 
     @Test
-    public void testReadUnsignedShort() {
+    public void testReadUnsignedShort() throws JMSException {
         JmsBytesMessage msg = factory.createBytesMessage();
-        try {
-            msg.writeShort((short) 3000);
-            msg.reset();
-            assertTrue(msg.readUnsignedShort() == 3000);
-        } catch (JMSException jmsEx) {
-            jmsEx.printStackTrace();
-            assertTrue(false);
-        }
+        msg.writeShort((short) 3000);
+        msg.reset();
+        assertTrue(msg.readUnsignedShort() == 3000);
     }
 
     @Test
-    public void testReadChar() {
+    public void testReadChar() throws JMSException {
         JmsBytesMessage msg = factory.createBytesMessage();
-        try {
-            msg.writeChar('a');
-            msg.reset();
-            assertTrue(msg.readChar() == 'a');
-        } catch (JMSException jmsEx) {
-            jmsEx.printStackTrace();
-            assertTrue(false);
-        }
+        msg.writeChar('a');
+        msg.reset();
+        assertTrue(msg.readChar() == 'a');
     }
 
     @Test
-    public void testReadInt() {
+    public void testReadInt() throws JMSException {
         JmsBytesMessage msg = factory.createBytesMessage();
-        try {
-            msg.writeInt(3000);
-            msg.reset();
-            assertTrue(msg.readInt() == 3000);
-        } catch (JMSException jmsEx) {
-            jmsEx.printStackTrace();
-            assertTrue(false);
-        }
+        msg.writeInt(3000);
+        msg.reset();
+        assertTrue(msg.readInt() == 3000);
     }
 
     @Test
-    public void testReadLong() {
+    public void testReadLong() throws JMSException {
         JmsBytesMessage msg = factory.createBytesMessage();
-        try {
-            msg.writeLong(3000);
-            msg.reset();
-            assertTrue(msg.readLong() == 3000);
-        } catch (JMSException jmsEx) {
-            jmsEx.printStackTrace();
-            assertTrue(false);
-        }
+        msg.writeLong(3000);
+        msg.reset();
+        assertTrue(msg.readLong() == 3000);
     }
 
     @Test
-    public void testReadFloat() {
+    public void testReadFloat() throws JMSException {
         JmsBytesMessage msg = factory.createBytesMessage();
-        try {
-            msg.writeFloat(3.3f);
-            msg.reset();
-            assertTrue(msg.readFloat() == 3.3f);
-        } catch (JMSException jmsEx) {
-            jmsEx.printStackTrace();
-            assertTrue(false);
-        }
+        msg.writeFloat(3.3f);
+        msg.reset();
+        assertTrue(msg.readFloat() == 3.3f);
     }
 
     @Test
-    public void testReadDouble() {
+    public void testReadDouble() throws JMSException {
         JmsBytesMessage msg = factory.createBytesMessage();
-        try {
-            msg.writeDouble(3.3d);
-            msg.reset();
-            assertTrue(msg.readDouble() == 3.3d);
-        } catch (JMSException jmsEx) {
-            jmsEx.printStackTrace();
-            assertTrue(false);
-        }
+        msg.writeDouble(3.3d);
+        msg.reset();
+        assertTrue(msg.readDouble() == 3.3d);
     }
 
     @Test
-    public void testReadUTF() {
+    public void testReadUTF() throws JMSException {
         JmsBytesMessage msg = factory.createBytesMessage();
-        try {
-            String str = "this is a test";
-            msg.writeUTF(str);
-            msg.reset();
-            assertTrue(msg.readUTF().equals(str));
-        } catch (JMSException jmsEx) {
-            jmsEx.printStackTrace();
-            assertTrue(false);
-        }
+        String str = "this is a test";
+        msg.writeUTF(str);
+        msg.reset();
+        assertTrue(msg.readUTF().equals(str));
     }
 
     @Test
-    public void testReadBytesbyteArray() {
+    public void testReadBytesbyteArray() throws JMSException {
         JmsBytesMessage msg = factory.createBytesMessage();
-        try {
-            byte[] data = new byte[50];
-            for (int i = 0; i < data.length; i++) {
-                data[i] = (byte) i;
-            }
-            msg.writeBytes(data);
-            msg.reset();
-            byte[] test = new byte[data.length];
-            msg.readBytes(test);
-            for (int i = 0; i < test.length; i++) {
-                assertTrue(test[i] == i);
-            }
-        } catch (JMSException jmsEx) {
-            jmsEx.printStackTrace();
-            assertTrue(false);
+        byte[] data = new byte[50];
+        for (int i = 0; i < data.length; i++) {
+            data[i] = (byte) i;
+        }
+        msg.writeBytes(data);
+        msg.reset();
+        byte[] test = new byte[data.length];
+        msg.readBytes(test);
+        for (int i = 0; i < test.length; i++) {
+            assertTrue(test[i] == i);
         }
     }
 

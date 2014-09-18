@@ -16,6 +16,7 @@
  */
 package io.neutronjms.provider.amqp.message;
 
+import io.neutronjms.jms.exceptions.JmsExceptionSupport;
 import io.neutronjms.jms.message.JmsBytesMessage;
 import io.neutronjms.jms.message.JmsMapMessage;
 import io.neutronjms.jms.message.JmsMessage;
@@ -23,6 +24,9 @@ import io.neutronjms.jms.message.JmsMessageFactory;
 import io.neutronjms.jms.message.JmsObjectMessage;
 import io.neutronjms.jms.message.JmsStreamMessage;
 import io.neutronjms.jms.message.JmsTextMessage;
+import io.neutronjms.jms.message.facade.JmsObjectMessageFacade;
+import io.neutronjms.jms.message.facade.JmsTextMessageFacade;
+import io.neutronjms.jms.message.facade.defaults.JmsDefaultBytesMessageFacade;
 import io.neutronjms.jms.message.facade.defaults.JmsDefaultMapMessageFacade;
 import io.neutronjms.jms.message.facade.defaults.JmsDefaultMessageFacade;
 import io.neutronjms.jms.message.facade.defaults.JmsDefaultObjectMessageFacade;
@@ -30,6 +34,7 @@ import io.neutronjms.jms.message.facade.defaults.JmsDefaultStreamMessageFacade;
 import io.neutronjms.jms.message.facade.defaults.JmsDefaultTextMessageFacade;
 import io.neutronjms.provider.amqp.AmqpConnection;
 
+import java.io.IOException;
 import java.io.Serializable;
 
 import javax.jms.JMSException;
@@ -60,56 +65,66 @@ public class AmqpJmsMessageFactory implements JmsMessageFactory {
     }
 
     @Override
-    public JmsMessage createMessage() throws UnsupportedOperationException {
+    public JmsMessage createMessage() throws JMSException {
+        //return new JmsMessage(new AmqpJmsMessageFacade(connection));
         return new JmsMessage(new JmsDefaultMessageFacade());
     }
 
     @Override
-    public JmsTextMessage createTextMessage() throws UnsupportedOperationException {
+    public JmsTextMessage createTextMessage() throws JMSException {
         return createTextMessage(null);
     }
 
     @Override
-    public JmsTextMessage createTextMessage(String payload) throws UnsupportedOperationException {
-        JmsTextMessage result = new JmsTextMessage(new JmsDefaultTextMessageFacade());
+    public JmsTextMessage createTextMessage(String payload) throws JMSException {
+
+        // JmsTextMessageFacade facade = new AmqpJmsTextMessageFacade(connection);
+        JmsTextMessageFacade facade = new JmsDefaultTextMessageFacade();
+
         if (payload != null) {
-            try {
-                result.setText(payload);
-            } catch (JMSException e) {
-            }
+            facade.setText(payload);
         }
-        return result;
+
+        return new JmsTextMessage(facade);
     }
 
     @Override
-    public JmsBytesMessage createBytesMessage() throws UnsupportedOperationException {
-        return new JmsBytesMessage(new AmqpJmsBytesMessageFacade(connection));
+    public JmsBytesMessage createBytesMessage() throws JMSException {
+        // return new JmsBytesMessage(new AmqpJmsBytesMessageFacade(connection));
+        return new JmsBytesMessage(new JmsDefaultBytesMessageFacade());
     }
 
     @Override
-    public JmsMapMessage createMapMessage() throws UnsupportedOperationException {
+    public JmsMapMessage createMapMessage() throws JMSException {
+        // return new JmsMapMessage(new AmqpJmsMapMessageFacade(connection));
         return new JmsMapMessage(new JmsDefaultMapMessageFacade());
     }
 
     @Override
-    public JmsStreamMessage createStreamMessage() throws UnsupportedOperationException {
+    public JmsStreamMessage createStreamMessage() throws JMSException {
+        // return new JmsStreamMessage(new AmqpJmsStreamMessageFacade(connection));
         return new JmsStreamMessage(new JmsDefaultStreamMessageFacade());
     }
 
     @Override
-    public JmsObjectMessage createObjectMessage() throws UnsupportedOperationException {
+    public JmsObjectMessage createObjectMessage() throws JMSException {
         return createObjectMessage(null);
     }
 
     @Override
-    public JmsObjectMessage createObjectMessage(Serializable payload) throws UnsupportedOperationException {
-        JmsObjectMessage result = new JmsObjectMessage(new JmsDefaultObjectMessageFacade());
+    public JmsObjectMessage createObjectMessage(Serializable payload) throws JMSException {
+
+        // JmsObjectMessageFacade facade = new AmqpJmsSerializedObjectMessageFacade(connection);
+        JmsObjectMessageFacade facade = new JmsDefaultObjectMessageFacade();
+
         if (payload != null) {
             try {
-                result.setObject(payload);
-            } catch (Exception e) {
+                facade.setObject(payload);
+            } catch (IOException e) {
+                throw JmsExceptionSupport.create(e);
             }
         }
-        return result;
+
+        return new JmsObjectMessage(facade);
     }
 }

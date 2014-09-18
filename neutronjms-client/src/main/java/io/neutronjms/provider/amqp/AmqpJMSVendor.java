@@ -27,6 +27,7 @@ import io.neutronjms.jms.message.JmsMessageFactory;
 
 import javax.jms.BytesMessage;
 import javax.jms.Destination;
+import javax.jms.JMSException;
 import javax.jms.MapMessage;
 import javax.jms.Message;
 import javax.jms.ObjectMessage;
@@ -55,32 +56,56 @@ public class AmqpJMSVendor extends JMSVendor {
 
     @Override
     public BytesMessage createBytesMessage() {
-        return factory.createBytesMessage();
+        try {
+            return factory.createBytesMessage();
+        } catch (JMSException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public StreamMessage createStreamMessage() {
-        return factory.createStreamMessage();
+        try {
+            return factory.createStreamMessage();
+        } catch (JMSException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public Message createMessage() {
-        return factory.createMessage();
+        try {
+            return factory.createMessage();
+        } catch (JMSException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public TextMessage createTextMessage() {
-        return factory.createTextMessage();
+        try {
+            return factory.createTextMessage();
+        } catch (JMSException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public ObjectMessage createObjectMessage() {
-        return factory.createObjectMessage();
+        try {
+            return factory.createObjectMessage();
+        } catch (JMSException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public MapMessage createMapMessage() {
-        return factory.createMapMessage();
+        try {
+            return factory.createMapMessage();
+        } catch (JMSException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

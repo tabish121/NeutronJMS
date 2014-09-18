@@ -18,6 +18,8 @@ package io.neutronjms.jms.message;
 
 import java.io.Serializable;
 
+import javax.jms.JMSException;
+
 /**
  * Interface that a Provider should implement to provide a Provider
  * Specific JmsMessage implementation that optimizes the exchange of
@@ -34,9 +36,9 @@ public interface JmsMessageFactory {
      *
      * @return a newly created and initialized JmsMessage instance.
      *
-     * @throws UnsupportedOperationException if the provider can't send empty Message types.
+     * @throws JMSException if the provider cannot create the message for some reason.
      */
-    JmsMessage createMessage() throws UnsupportedOperationException;
+    JmsMessage createMessage() throws JMSException;
 
     /**
      * Creates an instance of a basic JmsTextMessage object.  The provider may
@@ -49,9 +51,9 @@ public interface JmsMessageFactory {
      *
      * @returns a newly created and initialized JmsTextMessage instance.
      *
-     * @throws UnsupportedOperationException if the provider can't send TextMessage types.
+     * @throws JMSException if the provider cannot create the message for some reason.
      */
-    JmsTextMessage createTextMessage(String payload) throws UnsupportedOperationException;
+    JmsTextMessage createTextMessage(String payload) throws JMSException;
 
     /**
      * Creates an instance of a basic JmsTextMessage object.  The provider may
@@ -61,9 +63,9 @@ public interface JmsMessageFactory {
      *
      * @returns a newly created and initialized JmsTextMessage instance.
      *
-     * @throws UnsupportedOperationException if the provider can't send TextMessage types.
+     * @throws JMSException if the provider cannot create the message for some reason.
      */
-    JmsTextMessage createTextMessage() throws UnsupportedOperationException;
+    JmsTextMessage createTextMessage() throws JMSException;
 
     /**
      * Creates an instance of a basic JmsBytesMessage object.  The provider may
@@ -73,9 +75,9 @@ public interface JmsMessageFactory {
      *
      * @returns a newly created and initialized JmsTextMessage instance.
      *
-     * @throws UnsupportedOperationException if the provider can't send BytesMessage types.
+     * @throws JMSException if the provider cannot create the message for some reason.
      */
-    JmsBytesMessage createBytesMessage() throws UnsupportedOperationException;
+    JmsBytesMessage createBytesMessage() throws JMSException;
 
     /**
      * Creates an instance of a basic JmsMapMessage object.  The provider may
@@ -85,9 +87,9 @@ public interface JmsMessageFactory {
      *
      * @returns a newly created and initialized JmsTextMessage instance.
      *
-     * @throws UnsupportedOperationException if the provider can't send MapMessage types.
+     * @throws JMSException if the provider cannot create the message for some reason.
      */
-    JmsMapMessage createMapMessage() throws UnsupportedOperationException;
+    JmsMapMessage createMapMessage() throws JMSException;
 
     /**
      * Creates an instance of a basic JmsStreamMessage object.  The provider may
@@ -97,9 +99,9 @@ public interface JmsMessageFactory {
      *
      * @returns a newly created and initialized JmsTextMessage instance.
      *
-     * @throws UnsupportedOperationException if the provider can't send StreamMessage types.
+     * @throws JMSException if the provider cannot create the message for some reason.
      */
-    JmsStreamMessage createStreamMessage() throws UnsupportedOperationException;
+    JmsStreamMessage createStreamMessage() throws JMSException;
 
     /**
      * Creates an instance of a basic JmsObjectMessage object.  The provider may
@@ -110,11 +112,11 @@ public interface JmsMessageFactory {
      * @param payload
      *        The value to initially assign to the Message body, or null if empty to start.
      *
-     * @returns a newly created and initialized JmsTextMessage instance.
+     * @returns a newly created and initialized JmsObjectMessage instance.
      *
-     * @throws UnsupportedOperationException if the provider can't send ObjectMessage types.
+     * @throws JMSException if the provider cannot create the message for some reason.
      */
-    JmsObjectMessage createObjectMessage(Serializable payload) throws UnsupportedOperationException;
+    JmsObjectMessage createObjectMessage(Serializable payload) throws JMSException;
 
     /**
      * Creates an instance of a basic JmsObjectMessage object.  The provider may
@@ -122,10 +124,10 @@ public interface JmsMessageFactory {
      * implementation or create a Provider specific instance that optimizes
      * the access and marshaling of the message.
      *
-     * @returns a newly created and initialized JmsTextMessage instance.
+     * @returns a newly created and initialized JmsObjectMessage instance.
      *
-     * @throws UnsupportedOperationException if the provider can't send ObjectMessage types.
+     * @throws JMSException if the provider cannot create the message for some reason.
      */
-    JmsObjectMessage createObjectMessage() throws UnsupportedOperationException;
+    JmsObjectMessage createObjectMessage() throws JMSException;
 
 }
