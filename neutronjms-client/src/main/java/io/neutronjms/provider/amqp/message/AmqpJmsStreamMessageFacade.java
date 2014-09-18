@@ -143,6 +143,11 @@ public class AmqpJmsStreamMessageFacade extends AmqpJmsMessageFacade implements 
         position = 0;
     }
 
+    @Override
+    public boolean isEmpty() {
+        return list.isEmpty();
+    }
+
     private void initializeEmptyList() {
         List<Object> list = new ArrayList<Object>();
         message.setBody(new AmqpValue(list));

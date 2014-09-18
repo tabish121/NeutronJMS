@@ -126,4 +126,20 @@ public class AmqpJmsTextMessageFacade extends AmqpJmsMessageFacade implements Jm
     public void clearBody() {
         setText(null);
     }
+
+    @Override
+    public boolean isEmpty() {
+        Section body = getAmqpMessage().getBody();
+
+        if (body == null) {
+            return true;
+        } else if (body instanceof Data) {
+            Data data = (Data) body;
+            if (data.getValue() == null || data.getValue().getLength() == 0) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }
