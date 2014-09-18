@@ -117,7 +117,11 @@ public class AmqpJmsMessageFacade implements JmsMessageFacade {
      * @return a String value indicating the message content type.
      */
     public String getContentType() {
-        return null;
+        return message.getContentType();
+    }
+
+    public void setContentType(String value) {
+        message.setContentType(value);
     }
 
     @Override

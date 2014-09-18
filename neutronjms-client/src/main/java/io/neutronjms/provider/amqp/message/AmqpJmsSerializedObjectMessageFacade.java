@@ -56,7 +56,7 @@ public class AmqpJmsSerializedObjectMessageFacade extends AmqpJmsMessageFacade i
      */
     public AmqpJmsSerializedObjectMessageFacade(AmqpConnection connection) {
         super(connection);
-        //setContentType(CONTENT_TYPE);
+        setContentType(CONTENT_TYPE);
         setAnnotation(JMS_MSG_TYPE, JMS_OBJECT_MESSAGE);
     }
 
