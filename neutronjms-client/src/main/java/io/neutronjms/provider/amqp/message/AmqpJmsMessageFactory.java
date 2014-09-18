@@ -36,7 +36,9 @@ import javax.jms.JMSException;
 
 /**
  * AMQP Message Factory instance used to create new JmsMessage types that wrap an
- * Proton AMQP Message.
+ * Proton AMQP Message.  This class is used by the JMS layer to create its JMS
+ * Message instances, the messages returned here should be created in a proper
+ * initially empty state for the client to populate.
  */
 public class AmqpJmsMessageFactory implements JmsMessageFactory {
 
