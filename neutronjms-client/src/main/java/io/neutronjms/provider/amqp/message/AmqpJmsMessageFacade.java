@@ -66,6 +66,8 @@ public class AmqpJmsMessageFacade implements JmsMessageFacade {
      */
     public AmqpJmsMessageFacade(AmqpConnection connection) {
         this.message = Proton.message();
+        this.message.setDurable(true);
+
         this.connection = connection;
     }
 

@@ -357,14 +357,9 @@ public class JmsMessage implements javax.jms.Message {
 
     @Override
     public void setObjectProperty(String name, Object value) throws JMSException {
-        setObjectProperty(name, value, true);
-    }
+        checkReadOnlyProperties();
+        checkPropertyNameIsValid(name);
 
-    public void setObjectProperty(String name, Object value, boolean checkReadOnly) throws JMSException {
-
-        if (checkReadOnly) {
-            checkReadOnlyProperties();
-        }
         if (name == null || name.equals("")) {
             throw new IllegalArgumentException("Property name cannot be empty or null");
         }
@@ -512,11 +507,7 @@ public class JmsMessage implements javax.jms.Message {
 
     @Override
     public void setBooleanProperty(String name, boolean value) throws JMSException {
-        setBooleanProperty(name, value, true);
-    }
-
-    public void setBooleanProperty(String name, boolean value, boolean checkReadOnly) throws JMSException {
-        setObjectProperty(name, Boolean.valueOf(value), checkReadOnly);
+        setObjectProperty(name, Boolean.valueOf(value));
     }
 
     @Override
@@ -625,6 +616,59 @@ public class JmsMessage implements javax.jms.Message {
     protected void checkWriteOnlyBody() throws MessageNotReadableException {
         if (!readOnlyBody) {
             throw new MessageNotReadableException("Message body is write-only");
+        }
+    }
+
+    private void checkPropertyNameIsValid(String propertyName) throws IllegalArgumentException {
+        if (propertyName == null) {
+            throw new IllegalArgumentException("Property name must not be null");
+        } else if (propertyName.length() == 0) {
+            throw new IllegalArgumentException("Property name must not be the empty string");
+        }
+
+        checkIdentifierFormat(propertyName);
+    }
+
+    private void checkIdentifierFormat(String identifier) throws IllegalArgumentException {
+        checkIdentifierLetterAndDigitRequirements(identifier);
+        checkIdentifierIsntNullTrueFalse(identifier);
+        checkIdentifierIsntLogicOperator(identifier);
+    }
+
+    private void checkIdentifierIsntLogicOperator(String identifier) {
+        // Identifiers cannot be NOT, AND, OR, BETWEEN, LIKE, IN, IS, or ESCAPE.
+        if ("NOT".equals(identifier) || "AND".equals(identifier) || "OR".equals(identifier) ||
+            "BETWEEN".equals(identifier) || "LIKE".equals(identifier) || "IN".equals(identifier) ||
+            "IS".equals(identifier) || "ESCAPE".equals(identifier)) {
+
+            throw new IllegalArgumentException("Identifier not allowed in JMS: '" + identifier + "'");
+        }
+    }
+
+    private void checkIdentifierIsntNullTrueFalse(String identifier) {
+        // Identifiers cannot be the names NULL, TRUE, and FALSE.
+        if ("NULL".equals(identifier) || "TRUE".equals(identifier) || "FALSE".equals(identifier)) {
+            throw new IllegalArgumentException("Identifier not allowed in JMS: '" + identifier + "'");
+        }
+    }
+
+    private void checkIdentifierLetterAndDigitRequirements(String identifier) {
+        // An identifier is an unlimited-length sequence of letters and digits, the first of
+        // which must be a letter.  A letter is any character for which the method
+        // Character.isJavaLetter returns true.  This includes '_' and '$'.  A letter or digit
+        // is any character for which the method Character.isJavaLetterOrDigit returns true.
+        char startChar = identifier.charAt(0);
+        if (!(Character.isJavaIdentifierStart(startChar))) {
+            throw new IllegalArgumentException("Identifier does not begin with a valid JMS identifier start character: '" + identifier + "' ");
+        }
+
+        // JMS part character
+        int length = identifier.length();
+        for (int i = 1; i < length; i++) {
+            char ch = identifier.charAt(i);
+            if (!(Character.isJavaIdentifierPart(ch))) {
+                throw new IllegalArgumentException("Identifier contains invalid JMS identifier character '" + ch + "': '" + identifier + "' ");
+            }
         }
     }
 }
