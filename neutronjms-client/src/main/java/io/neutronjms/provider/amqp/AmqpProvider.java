@@ -615,18 +615,21 @@ public class AmqpProvider extends AbstractProvider implements TransportListener 
      */
     @Override
     public void onTransportError(final Throwable error) {
-        serializer.execute(new Runnable() {
-            @Override
-            public void run() {
-                LOG.info("Transport failed: {}", error.getMessage());
-                if (!closed.get()) {
-                    fireProviderException(error);
-                    if (connection != null) {
-                        connection.closed();
+        if(!serializer.isShutdown())
+        {
+            serializer.execute(new Runnable() {
+                @Override
+                public void run() {
+                    LOG.info("Transport failed: {}", error.getMessage());
+                    if (!closed.get()) {
+                        fireProviderException(error);
+                        if (connection != null) {
+                            connection.closed();
+                        }
                     }
                 }
-            }
-        });
+            });
+        }
     }
 
     /**
@@ -639,18 +642,21 @@ public class AmqpProvider extends AbstractProvider implements TransportListener 
     public void onTransportClosed() {
         //TODO: improve or delete this logging
         LOG.debug("onTransportClosed listener called");
-        serializer.execute(new Runnable() {
-            @Override
-            public void run() {
-                LOG.debug("Transport connection remotely closed");
-                if (!closed.get()) {
-                    fireProviderException(new IOException("Connection remotely closed."));
-                    if (connection != null) {
-                        connection.closed();
+        if(!serializer.isShutdown())
+        {
+            serializer.execute(new Runnable() {
+                @Override
+                public void run() {
+                    LOG.debug("Transport connection remotely closed");
+                    if (!closed.get()) {
+                        fireProviderException(new IOException("Connection remotely closed."));
+                        if (connection != null) {
+                            connection.closed();
+                        }
                     }
                 }
-            }
-        });
+            });
+        }
     }
 
     private void processUpdates() {
