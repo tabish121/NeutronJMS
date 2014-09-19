@@ -31,12 +31,12 @@ import org.junit.Test;
 
 // TODO find a way to make the test abort immediately if the TestAmqpPeer throws an exception
 public class ConnectionIntegrationTest extends QpidJmsTestCase {
-    private final IntegrationTestFixture _testFixture = new IntegrationTestFixture();
+    private final IntegrationTestFixture testFixture = new IntegrationTestFixture();
 
     @Test(timeout=10000)
     public void testCreateAndCloseConnection() throws Exception {
         try (TestAmqpPeer testPeer = new TestAmqpPeer(IntegrationTestFixture.PORT);) {
-            Connection connection = _testFixture.establishConnecton(testPeer);
+            Connection connection = testFixture.establishConnecton(testPeer);
             testPeer.expectClose();
             connection.close();
         }
@@ -45,7 +45,7 @@ public class ConnectionIntegrationTest extends QpidJmsTestCase {
     @Test(timeout=10000)
     public void testCreateAutoAckSession() throws Exception {
         try (TestAmqpPeer testPeer = new TestAmqpPeer(IntegrationTestFixture.PORT);) {
-            Connection connection = _testFixture.establishConnecton(testPeer);
+            Connection connection = testFixture.establishConnecton(testPeer);
             testPeer.expectBegin(true);
             Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
             assertNotNull("Session should not be null", session);
