@@ -265,7 +265,7 @@ public class JmsMessage implements javax.jms.Message {
 
     @Override
     public boolean propertyExists(String name) throws JMSException {
-        return (facade.propertyExists(name) || getObjectProperty(name) != null);
+        return JmsMessagePropertyIntercepter.propertyExists(facade, name);
     }
 
     /**
@@ -323,8 +323,7 @@ public class JmsMessage implements javax.jms.Message {
      * @return Enumeration of all property names on this message
      * @throws JMSException
      */
-    @SuppressWarnings("rawtypes")
-    public Enumeration getAllPropertyNames() throws JMSException {
+    public Enumeration<?> getAllPropertyNames() throws JMSException {
         Set<String> result = new HashSet<String>(facade.getProperties().keySet());
         result.addAll(JmsMessagePropertyIntercepter.getAllPropertyNames());
         return Collections.enumeration(result);
@@ -334,11 +333,6 @@ public class JmsMessage implements javax.jms.Message {
     public void setObjectProperty(String name, Object value) throws JMSException {
         checkReadOnlyProperties();
         checkPropertyNameIsValid(name);
-
-        if (name == null || name.equals("")) {
-            throw new IllegalArgumentException("Property name cannot be empty or null");
-        }
-
         checkValidObject(value);
         JmsMessagePropertyIntercepter.setProperty(facade, name, value);
     }
@@ -561,7 +555,7 @@ public class JmsMessage implements javax.jms.Message {
     }
 
     public boolean isRedelivered() throws JMSException {
-        return facade.getRedeliveryCounter() > 0;
+        return facade.isRedelivered();
     }
 
     public void setRedelivered(boolean redelivered) throws JMSException {

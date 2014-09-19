@@ -458,6 +458,27 @@ public class JmsMessagePropertyIntercepter {
     }
 
     /**
+     * Static inspection method to determine if a named property exists for a given message.
+     *
+     * @param message
+     *        the JmsMessageFacade instance to read from
+     * @param name
+     *        the property name that is being inspected.
+     *
+     * @return true if the message contains the given property.
+     *
+     * @throws JMSException if an error occurs while validating the defined property.
+     */
+    public static boolean propertyExists(JmsMessageFacade message, String name) throws JMSException {
+        PropertyIntercepter jmsPropertyExpression = PROPERTY_INTERCEPTERS.get(name);
+        if (jmsPropertyExpression != null) {
+            return jmsPropertyExpression.propertyExists(message);
+        } else {
+            return message.propertyExists(name);
+        }
+    }
+
+    /**
      * For each of the currently configured message property intercepter instance a
      * string key value is inserted into an Set and returned.
      *
