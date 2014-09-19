@@ -21,7 +21,6 @@ import io.neutronjms.jms.JmsDestination;
 import io.neutronjms.jms.message.facade.JmsMessageFacade;
 import io.neutronjms.jms.meta.JmsMessageId;
 
-import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
@@ -109,23 +108,23 @@ public class JmsDefaultMessageFacade implements JmsMessageFacade {
     }
 
     @Override
-    public Map<String, Object> getProperties() throws IOException {
+    public Map<String, Object> getProperties() throws JMSException {
         lazyCreateProperties();
         return properties;
     }
 
     @Override
-    public boolean propertyExists(String key) throws IOException {
+    public boolean propertyExists(String key) throws JMSException {
         return this.properties.containsKey(key);
     }
 
     @Override
-    public Object getProperty(String key) throws IOException {
+    public Object getProperty(String key) throws JMSException {
         return this.properties.get(key);
     }
 
     @Override
-    public void setProperty(String key, Object value) throws IOException {
+    public void setProperty(String key, Object value) throws JMSException {
         this.properties.put(key, value);
     }
 
@@ -309,7 +308,7 @@ public class JmsDefaultMessageFacade implements JmsMessageFacade {
         this.groupSequence = groupSequence;
     }
 
-    private void lazyCreateProperties() throws IOException {
+    private void lazyCreateProperties() {
         if (properties == null) {
             properties = new HashMap<String, Object>();
         }

@@ -19,7 +19,6 @@ package io.neutronjms.jms.message.facade;
 import io.neutronjms.jms.JmsDestination;
 import io.neutronjms.jms.meta.JmsMessageId;
 
-import java.io.IOException;
 import java.util.Map;
 
 import javax.jms.JMSException;
@@ -44,16 +43,16 @@ public interface JmsMessageFacade {
      *
      * @return a Map containing the properties of this Message that cannot be modified.
      *
-     * @throws IOException if an error occurs while accessing the Message properties.
+     * @throws JMSException if an error occurs while accessing the Message properties.
      */
-    public Map<String, Object> getProperties() throws IOException;
+    public Map<String, Object> getProperties() throws JMSException;
 
     /**
      * @returns true if the given property exists within the message.
      *
-     * @throws IOException if an error occurs while accessing the Message properties.
+     * @throws JMSException if an error occurs while accessing the Message properties.
      */
-    boolean propertyExists(String key) throws IOException;
+    boolean propertyExists(String key) throws JMSException;
 
     /**
      * Returns the property stored in the message accessed via the given key/
@@ -61,9 +60,9 @@ public interface JmsMessageFacade {
      * @param key
      *        the key used to access the given property.
      *
-     * @throws IOException if an error occurs while accessing the Message properties.
+     * @throws JMSException if an error occurs while accessing the Message properties.
      */
-    Object getProperty(String key) throws IOException;
+    Object getProperty(String key) throws JMSException;
 
     /**
      * Sets the message property value using the supplied key to identify the value
@@ -74,9 +73,9 @@ public interface JmsMessageFacade {
      * @param value
      *        the value that is to be stored in the message.
      *
-     * @throws IOException if an error occurs while accessing the Message properties.
+     * @throws JMSException if an error occurs while accessing the Message properties.
      */
-    void setProperty(String key, Object value) throws IOException;
+    void setProperty(String key, Object value) throws JMSException;
 
     /**
      * Called when a message is sent to allow a Message instance to move the

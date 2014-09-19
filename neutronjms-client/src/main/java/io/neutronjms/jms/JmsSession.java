@@ -646,8 +646,7 @@ public class JmsSession implements Session, QueueSession, TopicSession, JmsMessa
 
             original.setJMSTimestamp(timeStamp);
 
-            if(hasTTL)
-            {
+            if (hasTTL) {
                 original.setJMSExpiration(timeStamp + timeToLive);
             }
 

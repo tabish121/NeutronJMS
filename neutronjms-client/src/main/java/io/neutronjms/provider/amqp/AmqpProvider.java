@@ -615,8 +615,7 @@ public class AmqpProvider extends AbstractProvider implements TransportListener 
      */
     @Override
     public void onTransportError(final Throwable error) {
-        if(!serializer.isShutdown())
-        {
+        if (!serializer.isShutdown()) {
             serializer.execute(new Runnable() {
                 @Override
                 public void run() {
@@ -640,10 +639,9 @@ public class AmqpProvider extends AbstractProvider implements TransportListener 
      */
     @Override
     public void onTransportClosed() {
-        //TODO: improve or delete this logging
+        // TODO: improve or delete this logging
         LOG.debug("onTransportClosed listener called");
-        if(!serializer.isShutdown())
-        {
+        if (!serializer.isShutdown()) {
             serializer.execute(new Runnable() {
                 @Override
                 public void run() {

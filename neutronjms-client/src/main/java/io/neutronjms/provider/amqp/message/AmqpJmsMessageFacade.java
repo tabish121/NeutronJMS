@@ -24,7 +24,6 @@ import io.neutronjms.jms.message.facade.JmsMessageFacade;
 import io.neutronjms.jms.meta.JmsMessageId;
 import io.neutronjms.provider.amqp.AmqpConnection;
 
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.Arrays;
@@ -143,44 +142,55 @@ public class AmqpJmsMessageFacade implements JmsMessageFacade {
     }
 
     @Override
-    public Map<String, Object> getProperties() throws IOException {
+    public Map<String, Object> getProperties() throws JMSException {
         lazyCreateProperties();
         return Collections.unmodifiableMap(new HashMap<String, Object>(propertiesMap));
     }
 
     @Override
-    public boolean propertyExists(String key) throws IOException {
+    public boolean propertyExists(String key) throws JMSException {
+        return AmqpJmsMessagePropertyIntercepter.getProperty(this, key) != null;
+    }
+
+    /**
+     * Returns a set of all the property names that have been set in this message.
+     *
+     * @return a set of property names in the message or an empty set if none are set.
+     */
+    public Set<String> getPropertyNames() {
+        Set<String> properties = AmqpJmsMessagePropertyIntercepter.getPropertyNames(this);
         if (propertiesMap != null) {
-            return propertiesMap.containsKey(key);
+            properties.addAll(propertiesMap.keySet());
         }
-
-        // TODO - Examine message annotations for other message properties.
-
-        return false;
+        return properties;
     }
 
     @Override
-    public Object getProperty(String key) throws IOException {
+    public Object getProperty(String key) throws JMSException {
+        return AmqpJmsMessagePropertyIntercepter.getProperty(this, key);
+    }
+
+    public Object getApplicationProperty(String key) throws JMSException {
         if (propertiesMap != null) {
             return propertiesMap.get(key);
         }
-
-        // TODO - Should other message annotations be included here?
 
         return null;
     }
 
     @Override
-    public void setProperty(String key, Object value) throws IOException {
+    public void setProperty(String key, Object value) throws JMSException {
         if (key == null) {
             throw new IllegalArgumentException("Property key must not be null");
         }
 
+        AmqpJmsMessagePropertyIntercepter.setProperty(this, key, value);
+    }
+
+    public void setApplicationProperty(String key, Object value) throws JMSException {
         if (propertiesMap == null) {
             lazyCreateProperties();
         }
-
-        // TODO - intercept annotations or message level values by name \
 
         propertiesMap.put(key, value);
     }
@@ -615,19 +625,6 @@ public class AmqpJmsMessageFacade implements JmsMessageFacade {
     void clearAllApplicationProperties() {
         propertiesMap = null;
         message.setApplicationProperties(null);
-    }
-
-    /**
-     * Returns a set of all the property names that have been set in this message.
-     *
-     * @return a set of property names in the message or an empty set if none are set.
-     */
-    public Set<String> getPropertyNames() {
-        if (propertiesMap != null) {
-            return propertiesMap.keySet();
-        } else {
-            return Collections.emptySet();
-        }
     }
 
     private Long getAbsoluteExpiryTime() {

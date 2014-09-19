@@ -22,12 +22,12 @@ import io.neutronjms.jms.message.facade.JmsMessageFacade;
 import io.neutronjms.jms.meta.JmsMessageId;
 import io.neutronjms.util.TypeConversionSupport;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Vector;
+import java.util.Set;
 import java.util.concurrent.Callable;
 
 import javax.jms.DeliveryMode;
@@ -265,11 +265,7 @@ public class JmsMessage implements javax.jms.Message {
 
     @Override
     public boolean propertyExists(String name) throws JMSException {
-        try {
-            return (facade.propertyExists(name) || getObjectProperty(name) != null);
-        } catch (Exception e) {
-            throw JmsExceptionSupport.create(e);
-        }
+        return (facade.propertyExists(name) || getObjectProperty(name) != null);
     }
 
     /**
@@ -277,9 +273,9 @@ public class JmsMessage implements javax.jms.Message {
      *
      * @return unmodifiable Map of the current properties in the message.
      *
-     * @throws Exception if there is an error accessing the message properties.
+     * @throws JMSException if there is an error accessing the message properties.
      */
-    public Map<String, Object> getProperties() throws IOException {
+    public Map<String, Object> getProperties() throws JMSException {
         return Collections.unmodifiableMap(facade.getProperties());
     }
 
@@ -294,9 +290,9 @@ public class JmsMessage implements javax.jms.Message {
      * @param value
      *        the value to insert into the message properties.
      *
-     * @throws IOException if an error occurs while accessing the Message properties.
+     * @throws JMSException if an error occurs while accessing the Message properties.
      */
-    public void setProperty(String key, Object value) throws IOException {
+    public void setProperty(String key, Object value) throws JMSException {
         this.facade.setProperty(key, value);
     }
 
@@ -308,33 +304,16 @@ public class JmsMessage implements javax.jms.Message {
      *
      * @return the value stored at the given location or null if non set.
      *
-     * @throws IOException if an error occurs while accessing the Message properties.
+     * @throws JMSException if an error occurs while accessing the Message properties.
      */
-    public Object getProperty(String key) throws IOException {
+    public Object getProperty(String key) throws JMSException {
         return this.facade.getProperty(key);
     }
 
-    @SuppressWarnings("rawtypes")
     @Override
-    public Enumeration getPropertyNames() throws JMSException {
-        try {
-            Vector<String> result = new Vector<String>(facade.getProperties().keySet());
-            if (getFacade().getRedeliveryCounter() != 0) {
-                result.add("JMSXDeliveryCount");
-            }
-            if (getFacade().getGroupId() != null) {
-                result.add("JMSXGroupID");
-            }
-            if (getFacade().getGroupId() != null) {
-                result.add("JMSXGroupSeq");
-            }
-            if (getFacade().getUserId() != null) {
-                result.add("JMSXUserID");
-            }
-            return result.elements();
-        } catch (IOException e) {
-            throw JmsExceptionSupport.create(e);
-        }
+    public Enumeration<?> getPropertyNames() throws JMSException {
+        Set<String> result = new HashSet<String>(facade.getProperties().keySet());
+        return Collections.enumeration(result);
     }
 
     /**
@@ -346,13 +325,9 @@ public class JmsMessage implements javax.jms.Message {
      */
     @SuppressWarnings("rawtypes")
     public Enumeration getAllPropertyNames() throws JMSException {
-        try {
-            Vector<String> result = new Vector<String>(facade.getProperties().keySet());
-            result.addAll(JmsMessagePropertySetter.getPropertyNames());
-            return result.elements();
-        } catch (IOException e) {
-            throw JmsExceptionSupport.create(e);
-        }
+        Set<String> result = new HashSet<String>(facade.getProperties().keySet());
+        result.addAll(JmsMessagePropertyIntercepter.getAllPropertyNames());
+        return Collections.enumeration(result);
     }
 
     @Override
@@ -365,7 +340,7 @@ public class JmsMessage implements javax.jms.Message {
         }
 
         checkValidObject(value);
-        JmsMessagePropertySetter.setProperty(facade, name, value);
+        JmsMessagePropertyIntercepter.setProperty(facade, name, value);
     }
 
     public void setProperties(Map<String, Object> properties) throws JMSException {
@@ -398,7 +373,7 @@ public class JmsMessage implements javax.jms.Message {
             throw new NullPointerException("Property name cannot be null");
         }
 
-        return JmsMessagePropertyGetter.getProperty(facade, name);
+        return JmsMessagePropertyIntercepter.getProperty(facade, name);
     }
 
     @Override
