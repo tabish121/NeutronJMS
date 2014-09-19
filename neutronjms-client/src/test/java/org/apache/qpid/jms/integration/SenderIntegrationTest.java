@@ -48,15 +48,12 @@ import org.apache.qpid.proton.amqp.UnsignedInteger;
 import org.junit.Ignore;
 import org.junit.Test;
 
-public class SenderIntegrationTest extends QpidJmsTestCase
-{
+public class SenderIntegrationTest extends QpidJmsTestCase {
     private final IntegrationTestFixture _testFixture = new IntegrationTestFixture();
 
-    @Test(timeout=10000)
-    public void testCloseSender() throws Exception
-    {
-        try(TestAmqpPeer testPeer = new TestAmqpPeer(IntegrationTestFixture.PORT);)
-        {
+    @Test(timeout = 10000)
+    public void testCloseSender() throws Exception {
+        try (TestAmqpPeer testPeer = new TestAmqpPeer(IntegrationTestFixture.PORT);) {
             Connection connection = _testFixture.establishConnecton(testPeer);
             testPeer.expectBegin(true);
             testPeer.expectSenderAttach();
@@ -72,11 +69,9 @@ public class SenderIntegrationTest extends QpidJmsTestCase
         }
     }
 
-    @Test(timeout=10000)
-    public void testDefaultDeliveryModeProducesDurableMessages() throws Exception
-    {
-        try(TestAmqpPeer testPeer = new TestAmqpPeer(IntegrationTestFixture.PORT);)
-        {
+    @Test(timeout = 10000)
+    public void testDefaultDeliveryModeProducesDurableMessages() throws Exception {
+        try (TestAmqpPeer testPeer = new TestAmqpPeer(IntegrationTestFixture.PORT);) {
             Connection connection = _testFixture.establishConnecton(testPeer);
             testPeer.expectBegin(true);
             testPeer.expectSenderAttach();
@@ -85,8 +80,9 @@ public class SenderIntegrationTest extends QpidJmsTestCase
             Queue queue = session.createQueue("myQueue");
             MessageProducer producer = session.createProducer(queue);
 
-            //Create and transfer a new message
-            MessageHeaderSectionMatcher headersMatcher = new MessageHeaderSectionMatcher(true).withDurable(equalTo(true));
+            // Create and transfer a new message
+            MessageHeaderSectionMatcher headersMatcher = new MessageHeaderSectionMatcher(true)
+                    .withDurable(equalTo(true));
             MessageAnnotationsSectionMatcher msgAnnotationsMatcher = new MessageAnnotationsSectionMatcher(true);
             TransferPayloadCompositeMatcher messageMatcher = new TransferPayloadCompositeMatcher();
             messageMatcher.setHeadersMatcher(headersMatcher);
@@ -102,11 +98,9 @@ public class SenderIntegrationTest extends QpidJmsTestCase
         }
     }
 
-    @Test(timeout=10000)
-    public void testProducerOverridesMessageDeliveryMode() throws Exception
-    {
-        try(TestAmqpPeer testPeer = new TestAmqpPeer(IntegrationTestFixture.PORT);)
-        {
+    @Test(timeout = 10000)
+    public void testProducerOverridesMessageDeliveryMode() throws Exception {
+        try (TestAmqpPeer testPeer = new TestAmqpPeer(IntegrationTestFixture.PORT);) {
             Connection connection = _testFixture.establishConnecton(testPeer);
             testPeer.expectBegin(true);
             testPeer.expectSenderAttach();
@@ -115,10 +109,11 @@ public class SenderIntegrationTest extends QpidJmsTestCase
             Queue queue = session.createQueue("myQueue");
             MessageProducer producer = session.createProducer(queue);
 
-            //Create and transfer a new message, explicitly setting the deliveryMode on the
-            //message (which applications shouldn't) to NON_PERSISTENT and sending it to check
-            //that the producer ignores this value and sends the message as PERSISTENT(/durable)
-            MessageHeaderSectionMatcher headersMatcher = new MessageHeaderSectionMatcher(true).withDurable(equalTo(true));
+            // Create and transfer a new message, explicitly setting the deliveryMode on the
+            // message (which applications shouldn't) to NON_PERSISTENT and sending it to check
+            // that the producer ignores this value and sends the message as PERSISTENT(/durable)
+            MessageHeaderSectionMatcher headersMatcher = new MessageHeaderSectionMatcher(true)
+                    .withDurable(equalTo(true));
             MessageAnnotationsSectionMatcher msgAnnotationsMatcher = new MessageAnnotationsSectionMatcher(true);
             TransferPayloadCompositeMatcher messageMatcher = new TransferPayloadCompositeMatcher();
             messageMatcher.setHeadersMatcher(headersMatcher);
@@ -138,9 +133,8 @@ public class SenderIntegrationTest extends QpidJmsTestCase
     }
 
     @Ignore
-    @Test(timeout=10000)
-    public void testSendingMessageSetsJMSDestination() throws Exception
-    {
+    @Test(timeout = 10000)
+    public void testSendingMessageSetsJMSDestination() throws Exception {
 //TODO: Update test + implement required JMSDestination handling.
 //
 //        try(TestAmqpPeer testPeer = new TestAmqpPeer(IntegrationTestFixture.PORT);)
@@ -171,11 +165,9 @@ public class SenderIntegrationTest extends QpidJmsTestCase
 //        }
     }
 
-    @Test(timeout=10000)
-    public void testSendingMessageSetsJMSTimestamp() throws Exception
-    {
-        try(TestAmqpPeer testPeer = new TestAmqpPeer(IntegrationTestFixture.PORT);)
-        {
+    @Test(timeout = 10000)
+    public void testSendingMessageSetsJMSTimestamp() throws Exception {
+        try (TestAmqpPeer testPeer = new TestAmqpPeer(IntegrationTestFixture.PORT);) {
             Connection connection = _testFixture.establishConnecton(testPeer);
             testPeer.expectBegin(true);
             testPeer.expectSenderAttach();
@@ -185,12 +177,15 @@ public class SenderIntegrationTest extends QpidJmsTestCase
             Queue queue = session.createQueue(queueName);
             MessageProducer producer = session.createProducer(queue);
 
-            //Add matcher to expect the creation time field of the properties section to be set to a value greater than or equal to 'now'
+            // Add matcher to expect the creation time field of the properties section to be set to a value greater than
+            // or equal to 'now'
             Date currentTime = Calendar.getInstance().getTime();
             String text = "myMessage";
-            MessageHeaderSectionMatcher headersMatcher = new MessageHeaderSectionMatcher(true).withDurable(equalTo(true));
+            MessageHeaderSectionMatcher headersMatcher = new MessageHeaderSectionMatcher(true)
+                    .withDurable(equalTo(true));
             MessageAnnotationsSectionMatcher msgAnnotationsMatcher = new MessageAnnotationsSectionMatcher(true);
-            MessagePropertiesSectionMatcher propsMatcher = new MessagePropertiesSectionMatcher(true).withCreationTime(greaterThanOrEqualTo(currentTime));
+            MessagePropertiesSectionMatcher propsMatcher = new MessagePropertiesSectionMatcher(true)
+                    .withCreationTime(greaterThanOrEqualTo(currentTime));
             TransferPayloadCompositeMatcher messageMatcher = new TransferPayloadCompositeMatcher();
             messageMatcher.setHeadersMatcher(headersMatcher);
             messageMatcher.setMessageAnnotationsMatcher(msgAnnotationsMatcher);
@@ -204,12 +199,11 @@ public class SenderIntegrationTest extends QpidJmsTestCase
         }
     }
 
-    @Ignore//TODO: currently failing
-    @Test(timeout=10000)
-    public void testSendingMessageSetsJMSExpirationRelatedAbsoluteExpiryAndTtlFields() throws Exception
-    {
-        try(TestAmqpPeer testPeer = new TestAmqpPeer(IntegrationTestFixture.PORT);)
-        {
+    @Ignore
+    // TODO: currently failing
+    @Test(timeout = 10000)
+    public void testSendingMessageSetsJMSExpirationRelatedAbsoluteExpiryAndTtlFields() throws Exception {
+        try (TestAmqpPeer testPeer = new TestAmqpPeer(IntegrationTestFixture.PORT);) {
             Connection connection = _testFixture.establishConnecton(testPeer);
             testPeer.expectBegin(true);
             testPeer.expectSenderAttach();
@@ -228,7 +222,8 @@ public class SenderIntegrationTest extends QpidJmsTestCase
             headersMatcher.withDurable(equalTo(true));
             headersMatcher.withTtl(equalTo(UnsignedInteger.valueOf(ttl)));
             MessageAnnotationsSectionMatcher msgAnnotationsMatcher = new MessageAnnotationsSectionMatcher(true);
-            MessagePropertiesSectionMatcher propsMatcher = new MessagePropertiesSectionMatcher(true).withAbsoluteExpiryTime(greaterThanOrEqualTo(expiration));
+            MessagePropertiesSectionMatcher propsMatcher = new MessagePropertiesSectionMatcher(true)
+                    .withAbsoluteExpiryTime(greaterThanOrEqualTo(expiration));
             TransferPayloadCompositeMatcher messageMatcher = new TransferPayloadCompositeMatcher();
             messageMatcher.setHeadersMatcher(headersMatcher);
             messageMatcher.setMessageAnnotationsMatcher(msgAnnotationsMatcher);
@@ -243,15 +238,14 @@ public class SenderIntegrationTest extends QpidJmsTestCase
     }
 
     /**
-     * Test that when a message is sent with default priority of 4, the emitted AMQP message
-     * has no value in the header priority field, since the default for that field is already 4.
+     * Test that when a message is sent with default priority of 4, the emitted AMQP message has no value in the header
+     * priority field, since the default for that field is already 4.
      */
-    @Ignore//TODO: currently failing
-    @Test(timeout=10000)
-    public void testDefaultPriorityProducesMessagesWithoutPriorityField() throws Exception
-    {
-        try(TestAmqpPeer testPeer = new TestAmqpPeer(IntegrationTestFixture.PORT);)
-        {
+    @Ignore
+    // TODO: currently failing
+    @Test(timeout = 10000)
+    public void testDefaultPriorityProducesMessagesWithoutPriorityField() throws Exception {
+        try (TestAmqpPeer testPeer = new TestAmqpPeer(IntegrationTestFixture.PORT);) {
             Connection connection = _testFixture.establishConnecton(testPeer);
             testPeer.expectBegin(true);
             testPeer.expectSenderAttach();
@@ -260,8 +254,9 @@ public class SenderIntegrationTest extends QpidJmsTestCase
             Queue queue = session.createQueue("myQueue");
             MessageProducer producer = session.createProducer(queue);
 
-            //Create and transfer a new message
-            MessageHeaderSectionMatcher headersMatcher = new MessageHeaderSectionMatcher(true).withPriority(equalTo(null));
+            // Create and transfer a new message
+            MessageHeaderSectionMatcher headersMatcher = new MessageHeaderSectionMatcher(true)
+                    .withPriority(equalTo(null));
             MessageAnnotationsSectionMatcher msgAnnotationsMatcher = new MessageAnnotationsSectionMatcher(true);
             TransferPayloadCompositeMatcher messageMatcher = new TransferPayloadCompositeMatcher();
             messageMatcher.setHeadersMatcher(headersMatcher);
@@ -279,14 +274,12 @@ public class SenderIntegrationTest extends QpidJmsTestCase
     }
 
     /**
-     * Test that when a message is sent with a non-default priority, the emitted AMQP message
-     * has that value in the header priority field, and the JMS message has had JMSPriority set.
+     * Test that when a message is sent with a non-default priority, the emitted AMQP message has that value in the
+     * header priority field, and the JMS message has had JMSPriority set.
      */
-    @Test(timeout=10000)
-    public void testNonDefaultPriorityProducesMessagesWithPriorityFieldAndSetsJMSPriority() throws Exception
-    {
-        try(TestAmqpPeer testPeer = new TestAmqpPeer(IntegrationTestFixture.PORT);)
-        {
+    @Test(timeout = 10000)
+    public void testNonDefaultPriorityProducesMessagesWithPriorityFieldAndSetsJMSPriority() throws Exception {
+        try (TestAmqpPeer testPeer = new TestAmqpPeer(IntegrationTestFixture.PORT);) {
             Connection connection = _testFixture.establishConnecton(testPeer);
             testPeer.expectBegin(true);
             testPeer.expectSenderAttach();
@@ -297,8 +290,9 @@ public class SenderIntegrationTest extends QpidJmsTestCase
 
             byte priority = 5;
 
-            //Create and transfer a new message
-            MessageHeaderSectionMatcher headersMatcher = new MessageHeaderSectionMatcher(true).withPriority(equalTo(UnsignedByte.valueOf(priority)));
+            // Create and transfer a new message
+            MessageHeaderSectionMatcher headersMatcher = new MessageHeaderSectionMatcher(true)
+                    .withPriority(equalTo(UnsignedByte.valueOf(priority)));
             MessageAnnotationsSectionMatcher msgAnnotationsMatcher = new MessageAnnotationsSectionMatcher(true);
             TransferPayloadCompositeMatcher messageMatcher = new TransferPayloadCompositeMatcher();
             messageMatcher.setHeadersMatcher(headersMatcher);
@@ -316,14 +310,12 @@ public class SenderIntegrationTest extends QpidJmsTestCase
     }
 
     /**
-     * Test that upon sending a message, the sender sets the JMSMessageID on the
-     * Message object, and that the expected value is included in the AMQP
-     * message sent by the client
+     * Test that upon sending a message, the sender sets the JMSMessageID on the Message object, and that the expected
+     * value is included in the AMQP message sent by the client
      */
     @Ignore
-    @Test(timeout=10000)
-    public void testSendingMessageSetsJMSMessageID() throws Exception
-    {
+    @Test(timeout = 10000)
+    public void testSendingMessageSetsJMSMessageID() throws Exception {
 //TODO: Update test + implement required JMSMessageID handling
 //
 //        try(TestAmqpPeer testPeer = new TestAmqpPeer(IntegrationTestFixture.PORT);)
