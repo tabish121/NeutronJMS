@@ -25,7 +25,9 @@ import io.neutronjms.jms.meta.JmsMessageId;
 import io.neutronjms.provider.amqp.AmqpConnection;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -282,15 +284,32 @@ public class AmqpJmsMessageFacade implements JmsMessageFacade {
     }
 
     @Override
-    public byte[] getCorrelationIdBytes() {
-        // TODO Auto-generated method stub
-        return null;
+    public byte[] getCorrelationIdBytes() throws JMSException {
+        Object correlationId = message.getCorrelationId();
+        if (correlationId == null) {
+            return null;
+        } else if (correlationId instanceof ByteBuffer) {
+            ByteBuffer dup = ((ByteBuffer) correlationId).duplicate();
+            byte[] bytes = new byte[dup.remaining()];
+            dup.get(bytes);
+            return bytes;
+        } else {
+            // TODO - Do we need to throw here, or could we just stringify whatever is in
+            //        there and return the UTF-8 bytes?  This method is pretty useless so
+            //        maybe we just return something and let the user sort if out if they
+            //        really think they need this.
+            throw new JMSException("The underlying correlation-id is not binary and so can't be returned");
+        }
     }
 
     @Override
     public void setCorrelationIdBytes(byte[] correlationId) {
-        // TODO Auto-generated method stub
-
+        if (correlationId == null) {
+            message.setCorrelationId(correlationId);
+        } else {
+            byte[] bytes = Arrays.copyOf(correlationId, correlationId.length);
+            message.setCorrelationId(ByteBuffer.wrap(bytes));
+        }
     }
 
     @Override

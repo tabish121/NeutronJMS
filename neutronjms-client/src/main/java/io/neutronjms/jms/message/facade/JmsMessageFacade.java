@@ -167,7 +167,7 @@ public interface JmsMessageFacade {
      *
      * @throws JMSException if an error occurs while accessing the property.
      */
-    byte[] getCorrelationIdBytes();
+    byte[] getCorrelationIdBytes() throws JMSException;
 
     /**
      * Sets the correlation ID of the message in raw byte form.  Setting the value
