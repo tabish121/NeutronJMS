@@ -52,7 +52,7 @@ public class SenderIntegrationTest extends QpidJmsTestCase
 {
     private final IntegrationTestFixture _testFixture = new IntegrationTestFixture();
 
-    @Test
+    @Test(timeout=10000)
     public void testCloseSender() throws Exception
     {
         try(TestAmqpPeer testPeer = new TestAmqpPeer(IntegrationTestFixture.PORT);)
@@ -72,7 +72,7 @@ public class SenderIntegrationTest extends QpidJmsTestCase
         }
     }
 
-    @Test
+    @Test(timeout=10000)
     public void testDefaultDeliveryModeProducesDurableMessages() throws Exception
     {
         try(TestAmqpPeer testPeer = new TestAmqpPeer(IntegrationTestFixture.PORT);)
@@ -102,7 +102,7 @@ public class SenderIntegrationTest extends QpidJmsTestCase
         }
     }
 
-    @Test
+    @Test(timeout=10000)
     public void testProducerOverridesMessageDeliveryMode() throws Exception
     {
         try(TestAmqpPeer testPeer = new TestAmqpPeer(IntegrationTestFixture.PORT);)
@@ -138,7 +138,7 @@ public class SenderIntegrationTest extends QpidJmsTestCase
     }
 
     @Ignore
-    @Test
+    @Test(timeout=10000)
     public void testSendingMessageSetsJMSDestination() throws Exception
     {
 //TODO: Update test + implement required JMSDestination handling.
@@ -171,7 +171,7 @@ public class SenderIntegrationTest extends QpidJmsTestCase
 //        }
     }
 
-    @Test
+    @Test(timeout=10000)
     public void testSendingMessageSetsJMSTimestamp() throws Exception
     {
         try(TestAmqpPeer testPeer = new TestAmqpPeer(IntegrationTestFixture.PORT);)
@@ -205,7 +205,7 @@ public class SenderIntegrationTest extends QpidJmsTestCase
     }
 
     @Ignore//TODO: currently failing
-    @Test
+    @Test(timeout=10000)
     public void testSendingMessageSetsJMSExpirationRelatedAbsoluteExpiryAndTtlFields() throws Exception
     {
         try(TestAmqpPeer testPeer = new TestAmqpPeer(IntegrationTestFixture.PORT);)
@@ -247,7 +247,7 @@ public class SenderIntegrationTest extends QpidJmsTestCase
      * has no value in the header priority field, since the default for that field is already 4.
      */
     @Ignore//TODO: currently failing
-    @Test
+    @Test(timeout=10000)
     public void testDefaultPriorityProducesMessagesWithoutPriorityField() throws Exception
     {
         try(TestAmqpPeer testPeer = new TestAmqpPeer(IntegrationTestFixture.PORT);)
@@ -282,7 +282,7 @@ public class SenderIntegrationTest extends QpidJmsTestCase
      * Test that when a message is sent with a non-default priority, the emitted AMQP message
      * has that value in the header priority field, and the JMS message has had JMSPriority set.
      */
-    @Test
+    @Test(timeout=10000)
     public void testNonDefaultPriorityProducesMessagesWithPriorityFieldAndSetsJMSPriority() throws Exception
     {
         try(TestAmqpPeer testPeer = new TestAmqpPeer(IntegrationTestFixture.PORT);)
@@ -321,7 +321,7 @@ public class SenderIntegrationTest extends QpidJmsTestCase
      * message sent by the client
      */
     @Ignore
-    @Test
+    @Test(timeout=10000)
     public void testSendingMessageSetsJMSMessageID() throws Exception
     {
 //TODO: Update test + implement required JMSMessageID handling

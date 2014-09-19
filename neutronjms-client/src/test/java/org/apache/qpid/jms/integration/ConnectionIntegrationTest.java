@@ -33,7 +33,7 @@ import org.junit.Test;
 public class ConnectionIntegrationTest extends QpidJmsTestCase {
     private final IntegrationTestFixture _testFixture = new IntegrationTestFixture();
 
-    @Test
+    @Test(timeout=10000)
     public void testCreateAndCloseConnection() throws Exception {
         try (TestAmqpPeer testPeer = new TestAmqpPeer(IntegrationTestFixture.PORT);) {
             Connection connection = _testFixture.establishConnecton(testPeer);
@@ -42,7 +42,7 @@ public class ConnectionIntegrationTest extends QpidJmsTestCase {
         }
     }
 
-    @Test
+    @Test(timeout=10000)
     public void testCreateAutoAckSession() throws Exception {
         try (TestAmqpPeer testPeer = new TestAmqpPeer(IntegrationTestFixture.PORT);) {
             Connection connection = _testFixture.establishConnecton(testPeer);
