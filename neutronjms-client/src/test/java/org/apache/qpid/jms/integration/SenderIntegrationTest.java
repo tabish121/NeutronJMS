@@ -22,8 +22,10 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.isA;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -311,50 +313,54 @@ public class SenderIntegrationTest extends QpidJmsTestCase {
 
     /**
      * Test that upon sending a message, the sender sets the JMSMessageID on the Message object, and that the expected
-     * value is included in the AMQP message sent by the client
+     * value is included in the AMQP message sent by the client, without the JMS 'ID:' prefix.
      */
-    @Ignore
+    @Ignore//TODO: ensure the ID: prefix does not make it into the transmitted AMQP message.
     @Test(timeout = 10000)
-    public void testSendingMessageSetsJMSMessageID() throws Exception {
-//TODO: Update test + implement required JMSMessageID handling
-//
-//        try(TestAmqpPeer testPeer = new TestAmqpPeer(IntegrationTestFixture.PORT);)
-//        {
-//            Connection connection = _testFixture.establishConnecton(testPeer);
-//            testPeer.expectBegin(true);
-//            testPeer.expectSenderAttach();
-//
-//            Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-//            String queueName = "myQueue";
-//            Queue queue = session.createQueue(queueName);
-//            MessageProducer producer = session.createProducer(queue);
-//
-//            String text = "myMessage";
-//            MessageHeaderSectionMatcher headersMatcher = new MessageHeaderSectionMatcher(true).withDurable(equalTo(true));
-//            MessageAnnotationsSectionMatcher msgAnnotationsMatcher = new MessageAnnotationsSectionMatcher(true);
-//            MessagePropertiesSectionMatcher propsMatcher = new MessagePropertiesSectionMatcher(true).withMessageId(isA(String.class));
-//            TransferPayloadCompositeMatcher messageMatcher = new TransferPayloadCompositeMatcher();
-//            messageMatcher.setHeadersMatcher(headersMatcher);
-//            messageMatcher.setMessageAnnotationsMatcher(msgAnnotationsMatcher);
-//            messageMatcher.setPropertiesMatcher(propsMatcher);
-//            messageMatcher.setMessageContentMatcher(new EncodedAmqpValueMatcher(text));
-//            testPeer.expectTransfer(messageMatcher);
-//
-//            Message message = session.createTextMessage(text);
-//
-//
-//            assertNull("JMSMessageID should not yet be set", message.getJMSMessageID());
-//
-//            producer.send(message);
-//
-//            String jmsMessageID = message.getJMSMessageID();
-//            assertNotNull("JMSMessageID should not yet be set", jmsMessageID);
-//
-//            //Get the value that was actually transmitted/received, compare to what we have
-//            testPeer.waitForAllHandlersToComplete(1000);
-//            Object receivedMessageId = propsMatcher.getReceivedMessageId();
-//            MessageIdHelper mih = new MessageIdHelper();
-//            assertEquals("Unexpected AMQP message-id value", mih.stripMessageIdPrefix(jmsMessageID), receivedMessageId);
-//        }
+    public void testSendingMessageSetsJMSMessageIDAndDoesNotTransmitIdPrefix() throws Exception {
+        try(TestAmqpPeer testPeer = new TestAmqpPeer(IntegrationTestFixture.PORT);)
+        {
+            Connection connection = _testFixture.establishConnecton(testPeer);
+            testPeer.expectBegin(true);
+            testPeer.expectSenderAttach();
+
+            Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+            String queueName = "myQueue";
+            Queue queue = session.createQueue(queueName);
+            MessageProducer producer = session.createProducer(queue);
+
+            String text = "myMessage";
+            MessageHeaderSectionMatcher headersMatcher = new MessageHeaderSectionMatcher(true).withDurable(equalTo(true));
+            MessageAnnotationsSectionMatcher msgAnnotationsMatcher = new MessageAnnotationsSectionMatcher(true);
+            MessagePropertiesSectionMatcher propsMatcher = new MessagePropertiesSectionMatcher(true).withMessageId(isA(String.class));
+            TransferPayloadCompositeMatcher messageMatcher = new TransferPayloadCompositeMatcher();
+            messageMatcher.setHeadersMatcher(headersMatcher);
+            messageMatcher.setMessageAnnotationsMatcher(msgAnnotationsMatcher);
+            messageMatcher.setPropertiesMatcher(propsMatcher);
+            messageMatcher.setMessageContentMatcher(new EncodedAmqpValueMatcher(text));
+            testPeer.expectTransfer(messageMatcher);
+
+            Message message = session.createTextMessage(text);
+
+            assertNull("JMSMessageID should not yet be set", message.getJMSMessageID());
+
+            producer.send(message);
+
+            String jmsMessageID = message.getJMSMessageID();
+            assertNotNull("JMSMessageID should be set", jmsMessageID);
+            assertTrue("JMS 'ID:' prefix not found", jmsMessageID.startsWith("ID:"));
+
+            //Get the value that was actually transmitted/received, verify it is a string, compare to what we have locally
+            testPeer.waitForAllHandlersToComplete(1000);
+            Object receivedMessageId = propsMatcher.getReceivedMessageId();
+
+            assertTrue("Expected string to be sent by default", receivedMessageId instanceof String);
+            String receivedMessageIdString = (String)receivedMessageId;
+            assertFalse("JMS 'ID:' prefix should not be transmitted over the wire", receivedMessageIdString.toLowerCase().startsWith("id:"));
+
+            //strip the JMS prefix and verify the local value and remote value match
+            String substring = jmsMessageID.substring(3, jmsMessageID.length());
+            assertEquals("Unexpected AMQP message-id value", substring, receivedMessageId);
+        }
     }
 }
