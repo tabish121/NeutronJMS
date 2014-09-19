@@ -207,6 +207,25 @@ public class AmqpJmsMessagePropertyIntercepter {
     }
 
     /**
+     * Static query method to determine if a specific property exists in the given message.
+     *
+     * @param message
+     *        the AmqpJmsMessageFacade instance to write to.
+     * @param name
+     *        the property name that is being checked.
+     *
+     * @throws JMSException if an error occurs while inspecting the defined property.
+     */
+    public static void propertyExists(AmqpJmsMessageFacade message, String name) throws JMSException {
+        PropertyIntercepter propertyExpression = PROPERTY_INTERCEPTERS.get(name);
+        if (propertyExpression != null) {
+            propertyExpression.propertyExists(message);
+        } else {
+            message.applicationPropertyExists(name);
+        }
+    }
+
+    /**
      * For each of the currently configured message property intercepter instance a
      * string key value is inserted into an Set and returned.
      *

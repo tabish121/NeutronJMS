@@ -152,6 +152,14 @@ public class AmqpJmsMessageFacade implements JmsMessageFacade {
         return AmqpJmsMessagePropertyIntercepter.getProperty(this, key) != null;
     }
 
+    public boolean applicationPropertyExists(String key) throws JMSException {
+        if (propertiesMap != null) {
+            return propertiesMap.containsKey(key);
+        }
+
+        return false;
+    }
+
     /**
      * Returns a set of all the property names that have been set in this message.
      *
