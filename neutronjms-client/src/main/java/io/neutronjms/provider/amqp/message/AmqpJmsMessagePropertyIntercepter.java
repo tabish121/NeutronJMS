@@ -166,7 +166,7 @@ public class AmqpJmsMessagePropertyIntercepter {
      * @param name
      *        the property name that is being requested.
      *
-     * @return the correct value either mapped to an OpenWire attribute of a Message property.
+     * @return the correct value either mapped to an attribute of a Message or a message property.
      *
      * @throws JMSException if an error occurs while reading the defined property.
      */
@@ -302,7 +302,7 @@ public class AmqpJmsMessagePropertyIntercepter {
      * @param message
      *        the JmsMessageFacade whose property is being read.
      *
-     * @return the correct value either mapped to an OpenWire attribute of a Message property.
+     * @return the correct value either mapped to an Message attribute of a Message property.
      *
      * @throws JMSException if an error occurs while reading the defined property.
      */
