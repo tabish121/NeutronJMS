@@ -85,6 +85,14 @@ public class AmqpJmsSerializedObjectMessageFacade extends AmqpJmsMessageFacade i
         return getAmqpMessage().getBody() == null;
     }
 
+    /**
+     * @return the appropriate byte value that indicates the type of message this is.
+     */
+    @Override
+    public byte getJmsMsgType() {
+        return JMS_OBJECT_MESSAGE;
+    }
+
     @Override
     public JmsObjectMessageFacade copy() throws JMSException {
         AmqpJmsSerializedObjectMessageFacade copy = new AmqpJmsSerializedObjectMessageFacade(connection);

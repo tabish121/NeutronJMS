@@ -92,6 +92,14 @@ public class AmqpJmsStreamMessageFacade extends AmqpJmsMessageFacade implements 
         return copy;
     }
 
+    /**
+     * @return the appropriate byte value that indicates the type of message this is.
+     */
+    @Override
+    public byte getJmsMsgType() {
+        return JMS_STREAM_MESSAGE;
+    }
+
     @Override
     public boolean hasNext() {
         return !list.isEmpty() && position < list.size();

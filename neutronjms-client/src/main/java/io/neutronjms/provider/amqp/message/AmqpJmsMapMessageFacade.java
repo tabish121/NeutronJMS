@@ -82,6 +82,14 @@ public class AmqpJmsMapMessageFacade extends AmqpJmsMessageFacade implements Jms
         }
     }
 
+    /**
+     * @return the appropriate byte value that indicates the type of message this is.
+     */
+    @Override
+    public byte getJmsMsgType() {
+        return JMS_MAP_MESSAGE;
+    }
+
     @Override
     public JmsMapMessageFacade copy() {
         AmqpJmsMapMessageFacade copy = new AmqpJmsMapMessageFacade(connection);

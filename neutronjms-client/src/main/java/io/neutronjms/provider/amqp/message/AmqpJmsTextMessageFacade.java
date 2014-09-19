@@ -16,6 +16,7 @@
  */
 package io.neutronjms.provider.amqp.message;
 
+import static io.neutronjms.provider.amqp.message.AmqpMessageSupport.JMS_TEXT_MESSAGE;
 import io.neutronjms.jms.exceptions.JmsExceptionSupport;
 import io.neutronjms.jms.message.facade.JmsTextMessageFacade;
 import io.neutronjms.provider.amqp.AmqpConnection;
@@ -72,6 +73,14 @@ public class AmqpJmsTextMessageFacade extends AmqpJmsMessageFacade implements Jm
      */
     public AmqpJmsTextMessageFacade(AmqpConnection connection, Message message) {
         super(connection, message);
+    }
+
+    /**
+     * @return the appropriate byte value that indicates the type of message this is.
+     */
+    @Override
+    public byte getJmsMsgType() {
+        return JMS_TEXT_MESSAGE;
     }
 
     @Override

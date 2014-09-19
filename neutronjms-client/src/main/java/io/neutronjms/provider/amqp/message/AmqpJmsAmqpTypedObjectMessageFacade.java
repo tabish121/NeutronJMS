@@ -58,6 +58,14 @@ public class AmqpJmsAmqpTypedObjectMessageFacade extends AmqpJmsMessageFacade im
     }
 
     /**
+     * @return the appropriate byte value that indicates the type of message this is.
+     */
+    @Override
+    public byte getJmsMsgType() {
+        return JMS_OBJECT_MESSAGE;
+    }
+
+    /**
      * Creates a new Facade around an incoming AMQP Message for dispatch to the
      * JMS Consumer instance.
      *
