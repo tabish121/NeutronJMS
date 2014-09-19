@@ -142,7 +142,6 @@ public class JmsMessageProducerTest extends AmqpTestSupport {
         message = consumer.receive(5000);
         assertNotNull(message);
         assertEquals(0, message.getJMSExpiration());
-        assertEquals(0, message.getJMSTimestamp());
     }
 
     private String createLargeString(int sizeInBytes) {

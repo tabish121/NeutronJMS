@@ -624,12 +624,12 @@ public class JmsSession implements Session, QueueSession, TopicSession, JmsMessa
         this.connection.onException(ex);
     }
 
-    protected void send(JmsMessageProducer producer, Destination dest, Message msg, int deliveryMode, int priority, long timeToLive, boolean disableMsgId) throws JMSException {
+    protected void send(JmsMessageProducer producer, Destination dest, Message msg, int deliveryMode, int priority, long timeToLive, boolean disableMsgId, boolean disableTimestamp) throws JMSException {
         JmsDestination destination = JmsMessageTransformation.transformDestination(connection, dest);
-        send(producer, destination, msg, deliveryMode, priority, timeToLive, disableMsgId);
+        send(producer, destination, msg, deliveryMode, priority, timeToLive, disableMsgId, disableTimestamp);
     }
 
-    private void send(JmsMessageProducer producer, JmsDestination destination, Message original, int deliveryMode, int priority, long timeToLive, boolean disableMsgId) throws JMSException {
+    private void send(JmsMessageProducer producer, JmsDestination destination, Message original, int deliveryMode, int priority, long timeToLive, boolean disableMsgId, boolean disableTimestamp) throws JMSException {
         sendLock.lock();
         try {
             startNextTransaction();
@@ -637,10 +637,18 @@ public class JmsSession implements Session, QueueSession, TopicSession, JmsMessa
             original.setJMSDeliveryMode(deliveryMode);
             original.setJMSPriority(priority);
             original.setJMSRedelivered(false);
-            if (timeToLive > 0) {
-                long timeStamp = System.currentTimeMillis();
-                original.setJMSTimestamp(timeStamp);
-                original.setJMSExpiration(System.currentTimeMillis() + timeToLive);
+
+            long timeStamp = 0;
+            boolean hasTTL = timeToLive > 0;
+            if (!disableTimestamp || hasTTL) {
+                timeStamp = System.currentTimeMillis();
+            }
+
+            original.setJMSTimestamp(timeStamp);
+
+            if(hasTTL)
+            {
+                original.setJMSExpiration(timeStamp + timeToLive);
             }
 
             JmsMessageId msgId = null;

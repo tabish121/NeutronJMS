@@ -219,7 +219,7 @@ public class JmsMessageProducer implements MessageProducer {
             throw new UnsupportedOperationException("This producer can only send messages to: " + producerInfo.getDestination().getName());
         }
 
-        this.session.send(this, destination, message, deliveryMode, priority, timeToLive, disableMessageId);
+        this.session.send(this, destination, message, deliveryMode, priority, timeToLive, disableMessageId, disableTimestamp);
     }
 
     /**

@@ -171,7 +171,6 @@ public class SenderIntegrationTest extends QpidJmsTestCase
 //        }
     }
 
-    @Ignore//TODO: currently failing
     @Test
     public void testSendingMessageSetsJMSTimestamp() throws Exception
     {
@@ -186,6 +185,7 @@ public class SenderIntegrationTest extends QpidJmsTestCase
             Queue queue = session.createQueue(queueName);
             MessageProducer producer = session.createProducer(queue);
 
+            //Add matcher to expect the creation time field of the properties section to be set to a value greater than or equal to 'now'
             Date currentTime = Calendar.getInstance().getTime();
             String text = "myMessage";
             MessageHeaderSectionMatcher headersMatcher = new MessageHeaderSectionMatcher(true).withDurable(equalTo(true));
