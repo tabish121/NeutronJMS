@@ -16,6 +16,7 @@
  */
 package io.neutronjms.provider.amqp.message;
 
+import static io.neutronjms.provider.amqp.message.AmqpMessageSupport.JMS_AMQP_TTL;
 import static io.neutronjms.provider.amqp.message.AmqpMessageSupport.JMS_MESSAGE;
 import static io.neutronjms.provider.amqp.message.AmqpMessageSupport.JMS_MSG_TYPE;
 import io.neutronjms.jms.JmsDestination;
@@ -32,6 +33,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.jms.JMSException;
+import javax.jms.MessageFormatException;
 
 import org.apache.qpid.proton.Proton;
 import org.apache.qpid.proton.amqp.Symbol;
@@ -48,6 +50,7 @@ public class AmqpJmsMessageFacade implements JmsMessageFacade {
 
     private static final int DEFAULT_PRIORITY = javax.jms.Message.DEFAULT_PRIORITY;
     private static final Charset UTF8 = Charset.forName("UTF-8");
+    private static final long MAX_UINT = 0xFFFFFFFFL;
 
     protected final Message message;
     protected final AmqpConnection connection;
@@ -60,6 +63,12 @@ public class AmqpJmsMessageFacade implements JmsMessageFacade {
     private JmsDestination destination;
 
     private Long syntheticTTL;
+
+    /**
+     * Used to record the value of JMS_AMQP_TTL property
+     * if it is explicitly set by the application
+     */
+    private Long userSpecifiedTTL = null;
 
     /**
      * Create a new AMQP Message Facade with an empty message instance.
@@ -395,6 +404,23 @@ public class AmqpJmsMessageFacade implements JmsMessageFacade {
         }
     }
 
+    public void setAmqpTimeToLive(Object value) throws MessageFormatException {
+        Long ttl = null;
+        if (value instanceof Long) {
+            ttl = (Long) value;
+        }
+
+        if (ttl != null && ttl >= 0 && ttl <= MAX_UINT) {
+            userSpecifiedTTL = ttl;
+        } else {
+            throw new MessageFormatException(JMS_AMQP_TTL + " must be a long with value in range 0 to 2^31 - 1");
+        }
+    }
+
+    public long getAmqpTimeToLive() {
+        return userSpecifiedTTL;
+    }
+
     @Override
     public JmsDestination getDestination() {
         return destination;
@@ -416,6 +442,14 @@ public class AmqpJmsMessageFacade implements JmsMessageFacade {
     public void setReplyTo(JmsDestination replyTo) {
         this.replyTo = replyTo;
         // TODO Auto-generated method stub
+    }
+
+    public void setReplyToGroupId(String replyToGroupId) {
+        message.setReplyToGroupId(replyToGroupId);
+    }
+
+    public String getReplyToGroupId() {
+        return message.getReplyToGroupId();
     }
 
     @Override

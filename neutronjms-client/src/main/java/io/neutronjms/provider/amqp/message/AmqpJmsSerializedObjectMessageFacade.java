@@ -46,6 +46,12 @@ public class AmqpJmsSerializedObjectMessageFacade extends AmqpJmsMessageFacade i
     public static final String CONTENT_TYPE = "application/x-java-serialized-object";
 
     /**
+     * Used to record the value of JMS_AMQP_TYPED_ENCODING property
+     * if it is explicitly set by the application
+     */
+    // TODO private final Boolean jms_AMQP_TYPED_ENCODING = null;
+
+    /**
      * Peek and return the next element in the stream.  If the stream has been fully read
      * then this method should throw a MessageEOFException.  Multiple calls to peek should
      * return the same element.
@@ -149,5 +155,40 @@ public class AmqpJmsSerializedObjectMessageFacade extends AmqpJmsMessageFacade i
             setObject(null);
         } catch (IOException e) {
         }
+    }
+
+    void notifyChangeJMS_AMQP_TYPED_ENCODING(Boolean value) throws JMSException {
+        /* TODO
+         *
+         * JMS_AMQP_TYPED_ENCODING as a means of controlling/signalling whether an ObjectMessage is
+         * sent/received as serialized Java, or using the AMQP type system.
+         *
+         * NOTES/Questions:
+         *
+         * # We need to support converting from one type to the other with existing content, because we can't control when another JMS provider will set the property relative to the content.
+         *
+         * # If we don't put it in the result of getPropertyNames() then it wont survive a 're-populate the properties' by clearing and setting them again
+         *   - happens when being sent by another provider
+         *   - being used by an app that wants to remove properties or add properties to a received message even with the same provider
+         *
+         * # If we do put it in the property names, clearing the property names either has to:
+         *   - leave that special property present to keep signalling what will happen when sending the message
+         *   - clear the property and if necessary (depends on the default) alter the encoding type of the body (which might not be cleared)
+         *   - clear the property but regardless NOT alter the type of the body (which might not be cleared)
+         *
+         * # Do we add it to the property names if the connection/client has an [overriding] default configuration?
+         *
+         * # Do we add it to the property names for ObjectMessages which are received with the AMQP type encoding?
+         */
+//        boolean useAmqpTypeEnc = _defaultUseAmqpTypeEncoding;
+//        if (value != null) {
+//            useAmqpTypeEnc = value;
+//        }
+//
+//        try {
+//            setUseAmqpTypeEncoding(useAmqpTypeEnc);
+//        } catch (Exception e) {
+//            throw new QpidJmsMessageFormatException("Exception setting " + JMS_AMQP_TYPED_ENCODING, e);
+//        }
     }
 }
