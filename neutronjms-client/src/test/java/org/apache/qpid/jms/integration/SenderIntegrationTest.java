@@ -332,12 +332,11 @@ public class SenderIntegrationTest extends QpidJmsTestCase {
     }
 
     /**
-     * Test that upon sending a message, the sender sets the JMSMessageID on the Message object, and that the expected
-     * value is included in the AMQP message sent by the client, without the JMS 'ID:' prefix.
+     * Test that upon sending a message, the sender sets the JMSMessageID on the Message object,
+     * and that the value is included in the AMQP message sent by the client.
      */
-    @Ignore//TODO: ensure the ID: prefix does not make it into the transmitted AMQP message.
     @Test(timeout = 10000)
-    public void testSendingMessageSetsJMSMessageIDAndDoesNotTransmitIdPrefix() throws Exception {
+    public void testSendingMessageSetsJMSMessageID() throws Exception {
         try(TestAmqpPeer testPeer = new TestAmqpPeer(IntegrationTestFixture.PORT);) {
             Connection connection = testFixture.establishConnecton(testPeer);
             testPeer.expectBegin(true);
@@ -373,13 +372,8 @@ public class SenderIntegrationTest extends QpidJmsTestCase {
             testPeer.waitForAllHandlersToComplete(1000);
             Object receivedMessageId = propsMatcher.getReceivedMessageId();
 
-            assertTrue("Expected string to be sent by default", receivedMessageId instanceof String);
-            String receivedMessageIdString = (String)receivedMessageId;
-            assertFalse("JMS 'ID:' prefix should not be transmitted over the wire", receivedMessageIdString.toLowerCase().startsWith("id:"));
-
-            //strip the JMS prefix and verify the local value and remote value match
-            String substring = jmsMessageID.substring(3, jmsMessageID.length());
-            assertEquals("Unexpected AMQP message-id value", substring, receivedMessageId);
+            assertTrue("Expected string message id to be sent", receivedMessageId instanceof String);
+            assertTrue("Expected JMSMessageId value to be present in AMQP message", jmsMessageID.endsWith((String)receivedMessageId));
         }
     }
 }
