@@ -254,6 +254,7 @@ public class MessageIntegrationTest extends QpidJmsTestCase
             PropertiesDescribedType props = new PropertiesDescribedType();
             String myTopicAddress = "myTopicAddress";
             props.setTo(myTopicAddress );
+            props.setMessageId("myMessageIDString");
             DescribedType amqpValueNullContent = new AmqpValueDescribedType(null);
 
             testPeer.expectReceiverAttach();
@@ -291,10 +292,13 @@ public class MessageIntegrationTest extends QpidJmsTestCase
             String queueName = "myQueue";
             Queue queue = session.createQueue(queueName);
 
+            PropertiesDescribedType props = new PropertiesDescribedType();
+            props.setMessageId("myMessageIDString");
+
             DescribedType amqpValueNullContent = new AmqpValueDescribedType(null);
 
             testPeer.expectReceiverAttach();
-            testPeer.expectLinkFlowRespondWithTransfer(null, null, null, null, amqpValueNullContent);
+            testPeer.expectLinkFlowRespondWithTransfer(null, null, props, null, amqpValueNullContent);
             testPeer.expectDispositionThatIsAcceptedAndSettled();
 
             MessageConsumer messageConsumer = session.createConsumer(queue);
@@ -333,6 +337,7 @@ public class MessageIntegrationTest extends QpidJmsTestCase
             PropertiesDescribedType props = new PropertiesDescribedType();
             String myTopicAddress = "myTopicAddress";
             props.setReplyTo(myTopicAddress);
+            props.setMessageId("myMessageIDString");
             DescribedType amqpValueNullContent = new AmqpValueDescribedType(null);
 
             testPeer.expectReceiverAttach();
@@ -372,6 +377,7 @@ public class MessageIntegrationTest extends QpidJmsTestCase
             String myOtherQueueAddress = "myOtherQueueAddress";
             PropertiesDescribedType props = new PropertiesDescribedType();
             props.setReplyTo(myOtherQueueAddress);
+            props.setMessageId("myMessageIDString");
 
             DescribedType amqpValueNullContent = new AmqpValueDescribedType(null);
 
@@ -408,10 +414,13 @@ public class MessageIntegrationTest extends QpidJmsTestCase
             Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
             Queue queue = session.createQueue("myQueue");
 
+            PropertiesDescribedType props = new PropertiesDescribedType();
+            props.setMessageId("myMessageIDString");
+
             DescribedType amqpValueNullContent = new AmqpValueDescribedType(null);
 
             testPeer.expectReceiverAttach();
-            testPeer.expectLinkFlowRespondWithTransfer(null, null, null, null, amqpValueNullContent);
+            testPeer.expectLinkFlowRespondWithTransfer(null, null, props, null, amqpValueNullContent);
             testPeer.expectDispositionThatIsAcceptedAndSettled();
 
             MessageConsumer messageConsumer = session.createConsumer(queue);
@@ -440,10 +449,13 @@ public class MessageIntegrationTest extends QpidJmsTestCase
             Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
             Queue queue = session.createQueue("myQueue");
 
+            PropertiesDescribedType props = new PropertiesDescribedType();
+            props.setMessageId("myMessageIDString");
+
             DescribedType amqpValueNullContent = new AmqpValueDescribedType(null);
 
             testPeer.expectReceiverAttach();
-            testPeer.expectLinkFlowRespondWithTransfer(null, null, null, null, amqpValueNullContent);
+            testPeer.expectLinkFlowRespondWithTransfer(null, null, props, null, amqpValueNullContent);
             testPeer.expectDispositionThatIsAcceptedAndSettled();
 
             MessageConsumer messageConsumer = session.createConsumer(queue);
@@ -476,6 +488,8 @@ public class MessageIntegrationTest extends QpidJmsTestCase
 
             PropertiesDescribedType props = new PropertiesDescribedType();
             props.setAbsoluteExpiryTime(new Date(timestamp));
+            props.setMessageId("myMessageIDString");
+
             DescribedType amqpValueNullContent = new AmqpValueDescribedType(null);
 
             testPeer.expectReceiverAttach();
