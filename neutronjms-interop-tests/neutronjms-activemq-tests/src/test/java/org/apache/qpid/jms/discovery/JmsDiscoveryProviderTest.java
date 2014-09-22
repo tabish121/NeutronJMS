@@ -17,7 +17,6 @@
 package org.apache.qpid.jms.discovery;
 
 import static org.junit.Assert.assertNotNull;
-import io.neutronjms.provider.discovery.DiscoveryProviderFactory;
 
 import java.io.IOException;
 import java.net.URI;
@@ -26,6 +25,7 @@ import org.apache.activemq.broker.BrokerService;
 import org.apache.activemq.broker.TransportConnector;
 import org.apache.qpid.jms.provider.DefaultProviderListener;
 import org.apache.qpid.jms.provider.Provider;
+import org.apache.qpid.jms.provider.discovery.DiscoveryProviderFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;

@@ -39,7 +39,8 @@ public class SaslMechanismFinder {
     private static final Logger LOG = LoggerFactory.getLogger(SaslMechanismFinder.class);
 
     private static final FactoryFinder<MechanismFactory> MECHANISM_FACTORY_FINDER =
-        new FactoryFinder<MechanismFactory>(MechanismFactory.class, "META-INF/services/io/neutronjms/sasl/");
+        new FactoryFinder<MechanismFactory>(MechanismFactory.class,
+            "META-INF/services/org/apache/qpid/jms/sasl/");
 
     /**
      * Attempts to find a matching Mechanism implementation given a list of supported

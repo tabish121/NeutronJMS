@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.neutronjms.provider.discovery;
+package org.apache.qpid.jms.provider.discovery;
 
 import java.net.URI;
 import java.util.Map;

@@ -14,12 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.neutronjms.provider.discovery.multicast;
-
-import io.neutronjms.provider.discovery.DiscoveryAgent;
-import io.neutronjms.provider.discovery.DiscoveryEvent;
-import io.neutronjms.provider.discovery.DiscoveryListener;
-import io.neutronjms.provider.discovery.DiscoveryEvent.EventType;
+package org.apache.qpid.jms.provider.discovery.multicast;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -36,6 +31,10 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.apache.qpid.jms.provider.discovery.DiscoveryAgent;
+import org.apache.qpid.jms.provider.discovery.DiscoveryEvent;
+import org.apache.qpid.jms.provider.discovery.DiscoveryListener;
+import org.apache.qpid.jms.provider.discovery.DiscoveryEvent.EventType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

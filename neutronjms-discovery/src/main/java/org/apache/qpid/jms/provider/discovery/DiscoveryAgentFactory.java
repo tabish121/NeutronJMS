@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.neutronjms.provider.discovery;
+package org.apache.qpid.jms.provider.discovery;
 
 import java.io.IOException;
 import java.net.URI;
@@ -33,7 +33,7 @@ public abstract class DiscoveryAgentFactory {
 
     private static final FactoryFinder<DiscoveryAgentFactory> AGENT_FACTORY_FINDER =
         new FactoryFinder<DiscoveryAgentFactory>(DiscoveryAgentFactory.class,
-            "META-INF/services/org/apache/qpid/jms/providers/agents/");
+            "META-INF/services/org/apache/qpid/jms/provider/agents/");
 
     /**
      * Creates an instance of the given DiscoveryAgent and configures it using the

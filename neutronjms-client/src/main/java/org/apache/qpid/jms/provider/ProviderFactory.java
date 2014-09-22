@@ -32,7 +32,7 @@ public abstract class ProviderFactory {
 
     private static final FactoryFinder<ProviderFactory> PROVIDER_FACTORY_FINDER =
         new FactoryFinder<ProviderFactory>(ProviderFactory.class,
-            "META-INF/services/org/apache/qpid/jms/providers/");
+            "META-INF/services/org/apache/qpid/jms/provider/");
 
     /**
      * Creates an instance of the given AsyncProvider and configures it using the

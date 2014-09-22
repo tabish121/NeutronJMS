@@ -14,32 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.neutronjms.provider.discovery;
+package org.apache.qpid.jms.provider.discovery;
 
 /**
- * Event class used to convey discovered remote peer information to the
- * DiscoveryProvider.
+ * A listener of services being added or removed from a network
  */
-public class DiscoveryEvent {
+public interface DiscoveryListener {
 
-    public enum EventType {
-        ALIVE,
-        SHUTDOWN
-    };
+    /**
+     * Called when a DiscoveryAgent becomes aware of a new remote peer.
+     *
+     * @param event
+     *        the event data which contains the peer address and optional name.
+     */
+    void onServiceAdd(DiscoveryEvent event);
 
-    private final String peerUri;
-    private final EventType type;
+    /**
+     * Called when a DiscoveryAgent can no longer detect a previously known remote peer.
+     *
+     * @param event
+     *        the event data which contains the peer address and optional name.
+     */
+    void onServiceRemove(DiscoveryEvent event);
 
-    public DiscoveryEvent(String peerUri, EventType type) {
-        this.peerUri = peerUri;
-        this.type = type;
-    }
-
-    public String getPeerUri() {
-        return peerUri;
-    }
-
-    public EventType getType() {
-        return type;
-    }
 }

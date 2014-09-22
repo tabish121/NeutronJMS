@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.neutronjms.provider.discovery.multicast;
+package org.apache.qpid.jms.provider.discovery.multicast;
 
 import java.io.IOException;
 
@@ -33,7 +33,7 @@ public abstract class PacketParserFactory {
     private static final FactoryFinder<PacketParserFactory> AGENT_FACTORY_FINDER =
         new FactoryFinder<PacketParserFactory>(
             PacketParserFactory.class,
-            "META-INF/services/org/apache/qpid/jms/providers/agents/multicast-parsers/");
+            "META-INF/services/org/apache/qpid/jms/provider/agents/multicast-parsers/");
 
     /**
      * Creates an instance of the given PacketParser

@@ -14,11 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.neutronjms.provider.discovery.multicast.parsers;
+package org.apache.qpid.jms.provider.discovery.multicast.parsers;
 
-import io.neutronjms.provider.discovery.DiscoveryEvent;
-import io.neutronjms.provider.discovery.DiscoveryEvent.EventType;
-import io.neutronjms.provider.discovery.multicast.PacketParser;
+import org.apache.qpid.jms.provider.discovery.DiscoveryEvent;
+import org.apache.qpid.jms.provider.discovery.DiscoveryEvent.EventType;
+import org.apache.qpid.jms.provider.discovery.multicast.PacketParser;
 
 /**
  * Parser instance for ActiveMQ multicast discovery processing.

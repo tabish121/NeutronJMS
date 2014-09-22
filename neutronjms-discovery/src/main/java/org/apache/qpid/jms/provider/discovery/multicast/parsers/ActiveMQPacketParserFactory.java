@@ -14,27 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.neutronjms.provider.discovery;
+package org.apache.qpid.jms.provider.discovery.multicast.parsers;
+
+import org.apache.qpid.jms.provider.discovery.multicast.PacketParser;
+import org.apache.qpid.jms.provider.discovery.multicast.PacketParserFactory;
 
 /**
- * A listener of services being added or removed from a network
+ * Factory class for the ActiveMQ Packet Parser used to process data set over
+ * multicast when discovering ActiveMQ Brokers.
  */
-public interface DiscoveryListener {
+public class ActiveMQPacketParserFactory extends PacketParserFactory {
 
-    /**
-     * Called when a DiscoveryAgent becomes aware of a new remote peer.
-     *
-     * @param event
-     *        the event data which contains the peer address and optional name.
-     */
-    void onServiceAdd(DiscoveryEvent event);
+    @Override
+    public PacketParser createPacketParser(String key) throws Exception {
+        return new ActiveMQPacketParser();
+    }
 
-    /**
-     * Called when a DiscoveryAgent can no longer detect a previously known remote peer.
-     *
-     * @param event
-     *        the event data which contains the peer address and optional name.
-     */
-    void onServiceRemove(DiscoveryEvent event);
+    @Override
+    public String getName() {
+        return "ActiveMQ";
+    }
 
+    @Override
+    public String toString() {
+        return getName() + ": Discovery Parser.";
+    }
 }

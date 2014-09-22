@@ -14,14 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.neutronjms.provider.discovery.multicast;
-
-import io.neutronjms.provider.discovery.DiscoveryAgent;
-import io.neutronjms.provider.discovery.DiscoveryAgentFactory;
+package org.apache.qpid.jms.provider.discovery.multicast;
 
 import java.net.URI;
 import java.util.Map;
 
+import org.apache.qpid.jms.provider.discovery.DiscoveryAgent;
+import org.apache.qpid.jms.provider.discovery.DiscoveryAgentFactory;
 import org.apache.qpid.jms.util.PropertyUtil;
 import org.apache.qpid.jms.util.URISupport;
 
