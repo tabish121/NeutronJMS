@@ -254,6 +254,7 @@ public class AmqpJmsMessageFacade implements JmsMessageFacade {
             }
         }
 
+        //TODO: returning a null JmsMessageId object leads to NPE during delivery processing
         return null;
     }
 
