@@ -57,6 +57,7 @@ public class JmsMessageId extends JmsAbstractResourceId implements Comparable<Jm
 
     @Override
     public boolean equals(Object o) {
+        //TODO: handle messages with no messageId value
         if (this == o) {
             return true;
         }
@@ -70,6 +71,7 @@ public class JmsMessageId extends JmsAbstractResourceId implements Comparable<Jm
 
     @Override
     public int hashCode() {
+        //TODO: handle messages with no messageId value
         if (hashCode == 0) {
             hashCode = messageId.hashCode();
         }
@@ -78,6 +80,7 @@ public class JmsMessageId extends JmsAbstractResourceId implements Comparable<Jm
 
     @Override
     public int compareTo(JmsMessageId other) {
+        //TODO: handle messages with no messageId value
         int result = -1;
         if (other != null) {
             result = this.toString().compareTo(other.toString());
