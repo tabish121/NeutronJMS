@@ -62,18 +62,6 @@ public class AmqpMessageIdHelper
     private static final int AMQP_BINARY_PREFIX_LENGTH = AMQP_BINARY_PREFIX.length();
     private static final char[] HEX_CHARS = "0123456789ABCDEF".toCharArray();
 
-    private static final AmqpMessageIdHelper INSTANCE = new AmqpMessageIdHelper();
-
-    private AmqpMessageIdHelper()
-    {
-        //prevent other instances
-    }
-
-    public static AmqpMessageIdHelper getInstance()
-    {
-        return INSTANCE;
-    }
-
     /**
      * Checks whether the given string begins with "ID:" prefix used to denote a JMSMessageID
      *

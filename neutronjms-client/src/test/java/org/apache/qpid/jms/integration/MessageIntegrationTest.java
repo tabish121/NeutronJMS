@@ -541,7 +541,7 @@ public class MessageIntegrationTest extends QpidJmsTestCase
 
             assertNotNull(receivedMessage);
 
-            String expectedBaseIdString = AmqpMessageIdHelper.getInstance().toBaseMessageIdString(messageIdForAmqpMessageClass);
+            String expectedBaseIdString = new AmqpMessageIdHelper().toBaseMessageIdString(messageIdForAmqpMessageClass);
 
             assertEquals("ID:" + expectedBaseIdString, receivedMessage.getJMSMessageID());
         }
@@ -621,7 +621,7 @@ public class MessageIntegrationTest extends QpidJmsTestCase
             testPeer.waitForAllHandlersToComplete(3000);
 
             assertNotNull(receivedMessage);
-            String expectedBaseIdString = AmqpMessageIdHelper.getInstance().toBaseMessageIdString(correlationIdForAmqpMessageClass);
+            String expectedBaseIdString = new AmqpMessageIdHelper().toBaseMessageIdString(correlationIdForAmqpMessageClass);
             String expected = expectedBaseIdString;
             if (!appSpecific) {
                 expected = "ID:" + expected;
@@ -814,7 +814,7 @@ public class MessageIntegrationTest extends QpidJmsTestCase
 
             assertNotNull(receivedMessage);
 
-            String expectedBaseIdString = AmqpMessageIdHelper.getInstance().toBaseMessageIdString(idForAmqpMessageClass);
+            String expectedBaseIdString = new AmqpMessageIdHelper().toBaseMessageIdString(idForAmqpMessageClass);
 
             String jmsMessageID = receivedMessage.getJMSMessageID();
             assertEquals("ID:" + expectedBaseIdString, jmsMessageID);
