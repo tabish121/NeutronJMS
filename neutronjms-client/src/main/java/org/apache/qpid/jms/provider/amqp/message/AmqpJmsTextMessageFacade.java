@@ -16,6 +16,7 @@
  */
 package org.apache.qpid.jms.provider.amqp.message;
 
+import static org.apache.qpid.jms.provider.amqp.message.AmqpMessageSupport.JMS_MSG_TYPE;
 import static org.apache.qpid.jms.provider.amqp.message.AmqpMessageSupport.JMS_TEXT_MESSAGE;
 
 import java.nio.ByteBuffer;
@@ -59,6 +60,7 @@ public class AmqpJmsTextMessageFacade extends AmqpJmsMessageFacade implements Jm
      */
     public AmqpJmsTextMessageFacade(AmqpConnection connection) {
         super(connection);
+        setAnnotation(JMS_MSG_TYPE, JMS_TEXT_MESSAGE);
         setText(null);
     }
 

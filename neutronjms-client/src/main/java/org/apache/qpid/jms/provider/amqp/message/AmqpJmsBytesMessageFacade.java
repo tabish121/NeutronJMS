@@ -17,6 +17,7 @@
 package org.apache.qpid.jms.provider.amqp.message;
 
 import static org.apache.qpid.jms.provider.amqp.message.AmqpMessageSupport.JMS_BYTES_MESSAGE;
+import static org.apache.qpid.jms.provider.amqp.message.AmqpMessageSupport.JMS_MSG_TYPE;
 
 import org.apache.qpid.jms.message.facade.JmsBytesMessageFacade;
 import org.apache.qpid.jms.provider.amqp.AmqpConnection;
@@ -44,6 +45,7 @@ public class AmqpJmsBytesMessageFacade extends AmqpJmsMessageFacade implements J
      */
     public AmqpJmsBytesMessageFacade(AmqpConnection connection) {
         super(connection);
+        setAnnotation(JMS_MSG_TYPE, JMS_BYTES_MESSAGE);
     }
 
     /**

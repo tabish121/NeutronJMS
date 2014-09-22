@@ -79,6 +79,7 @@ public class AmqpJmsMessageFacade implements JmsMessageFacade {
         this.message.setDurable(true);
 
         this.connection = connection;
+        setAnnotation(JMS_MSG_TYPE, JMS_MESSAGE);
     }
 
     /**
