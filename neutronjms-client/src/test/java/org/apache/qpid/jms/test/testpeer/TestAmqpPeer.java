@@ -99,7 +99,7 @@ public class TestAmqpPeer implements AutoCloseable
      */
     private CountDownLatch _handlersCompletedLatch;
 
-    private int _nextLinkHandle = 100;
+    private volatile int _nextLinkHandle = 100;
 
     public TestAmqpPeer(int port) throws IOException
     {
@@ -466,17 +466,19 @@ public class TestAmqpPeer implements AutoCloseable
                             .setRcvSettleMode(ATTACH_RCV_SETTLE_MODE_FIRST)
                             .setInitialDeliveryCount(UnsignedInteger.ZERO);
 
-        FrameSender attachResponseSender = new FrameSender(this, FrameType.AMQP, 0, attachResponse, null)
-                            .setValueProvider(new ValueProvider()
-                            {
-                                @Override
-                                public void setValues()
-                                {
-                                    attachResponse.setName(attachMatcher.getReceivedName());
-                                    attachResponse.setSource(attachMatcher.getReceivedSource());
-                                    attachResponse.setTarget(attachMatcher.getReceivedTarget());
-                                }
-                            });
+        // The response frame channel will be dynamically set based on the incoming frame. Using the -1 is an illegal placeholder.
+        final FrameSender attachResponseSender = new FrameSender(this, FrameType.AMQP, -1, attachResponse, null);
+        attachResponseSender.setValueProvider(new ValueProvider()
+        {
+            @Override
+            public void setValues()
+            {
+                attachResponseSender.setChannel(attachMatcher.getActualChannel());
+                attachResponse.setName(attachMatcher.getReceivedName());
+                attachResponse.setSource(attachMatcher.getReceivedSource());
+                attachResponse.setTarget(attachMatcher.getReceivedTarget());
+            }
+        });
 
         attachMatcher.onSuccess(attachResponseSender);
 
@@ -568,12 +570,16 @@ public class TestAmqpPeer implements AutoCloseable
 
         Binary payload = payloadData.encode();
 
-        FrameSender transferResponseSender = new FrameSender(
-                this,
-                FrameType.AMQP,
-                0, // TODO use correct channel number (and check for dodgy hard-coded zeros elsewhere)
-                transferResponse,
-                payload);
+        // The response frame channel will be dynamically set based on the incoming frame. Using the -1 is an illegal placeholder.
+        final FrameSender transferResponseSender = new FrameSender(this, FrameType.AMQP, -1, transferResponse, payload);
+        transferResponseSender.setValueProvider(new ValueProvider()
+        {
+            @Override
+            public void setValues()
+            {
+                transferResponseSender.setChannel(flowMatcher.getActualChannel());
+            }
+        });
 
         flowMatcher.onSuccess(transferResponseSender);
 

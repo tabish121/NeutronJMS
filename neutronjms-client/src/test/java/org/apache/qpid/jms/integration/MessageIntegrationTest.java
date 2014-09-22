@@ -41,7 +41,6 @@ import javax.jms.MessageConsumer;
 import javax.jms.MessageProducer;
 import javax.jms.Queue;
 import javax.jms.Session;
-import javax.jms.TextMessage;
 import javax.jms.Topic;
 
 import org.apache.qpid.jms.test.QpidJmsTestCase;
@@ -61,6 +60,7 @@ import org.apache.qpid.proton.amqp.DescribedType;
 import org.apache.qpid.proton.amqp.Symbol;
 import org.apache.qpid.proton.amqp.UnsignedInteger;
 import org.apache.qpid.proton.amqp.UnsignedLong;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class MessageIntegrationTest extends QpidJmsTestCase
@@ -143,9 +143,8 @@ public class MessageIntegrationTest extends QpidJmsTestCase
         }
     }
 
-    //TODO: use Message instead of TextMessage
     @Test(timeout = 2000)
-    public void testReceiveTextMessageWithApplicationProperties() throws Exception
+    public void testReceiveMessageWithApplicationProperties() throws Exception
     {
         try(TestAmqpPeer testPeer = new TestAmqpPeer(IntegrationTestFixture.PORT);)
         {
@@ -156,6 +155,9 @@ public class MessageIntegrationTest extends QpidJmsTestCase
 
             Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
             Queue queue = session.createQueue("myQueue");
+
+            PropertiesDescribedType props = new PropertiesDescribedType();
+            props.setMessageId("myMessageIDString");
 
             ApplicationPropertiesDescribedType appProperties = new ApplicationPropertiesDescribedType();
             appProperties.setApplicationProperty(STRING_PROP, STRING_PROP_VALUE);
@@ -171,16 +173,12 @@ public class MessageIntegrationTest extends QpidJmsTestCase
             DescribedType amqpValueNullContent = new AmqpValueDescribedType(null);
 
             testPeer.expectReceiverAttach();
-            testPeer.expectLinkFlowRespondWithTransfer(null, null, null, appProperties, amqpValueNullContent);
+            testPeer.expectLinkFlowRespondWithTransfer(null, null, props, appProperties, amqpValueNullContent);
             testPeer.expectDispositionThatIsAcceptedAndSettled();
 
             MessageConsumer messageConsumer = session.createConsumer(queue);
             Message receivedMessage = messageConsumer.receive(1000);
             testPeer.waitForAllHandlersToComplete(3000);
-
-            assertNotNull(receivedMessage);
-            assertTrue(receivedMessage instanceof TextMessage);
-            assertNull(((TextMessage)receivedMessage).getText());
 
             assertTrue(receivedMessage.propertyExists(STRING_PROP));
             assertTrue(receivedMessage.propertyExists(NULL_STRING_PROP));
@@ -201,6 +199,34 @@ public class MessageIntegrationTest extends QpidJmsTestCase
             assertEquals(LONG_PROP_VALUE, receivedMessage.getLongProperty(LONG_PROP));
             assertEquals(FLOAT_PROP_VALUE, receivedMessage.getFloatProperty(FLOAT_PROP), 0.0);
             assertEquals(DOUBLE_PROP_VALUE, receivedMessage.getDoubleProperty(DOUBLE_PROP), 0.0);
+        }
+    }
+
+    @Ignore//TODO: currently fails due to NPE during delivery processing
+    @Test(timeout = 2000)
+    public void testReceiveMessageWithoutMessageId() throws Exception
+    {
+        try(TestAmqpPeer testPeer = new TestAmqpPeer(IntegrationTestFixture.PORT);)
+        {
+            Connection connection = _testFixture.establishConnecton(testPeer);
+            connection.start();
+
+            testPeer.expectBegin(true);
+
+            Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+            Queue queue = session.createQueue("myQueue");
+
+            DescribedType amqpValueNullContent = new AmqpValueDescribedType(null);
+
+            testPeer.expectReceiverAttach();
+            testPeer.expectLinkFlowRespondWithTransfer(null, null, null, null, amqpValueNullContent);
+            testPeer.expectDispositionThatIsAcceptedAndSettled();
+
+            MessageConsumer messageConsumer = session.createConsumer(queue);
+            Message receivedMessage = messageConsumer.receive(1000);
+            testPeer.waitForAllHandlersToComplete(2000);
+
+            assertNull(receivedMessage.getJMSMessageID());
         }
     }
 
