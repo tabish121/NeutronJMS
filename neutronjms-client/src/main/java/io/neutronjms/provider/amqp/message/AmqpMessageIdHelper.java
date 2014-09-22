@@ -47,8 +47,7 @@ import java.util.UUID;
  * ulong but can't be converted into the indicated format, an exception will be thrown.
  *
  */
-public class AmqpMessageIdHelper
-{
+public class AmqpMessageIdHelper {
     public static final String AMQP_STRING_PREFIX = "AMQP_STRING:";
     public static final String AMQP_UUID_PREFIX = "AMQP_UUID:";
     public static final String AMQP_ULONG_PREFIX = "AMQP_ULONG:";
@@ -68,10 +67,8 @@ public class AmqpMessageIdHelper
      * @param string the string to check
      * @return true if and only id the string begins with "ID:"
      */
-    public boolean hasMessageIdPrefix(String string)
-    {
-        if(string == null)
-        {
+    public boolean hasMessageIdPrefix(String string) {
+        if (string == null) {
             return false;
         }
 
@@ -84,20 +81,15 @@ public class AmqpMessageIdHelper
      * @param string the string to process
      * @return the suffix, or the original String if the "ID:" prefix is not present
      */
-    public String stripMessageIdPrefix(String id)
-    {
-        if(hasMessageIdPrefix(id))
-        {
+    public String stripMessageIdPrefix(String id) {
+        if (hasMessageIdPrefix(id)) {
             return strip(id, JMS_ID_PREFIX_LENGTH);
-        }
-        else
-        {
+        } else {
             return id;
         }
     }
 
-    private String strip(String id, int numChars)
-    {
+    private String strip(String id, int numChars) {
         return id.substring(numChars);
     }
 
@@ -109,39 +101,26 @@ public class AmqpMessageIdHelper
      * @param messageId the object to process
      * @return the base string to be used in creating the actual JMS id.
      */
-    public String toBaseMessageIdString(Object messageId)
-    {
-        if(messageId == null)
-        {
+    public String toBaseMessageIdString(Object messageId) {
+        if (messageId == null) {
             return null;
-        }
-        else if(messageId instanceof String)
-        {
+        } else if (messageId instanceof String) {
             String stringId = (String) messageId;
 
-            //If the given string has a type encoding prefix,
-            //we need to escape it as an encoded string (even if
-            //the existing encoding prefix was also for string)
-            if(hasTypeEncodingPrefix(stringId))
-            {
+            // If the given string has a type encoding prefix,
+            // we need to escape it as an encoded string (even if
+            // the existing encoding prefix was also for string)
+            if (hasTypeEncodingPrefix(stringId)) {
                 return AMQP_STRING_PREFIX + stringId;
-            }
-            else
-            {
+            } else {
                 return stringId;
             }
-        }
-        else if(messageId instanceof UUID)
-        {
+        } else if (messageId instanceof UUID) {
             return AMQP_UUID_PREFIX + messageId.toString();
-        }
-        else if(messageId instanceof BigInteger || messageId instanceof Long)
-        {
+        } else if (messageId instanceof BigInteger || messageId instanceof Long) {
             return AMQP_ULONG_PREFIX + messageId.toString();
-        }
-        else if(messageId instanceof ByteBuffer)
-        {
-            ByteBuffer dup = ((ByteBuffer)messageId).duplicate();
+        } else if (messageId instanceof ByteBuffer) {
+            ByteBuffer dup = ((ByteBuffer) messageId).duplicate();
 
             byte[] bytes = new byte[dup.remaining()];
             dup.get(bytes);
@@ -149,38 +128,31 @@ public class AmqpMessageIdHelper
             String hex = convertBinaryToHexString(bytes);
 
             return AMQP_BINARY_PREFIX + hex;
-        }
-        else
-        {
+        } else {
             throw new IllegalArgumentException("Unsupported type provided: " + messageId.getClass());
         }
     }
 
-    private boolean hasTypeEncodingPrefix(String stringId)
-    {
+    private boolean hasTypeEncodingPrefix(String stringId) {
         return hasAmqpBinaryPrefix(stringId) ||
                     hasAmqpUuidPrefix(stringId) ||
                         hasAmqpUlongPrefix(stringId) ||
                             hasAmqpStringPrefix(stringId);
     }
 
-    private boolean hasAmqpStringPrefix(String stringId)
-    {
+    private boolean hasAmqpStringPrefix(String stringId) {
         return stringId.startsWith(AMQP_STRING_PREFIX);
     }
 
-    private boolean hasAmqpUlongPrefix(String stringId)
-    {
+    private boolean hasAmqpUlongPrefix(String stringId) {
         return stringId.startsWith(AMQP_ULONG_PREFIX);
     }
 
-    private boolean hasAmqpUuidPrefix(String stringId)
-    {
+    private boolean hasAmqpUuidPrefix(String stringId) {
         return stringId.startsWith(AMQP_UUID_PREFIX);
     }
 
-    private boolean hasAmqpBinaryPrefix(String stringId)
-    {
+    private boolean hasAmqpBinaryPrefix(String stringId) {
         return stringId.startsWith(AMQP_BINARY_PREFIX);
     }
 
@@ -192,43 +164,29 @@ public class AmqpMessageIdHelper
      * @return the amqp messageId style object
      * @throws IdConversionException if the provided baseId String indicates an encoded type but can't be converted to that type. 
      */
-    public Object toIdObject(String baseId) throws IdConversionException
-    {
-        if(baseId == null)
-        {
+    public Object toIdObject(String baseId) throws IdConversionException {
+        if (baseId == null) {
             return null;
         }
 
-        try
-        {
-            if(hasAmqpUuidPrefix(baseId))
-            {
+        try {
+            if (hasAmqpUuidPrefix(baseId)) {
                 String uuidString = strip(baseId, AMQP_UUID_PREFIX_LENGTH);
                 return UUID.fromString(uuidString);
-            }
-            else if(hasAmqpUlongPrefix(baseId))
-            {
+            } else if (hasAmqpUlongPrefix(baseId)) {
                 String longString = strip(baseId, AMQP_ULONG_PREFIX_LENGTH);
                 return new BigInteger(longString);
-            }
-            else if(hasAmqpStringPrefix(baseId))
-            {
+            } else if (hasAmqpStringPrefix(baseId)) {
                 return strip(baseId, AMQP_STRING_PREFIX_LENGTH);
-            }
-            else if(hasAmqpBinaryPrefix(baseId))
-            {
+            } else if (hasAmqpBinaryPrefix(baseId)) {
                 String hexString = strip(baseId, AMQP_BINARY_PREFIX_LENGTH);
                 byte[] bytes = convertHexStringToBinary(hexString);
                 return ByteBuffer.wrap(bytes);
-            }
-            else
-            {
-                //We have a string without any type prefix, transmit it as-is.
+            } else {
+                // We have a string without any type prefix, transmit it as-is.
                 return baseId;
             }
-        }
-        catch(IllegalArgumentException e)
-        {
+        } catch (IllegalArgumentException e) {
             throw new IdConversionException("Unable to convert ID value", e);
         }
     }
@@ -243,20 +201,17 @@ public class AmqpMessageIdHelper
      * @return a byte array containing the binary representation
      * @throws IllegalArgumentException if the provided String is a non-even length or contains non-hex characters
      */
-    public byte[] convertHexStringToBinary(String hexString) throws IllegalArgumentException
-    {
+    public byte[] convertHexStringToBinary(String hexString) throws IllegalArgumentException {
         int length = hexString.length();
 
-        //As each byte needs two characters in the hex encoding, the string must be an even length.
-        if (length % 2 != 0)
-        {
+        // As each byte needs two characters in the hex encoding, the string must be an even length.
+        if (length % 2 != 0) {
             throw new IllegalArgumentException("The provided hex String must be an even length, but was of length " + length + ": " + hexString);
         }
 
         byte[] binary = new byte[length / 2];
 
-        for (int i = 0; i < length; i += 2)
-        {
+        for (int i = 0; i < length; i += 2) {
             char highBitsChar = hexString.charAt(i);
             char lowBitsChar = hexString.charAt(i + 1);
 
@@ -269,23 +224,17 @@ public class AmqpMessageIdHelper
         return binary;
     }
 
-    private int hexCharToInt(char ch, String orig) throws IllegalArgumentException
-    {
-        if (ch >= '0' && ch <= '9')
-        {
-            //subtract '0' to get difference in position as an int
+    private int hexCharToInt(char ch, String orig) throws IllegalArgumentException {
+        if (ch >= '0' && ch <= '9') {
+            // subtract '0' to get difference in position as an int
             return ch - '0';
-        }
-        else if (ch >= 'A' && ch <= 'F')
-        {
-            //subtract 'A' to get difference in position as an int
-            //and then add 10 for the offset of 'A'
+        } else if (ch >= 'A' && ch <= 'F') {
+            // subtract 'A' to get difference in position as an int
+            // and then add 10 for the offset of 'A'
             return ch - 'A' + 10;
-        }
-        else if (ch >= 'a' && ch <= 'f')
-        {
-            //subtract 'a' to get difference in position as an int
-            //and then add 10 for the offset of 'a'
+        } else if (ch >= 'a' && ch <= 'f') {
+            // subtract 'a' to get difference in position as an int
+            // and then add 10 for the offset of 'a'
             return ch - 'a' + 10;
         }
 
@@ -301,17 +250,15 @@ public class AmqpMessageIdHelper
      * @param bytes binary to convert
      * @return a String containing a hex representation of the bytes
      */
-    public String convertBinaryToHexString(byte[] bytes)
-    {
-        //Each byte is represented as 2 chars
+    public String convertBinaryToHexString(byte[] bytes) {
+        // Each byte is represented as 2 chars
         StringBuilder builder = new StringBuilder(bytes.length * 2);
 
-        for (byte b : bytes)
-        {
-            //The byte will be expanded to int before shifting, replicating the
-            //sign bit, so mask everything beyond the first 4 bits afterwards
+        for (byte b : bytes) {
+            // The byte will be expanded to int before shifting, replicating the
+            // sign bit, so mask everything beyond the first 4 bits afterwards
             int highBitsInt = (b >> 4) & 0xF;
-            //We only want the first 4 bits
+            // We only want the first 4 bits
             int lowBitsInt = b & 0xF;
 
             builder.append(HEX_CHARS[highBitsInt]);

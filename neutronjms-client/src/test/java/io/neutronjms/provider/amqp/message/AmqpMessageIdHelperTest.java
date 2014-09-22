@@ -31,13 +31,11 @@ import org.apache.qpid.jms.test.QpidJmsTestCase;
 import org.junit.Before;
 import org.junit.Test;
 
-public class AmqpMessageIdHelperTest extends QpidJmsTestCase
-{
+public class AmqpMessageIdHelperTest extends QpidJmsTestCase {
     private AmqpMessageIdHelper _messageIdHelper;
 
     @Before
-    public void setUp() throws Exception
-    {
+    public void setUp() throws Exception {
         super.setUp();
 
         _messageIdHelper = new AmqpMessageIdHelper();
@@ -47,8 +45,7 @@ public class AmqpMessageIdHelperTest extends QpidJmsTestCase
      * Test that {@link AmqpMessageIdHelper#hasMessageIdPrefix(String)} returns true for strings that begin "ID:"
      */
     @Test
-    public void testHasIdPrefixWithPrefix()
-    {
+    public void testHasIdPrefixWithPrefix() {
         String myId = "ID:something";
         assertTrue("'ID:' prefix should have been identified", _messageIdHelper.hasMessageIdPrefix(myId));
     }
@@ -57,8 +54,7 @@ public class AmqpMessageIdHelperTest extends QpidJmsTestCase
      * Test that {@link AmqpMessageIdHelper#hasMessageIdPrefix(String)} returns false for string beings "ID" without colon.
      */
     @Test
-    public void testHasIdPrefixWithIDButNoColonPrefix()
-    {
+    public void testHasIdPrefixWithIDButNoColonPrefix() {
         String myIdNoColon = "IDsomething";
         assertFalse("'ID' prefix should not have been identified without trailing colon", _messageIdHelper.hasMessageIdPrefix(myIdNoColon));
     }
@@ -67,8 +63,7 @@ public class AmqpMessageIdHelperTest extends QpidJmsTestCase
      * Test that {@link AmqpMessageIdHelper#hasMessageIdPrefix(String)} returns false for null
      */
     @Test
-    public void testHasIdPrefixWithNull()
-    {
+    public void testHasIdPrefixWithNull() {
         String nullString = null;
         assertFalse("null string should not result in identification as having the prefix", _messageIdHelper.hasMessageIdPrefix(nullString));
     }
@@ -77,8 +72,7 @@ public class AmqpMessageIdHelperTest extends QpidJmsTestCase
      * Test that {@link AmqpMessageIdHelper#hasMessageIdPrefix(String)} returns false for strings that doesnt have "ID:" anywhere
      */
     @Test
-    public void testHasIdPrefixWithoutPrefix()
-    {
+    public void testHasIdPrefixWithoutPrefix() {
         String myNonId = "something";
         assertFalse("string without 'ID:' anywhere should not have been identified as having the prefix", _messageIdHelper.hasMessageIdPrefix(myNonId));
     }
@@ -87,8 +81,7 @@ public class AmqpMessageIdHelperTest extends QpidJmsTestCase
      * Test that {@link AmqpMessageIdHelper#hasMessageIdPrefix(String)} returns false for strings has lowercase "id:" prefix
      */
     @Test
-    public void testHasIdPrefixWithLowercaseID()
-    {
+    public void testHasIdPrefixWithLowercaseID() {
         String myLowerCaseNonId = "id:something";
         assertFalse("lowercase 'id:' prefix should not result in identification as having 'ID:' prefix", _messageIdHelper.hasMessageIdPrefix(myLowerCaseNonId));
     }
@@ -97,8 +90,7 @@ public class AmqpMessageIdHelperTest extends QpidJmsTestCase
      * Test that {@link AmqpMessageIdHelper#stripMessageIdPrefix(String)} strips "ID:" from strings that do begin "ID:"
      */
     @Test
-    public void testStripMessageIdPrefixWithPrefix()
-    {
+    public void testStripMessageIdPrefixWithPrefix() {
         String myIdWithoutPrefix = "something";
         String myId = "ID:" + myIdWithoutPrefix;
         assertEquals("'ID:' prefix should have been stripped", myIdWithoutPrefix, _messageIdHelper.stripMessageIdPrefix(myId));
@@ -109,8 +101,7 @@ public class AmqpMessageIdHelperTest extends QpidJmsTestCase
      * begin "ID:ID:...."
      */
     @Test
-    public void testStripMessageIdPrefixWithDoublePrefix()
-    {
+    public void testStripMessageIdPrefixWithDoublePrefix() {
         String myIdWithSinglePrefix = "ID:something";
         String myIdWithDoublePrefix = "ID:" + myIdWithSinglePrefix;
         assertEquals("'ID:' prefix should only have been stripped once", myIdWithSinglePrefix, _messageIdHelper.stripMessageIdPrefix(myIdWithDoublePrefix));
@@ -120,8 +111,7 @@ public class AmqpMessageIdHelperTest extends QpidJmsTestCase
      * Test that {@link AmqpMessageIdHelper#stripMessageIdPrefix(String)} does not alter strings that begins "ID" without a colon.
      */
     @Test
-    public void testStripMessageIdPrefixWithIDButNoColonPrefix()
-    {
+    public void testStripMessageIdPrefixWithIDButNoColonPrefix() {
         String myIdNoColon = "IDsomething";
         assertEquals("string without 'ID:' prefix should have been returned unchanged", myIdNoColon, _messageIdHelper.stripMessageIdPrefix(myIdNoColon));
     }
@@ -130,8 +120,7 @@ public class AmqpMessageIdHelperTest extends QpidJmsTestCase
      * Test that {@link AmqpMessageIdHelper#stripMessageIdPrefix(String)} returns null if given null;
      */
     @Test
-    public void testStripMessageIdPrefixWithNull()
-    {
+    public void testStripMessageIdPrefixWithNull() {
         String nullString = null;
         assertNull("null string should have been returned", _messageIdHelper.stripMessageIdPrefix(nullString));
     }
@@ -140,8 +129,7 @@ public class AmqpMessageIdHelperTest extends QpidJmsTestCase
      * Test that {@link AmqpMessageIdHelper#stripMessageIdPrefix(String)} does not alter string that doesn't begin "ID:"
      */
     @Test
-    public void testStripMessageIdPrefixWithoutIDAnywhere()
-    {
+    public void testStripMessageIdPrefixWithoutIDAnywhere() {
         String myNonId = "something";
         assertEquals("string without 'ID:' anywhere should have been returned unchanged", myNonId, _messageIdHelper.stripMessageIdPrefix(myNonId));
     }
@@ -150,8 +138,7 @@ public class AmqpMessageIdHelperTest extends QpidJmsTestCase
      * Test that {@link AmqpMessageIdHelper#stripMessageIdPrefix(String)} does not alter string with lowercase "id:"
      */
     @Test
-    public void testStripMessageIdPrefixWithLowercaseID()
-    {
+    public void testStripMessageIdPrefixWithLowercaseID() {
         String myLowerCaseNonId = "id:something";
         assertEquals("string with lowercase 'id:' prefix should have been returned unchanged", myLowerCaseNonId, _messageIdHelper.stripMessageIdPrefix(myLowerCaseNonId));
     }
@@ -160,8 +147,7 @@ public class AmqpMessageIdHelperTest extends QpidJmsTestCase
      * Test that {@link AmqpMessageIdHelper#toBaseMessageIdString(String)} returns null if given null
      */
     @Test
-    public void testToBaseMessageIdStringWithNull()
-    {
+    public void testToBaseMessageIdStringWithNull() {
         String nullString = null;
         assertNull("null string should have been returned", _messageIdHelper.toBaseMessageIdString(nullString));
     }
@@ -170,16 +156,12 @@ public class AmqpMessageIdHelperTest extends QpidJmsTestCase
      * Test that {@link AmqpMessageIdHelper#toBaseMessageIdString(String)} throws an IAE if given an unexpected object type.
      */
     @Test
-    public void testToBaseMessageIdStringThrowsIAEWithUnexpectedType()
-    {
-        try
-        {
+    public void testToBaseMessageIdStringThrowsIAEWithUnexpectedType() {
+        try {
             _messageIdHelper.toBaseMessageIdString(new Object());
             fail("expected exception not thrown");
-        }
-        catch(IllegalArgumentException iae)
-        {
-            //expected
+        } catch (IllegalArgumentException iae) {
+            // expected
         }
     }
 
@@ -188,8 +170,7 @@ public class AmqpMessageIdHelperTest extends QpidJmsTestCase
      * basic string unchanged
      */
     @Test
-    public void testToBaseMessageIdStringWithString()
-    {
+    public void testToBaseMessageIdStringWithString() {
         String stringMessageId = "myIdString";
 
         String baseMessageIdString = _messageIdHelper.toBaseMessageIdString(stringMessageId);
@@ -203,8 +184,7 @@ public class AmqpMessageIdHelperTest extends QpidJmsTestCase
      * the {@link AmqpMessageIdHelper#AMQP_UUID_PREFIX}.
      */
     @Test
-    public void testToBaseMessageIdStringWithStringBeginningWithEncodingPrefixForUUID()
-    {
+    public void testToBaseMessageIdStringWithStringBeginningWithEncodingPrefixForUUID() {
         String uuidStringMessageId = AmqpMessageIdHelper.AMQP_UUID_PREFIX + UUID.randomUUID();
         String expected = AmqpMessageIdHelper.AMQP_STRING_PREFIX + uuidStringMessageId;
 
@@ -219,8 +199,7 @@ public class AmqpMessageIdHelperTest extends QpidJmsTestCase
      * the {@link AmqpMessageIdHelper#AMQP_ULONG_PREFIX}.
      */
     @Test
-    public void testToBaseMessageIdStringWithStringBeginningWithEncodingPrefixForLong()
-    {
+    public void testToBaseMessageIdStringWithStringBeginningWithEncodingPrefixForLong() {
         String longStringMessageId = AmqpMessageIdHelper.AMQP_ULONG_PREFIX + Long.valueOf(123456789L);
         String expected = AmqpMessageIdHelper.AMQP_STRING_PREFIX + longStringMessageId;
 
@@ -235,8 +214,7 @@ public class AmqpMessageIdHelperTest extends QpidJmsTestCase
      * the {@link AmqpMessageIdHelper#AMQP_BINARY_PREFIX}.
      */
     @Test
-    public void testToBaseMessageIdStringWithStringBeginningWithEncodingPrefixForBinary()
-    {
+    public void testToBaseMessageIdStringWithStringBeginningWithEncodingPrefixForBinary() {
         String binaryStringMessageId = AmqpMessageIdHelper.AMQP_BINARY_PREFIX + "0123456789ABCDEF";
         String expected = AmqpMessageIdHelper.AMQP_STRING_PREFIX + binaryStringMessageId;
 
@@ -251,8 +229,7 @@ public class AmqpMessageIdHelperTest extends QpidJmsTestCase
      * the {@link AmqpMessageIdHelper#AMQP_STRING_PREFIX}.
      */
     @Test
-    public void testToBaseMessageIdStringWithStringBeginningWithEncodingPrefixForString()
-    {
+    public void testToBaseMessageIdStringWithStringBeginningWithEncodingPrefixForString() {
         String stringMessageId = AmqpMessageIdHelper.AMQP_STRING_PREFIX + "myStringId";
         String expected = AmqpMessageIdHelper.AMQP_STRING_PREFIX + stringMessageId;
 
@@ -266,8 +243,7 @@ public class AmqpMessageIdHelperTest extends QpidJmsTestCase
      * indicating an AMQP encoded UUID when given a UUID object.
      */
     @Test
-    public void testToBaseMessageIdStringWithUUID()
-    {
+    public void testToBaseMessageIdStringWithUUID() {
         UUID uuidMessageId = UUID.randomUUID();
         String expected = AmqpMessageIdHelper.AMQP_UUID_PREFIX + uuidMessageId.toString();
 
@@ -281,8 +257,7 @@ public class AmqpMessageIdHelperTest extends QpidJmsTestCase
      * indicating an AMQP encoded ulong when given a Long object.
      */
     @Test
-    public void testToBaseMessageIdStringWithLong()
-    {
+    public void testToBaseMessageIdStringWithLong() {
         Long longMessageId = Long.valueOf(123456789L);
         String expected = AmqpMessageIdHelper.AMQP_ULONG_PREFIX + longMessageId.toString();
 
@@ -291,14 +266,12 @@ public class AmqpMessageIdHelperTest extends QpidJmsTestCase
         assertEquals("expected base id string was not returned", expected, baseMessageIdString);
     }
 
-
     /**
      * Test that {@link AmqpMessageIdHelper#toBaseMessageIdString(String)} returns a string
      * indicating an AMQP encoded ulong when given a BigInteger object.
      */
     @Test
-    public void testToBaseMessageIdStringWithBigInteger()
-    {
+    public void testToBaseMessageIdStringWithBigInteger() {
         BigInteger bigIntMessageId = BigInteger.valueOf(123456789L);
         String expected = AmqpMessageIdHelper.AMQP_ULONG_PREFIX + bigIntMessageId.toString();
 
@@ -307,15 +280,13 @@ public class AmqpMessageIdHelperTest extends QpidJmsTestCase
         assertEquals("expected base id string was not returned", expected, baseMessageIdString);
     }
 
-
     /**
      * Test that {@link AmqpMessageIdHelper#toBaseMessageIdString(String)} returns a string
      * indicating an AMQP encoded binary when given a ByteBuffer object.
      */
     @Test
-    public void testToBaseMessageIdStringWithByteBufferBinary()
-    {
-        byte[] bytes = new byte[] { (byte)0x00, (byte)0xAB, (byte) 0x09, (byte) 0xFF};
+    public void testToBaseMessageIdStringWithByteBufferBinary() {
+        byte[] bytes = new byte[] { (byte) 0x00, (byte) 0xAB, (byte) 0x09, (byte) 0xFF };
         ByteBuffer buf = ByteBuffer.wrap(bytes);
 
         String expected = AmqpMessageIdHelper.AMQP_BINARY_PREFIX + "00AB09FF";
@@ -331,8 +302,7 @@ public class AmqpMessageIdHelperTest extends QpidJmsTestCase
      * encoded AMQP ulong id.
      */
     @Test
-    public void testToIdObjectWithEncodedUlong() throws Exception
-    {
+    public void testToIdObjectWithEncodedUlong() throws Exception {
         BigInteger longId = BigInteger.valueOf(123456789L);
         String provided = AmqpMessageIdHelper.AMQP_ULONG_PREFIX + "123456789";
 
@@ -347,9 +317,8 @@ public class AmqpMessageIdHelperTest extends QpidJmsTestCase
      * encoded AMQP binary id, using upper case hex characters
      */
     @Test
-    public void testToIdObjectWithEncodedBinaryUppercaseHexString() throws Exception
-    {
-        byte[] bytes = new byte[] { (byte)0x00, (byte)0xAB, (byte) 0x09, (byte) 0xFF};
+    public void testToIdObjectWithEncodedBinaryUppercaseHexString() throws Exception {
+        byte[] bytes = new byte[] { (byte) 0x00, (byte) 0xAB, (byte) 0x09, (byte) 0xFF };
         ByteBuffer binaryId = ByteBuffer.wrap(bytes);
 
         String provided = AmqpMessageIdHelper.AMQP_BINARY_PREFIX + "00AB09FF";
@@ -364,8 +333,7 @@ public class AmqpMessageIdHelperTest extends QpidJmsTestCase
      * when given null.
      */
     @Test
-    public void testToIdObjectWithNull() throws Exception
-    {
+    public void testToIdObjectWithNull() throws Exception {
         assertNull("null object should have been returned", _messageIdHelper.toIdObject(null));
     }
 
@@ -375,9 +343,8 @@ public class AmqpMessageIdHelperTest extends QpidJmsTestCase
      * encoded AMQP binary id, using lower case hex characters.
      */
     @Test
-    public void testToIdObjectWithEncodedBinaryLowercaseHexString() throws Exception
-    {
-        byte[] bytes = new byte[] { (byte)0x00, (byte)0xAB, (byte) 0x09, (byte) 0xFF};
+    public void testToIdObjectWithEncodedBinaryLowercaseHexString() throws Exception {
+        byte[] bytes = new byte[] { (byte) 0x00, (byte) 0xAB, (byte) 0x09, (byte) 0xFF };
         ByteBuffer binaryId = ByteBuffer.wrap(bytes);
 
         String provided = AmqpMessageIdHelper.AMQP_BINARY_PREFIX + "00ab09ff";
@@ -392,8 +359,7 @@ public class AmqpMessageIdHelperTest extends QpidJmsTestCase
      * when given a string indicating an encoded AMQP uuid id.
      */
     @Test
-    public void testToIdObjectWithEncodedUuid() throws Exception
-    {
+    public void testToIdObjectWithEncodedUuid() throws Exception {
         UUID uuid = UUID.randomUUID();
         String provided = AmqpMessageIdHelper.AMQP_UUID_PREFIX + uuid.toString();
 
@@ -407,8 +373,7 @@ public class AmqpMessageIdHelperTest extends QpidJmsTestCase
      * when given a string without any type encoding prefix.
      */
     @Test
-    public void testToIdObjectWithStringContainingNoEncodingPrefix() throws Exception
-    {
+    public void testToIdObjectWithStringContainingNoEncodingPrefix() throws Exception {
         String stringId = "myStringId";
 
         Object idObject = _messageIdHelper.toIdObject(stringId);
@@ -421,8 +386,7 @@ public class AmqpMessageIdHelperTest extends QpidJmsTestCase
      * provided string after removing the {@link AmqpMessageIdHelper#AMQP_STRING_PREFIX} prefix.
      */
     @Test
-    public void testToIdObjectWithStringContainingStringEncodingPrefix() throws Exception
-    {
+    public void testToIdObjectWithStringContainingStringEncodingPrefix() throws Exception {
         String suffix = "myStringSuffix";
         String stringId = AmqpMessageIdHelper.AMQP_STRING_PREFIX + suffix;
 
@@ -438,8 +402,7 @@ public class AmqpMessageIdHelperTest extends QpidJmsTestCase
      *  after removing the {@link AmqpMessageIdHelper#AMQP_STRING_PREFIX} prefix.
      */
     @Test
-    public void testToIdObjectWithStringContainingStringEncodingPrefixAndThenUuidPrefix() throws Exception
-    {
+    public void testToIdObjectWithStringContainingStringEncodingPrefixAndThenUuidPrefix() throws Exception {
         String encodedUuidString = AmqpMessageIdHelper.AMQP_UUID_PREFIX + UUID.randomUUID().toString();
         String stringId = AmqpMessageIdHelper.AMQP_STRING_PREFIX + encodedUuidString;
 
@@ -455,18 +418,14 @@ public class AmqpMessageIdHelperTest extends QpidJmsTestCase
      * byte using 2 characters
      */
     @Test
-    public void testToIdObjectWithStringContainingBinaryHexThrowsICEWithUnevenLengthString()
-    {
+    public void testToIdObjectWithStringContainingBinaryHexThrowsICEWithUnevenLengthString() {
         String unevenHead = AmqpMessageIdHelper.AMQP_BINARY_PREFIX + "123";
 
-        try
-        {
+        try {
             _messageIdHelper.toIdObject(unevenHead);
             fail("expected exception was not thrown");
-        }
-        catch(IdConversionException iae)
-        {
-            //expected
+        } catch (IdConversionException iae) {
+            // expected
             String msg = iae.getCause().getMessage();
             assertTrue("Message was not as expected: " + msg, msg.contains("even length"));
         }
@@ -479,69 +438,56 @@ public class AmqpMessageIdHelperTest extends QpidJmsTestCase
      * and A-F and a-f, and thus can't be converted
      */
     @Test
-    public void testToIdObjectWithStringContainingBinaryHexThrowsICEWithNonHexCharacters()
-    {
+    public void testToIdObjectWithStringContainingBinaryHexThrowsICEWithNonHexCharacters() {
 
-        //char before '0'
+        // char before '0'
         char nonHexChar = '/';
         String nonHexString = AmqpMessageIdHelper.AMQP_BINARY_PREFIX + nonHexChar + nonHexChar;
 
-        try
-        {
+        try {
             _messageIdHelper.toIdObject(nonHexString);
             fail("expected exception was not thrown");
-        }
-        catch(IdConversionException ice)
-        {
-            //expected
+        } catch (IdConversionException ice) {
+            // expected
             String msg = ice.getCause().getMessage();
             assertTrue("Message was not as expected: " + msg, msg.contains("non-hex"));
         }
 
-        //char after '9', before 'A'
+        // char after '9', before 'A'
         nonHexChar = ':';
         nonHexString = AmqpMessageIdHelper.AMQP_BINARY_PREFIX + nonHexChar + nonHexChar;
 
-        try
-        {
+        try {
             _messageIdHelper.toIdObject(nonHexString);
             fail("expected exception was not thrown");
-        }
-        catch(IdConversionException ice)
-        {
-            //expected
+        } catch (IdConversionException ice) {
+            // expected
             String msg = ice.getCause().getMessage();
             assertTrue("Message was not as expected: " + msg, msg.contains("non-hex"));
         }
 
-        //char after 'F', before 'a'
+        // char after 'F', before 'a'
         nonHexChar = 'G';
         nonHexString = AmqpMessageIdHelper.AMQP_BINARY_PREFIX + nonHexChar + nonHexChar;
 
-        try
-        {
+        try {
             _messageIdHelper.toIdObject(nonHexString);
             fail("expected exception was not thrown");
-        }
-        catch(IdConversionException ice)
-        {
-            //expected
+        } catch (IdConversionException ice) {
+            // expected
             String msg = ice.getCause().getMessage();
             assertTrue("Message was not as expected: " + msg, msg.contains("non-hex"));
         }
 
-        //char after 'f'
+        // char after 'f'
         nonHexChar = 'g';
         nonHexString = AmqpMessageIdHelper.AMQP_BINARY_PREFIX + nonHexChar + nonHexChar;
 
-        try
-        {
+        try {
             _messageIdHelper.toIdObject(nonHexString);
             fail("expected exception was not thrown");
-        }
-        catch(IdConversionException ice)
-        {
-            //expected
+        } catch (IdConversionException ice) {
+            // expected
             String msg = ice.getCause().getMessage();
             assertTrue("Message was not as expected: " + msg, msg.contains("non-hex"));
         }
