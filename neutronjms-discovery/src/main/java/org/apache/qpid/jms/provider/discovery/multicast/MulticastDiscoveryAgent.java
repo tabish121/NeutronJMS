@@ -33,8 +33,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.qpid.jms.provider.discovery.DiscoveryAgent;
 import org.apache.qpid.jms.provider.discovery.DiscoveryEvent;
-import org.apache.qpid.jms.provider.discovery.DiscoveryListener;
 import org.apache.qpid.jms.provider.discovery.DiscoveryEvent.EventType;
+import org.apache.qpid.jms.provider.discovery.DiscoveryListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,7 +45,7 @@ public class MulticastDiscoveryAgent implements DiscoveryAgent, Runnable {
 
     public static final String DEFAULT_DISCOVERY_URI_STRING = "multicast://239.255.2.3:6155";
     public static final String DEFAULT_HOST_STR = "default";
-    public static final String DEFAULT_HOST_IP = System.getProperty("neutronjms.partition.discovery", "239.255.2.3");
+    public static final String DEFAULT_HOST_IP = System.getProperty("qpidjms.partition.discovery", "239.255.2.3");
     public static final int DEFAULT_PORT = 6155;
 
     private static final Logger LOG = LoggerFactory.getLogger(MulticastDiscoveryAgent.class);
