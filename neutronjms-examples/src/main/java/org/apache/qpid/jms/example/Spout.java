@@ -18,7 +18,7 @@
  * under the License.
  *
  */
-package io.neutronjms.example;
+package org.apache.qpid.jms.example;
 
 import io.neutronjms.jms.JmsConnectionFactory;
 
