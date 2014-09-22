@@ -19,7 +19,6 @@ package org.apache.qpid.jms.failover;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import io.neutronjms.jms.JmsConnectionFactory;
 
 import java.net.URI;
 import java.util.concurrent.CountDownLatch;
@@ -36,6 +35,7 @@ import javax.jms.Session;
 import javax.jms.Topic;
 
 import org.apache.activemq.broker.jmx.QueueViewMBean;
+import org.apache.qpid.jms.JmsConnectionFactory;
 import org.apache.qpid.jms.support.AmqpTestSupport;
 import org.apache.qpid.jms.support.Wait;
 import org.junit.Ignore;

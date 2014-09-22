@@ -20,8 +20,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import io.neutronjms.jms.JmsConnection;
-import io.neutronjms.jms.JmsConnectionFactory;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -29,6 +27,8 @@ import java.net.URISyntaxException;
 import javax.jms.Connection;
 import javax.jms.JMSException;
 
+import org.apache.qpid.jms.JmsConnection;
+import org.apache.qpid.jms.JmsConnectionFactory;
 import org.apache.qpid.jms.support.AmqpTestSupport;
 import org.junit.Test;
 

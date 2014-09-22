@@ -24,11 +24,6 @@ import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import io.neutronjms.jms.message.JmsDefaultMessageFactory;
-import io.neutronjms.jms.message.JmsMessageFactory;
-import io.neutronjms.jms.message.JmsObjectMessage;
-import io.neutronjms.jms.message.facade.JmsObjectMessageFacade;
-import io.neutronjms.jms.message.facade.defaults.JmsDefaultObjectMessageFacade;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -41,6 +36,11 @@ import javax.jms.MessageNotReadableException;
 import javax.jms.MessageNotWriteableException;
 import javax.jms.ObjectMessage;
 
+import org.apache.qpid.jms.message.JmsDefaultMessageFactory;
+import org.apache.qpid.jms.message.JmsMessageFactory;
+import org.apache.qpid.jms.message.JmsObjectMessage;
+import org.apache.qpid.jms.message.facade.JmsObjectMessageFacade;
+import org.apache.qpid.jms.message.facade.defaults.JmsDefaultObjectMessageFacade;
 import org.junit.Test;
 import org.mockito.Mockito;
 

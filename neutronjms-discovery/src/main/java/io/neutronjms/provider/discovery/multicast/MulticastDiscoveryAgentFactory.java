@@ -18,11 +18,12 @@ package io.neutronjms.provider.discovery.multicast;
 
 import io.neutronjms.provider.discovery.DiscoveryAgent;
 import io.neutronjms.provider.discovery.DiscoveryAgentFactory;
-import io.neutronjms.util.PropertyUtil;
-import io.neutronjms.util.URISupport;
 
 import java.net.URI;
 import java.util.Map;
+
+import org.apache.qpid.jms.util.PropertyUtil;
+import org.apache.qpid.jms.util.URISupport;
 
 /**
  * Creates and configures a new instance of the mutlicast agent.

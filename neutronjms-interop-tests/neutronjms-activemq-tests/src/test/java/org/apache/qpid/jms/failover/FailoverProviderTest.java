@@ -20,16 +20,16 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import io.neutronjms.provider.Provider;
-import io.neutronjms.provider.DefaultProviderListener;
-import io.neutronjms.provider.failover.FailoverProvider;
-import io.neutronjms.provider.failover.FailoverProviderFactory;
 
 import java.io.IOException;
 import java.net.URI;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.qpid.jms.provider.DefaultProviderListener;
+import org.apache.qpid.jms.provider.Provider;
+import org.apache.qpid.jms.provider.failover.FailoverProvider;
+import org.apache.qpid.jms.provider.failover.FailoverProviderFactory;
 import org.apache.qpid.jms.support.AmqpTestSupport;
 import org.junit.Test;
 

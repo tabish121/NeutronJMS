@@ -19,12 +19,12 @@
 package org.apache.qpid.jms.integration;
 
 import static org.junit.Assert.assertNull;
-import io.neutronjms.jms.JmsConnectionFactory;
 
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
 
+import org.apache.qpid.jms.JmsConnectionFactory;
 import org.apache.qpid.jms.test.testpeer.TestAmqpPeer;
 
 public class IntegrationTestFixture {

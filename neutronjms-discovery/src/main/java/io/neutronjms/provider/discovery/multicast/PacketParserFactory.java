@@ -16,10 +16,9 @@
  */
 package io.neutronjms.provider.discovery.multicast;
 
-import io.neutronjms.util.FactoryFinder;
-
 import java.io.IOException;
 
+import org.apache.qpid.jms.util.FactoryFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +32,8 @@ public abstract class PacketParserFactory {
 
     private static final FactoryFinder<PacketParserFactory> AGENT_FACTORY_FINDER =
         new FactoryFinder<PacketParserFactory>(
-            PacketParserFactory.class, "META-INF/services/io/neutronjms/providers/agents/multicast-parsers/");
+            PacketParserFactory.class,
+            "META-INF/services/org/apache/qpid/jms/providers/agents/multicast-parsers/");
 
     /**
      * Creates an instance of the given PacketParser

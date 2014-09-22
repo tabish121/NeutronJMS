@@ -16,8 +16,6 @@
  */
 package org.apache.qpid.jms.support;
 
-import io.neutronjms.jms.JmsConnectionFactory;
-
 import java.net.URI;
 import java.util.Map;
 
@@ -26,6 +24,7 @@ import javax.jms.ConnectionFactory;
 
 import org.apache.activemq.broker.BrokerService;
 import org.apache.activemq.broker.TransportConnector;
+import org.apache.qpid.jms.JmsConnectionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

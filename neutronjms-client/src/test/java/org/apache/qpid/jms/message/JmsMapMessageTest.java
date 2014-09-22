@@ -21,11 +21,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import io.neutronjms.jms.message.JmsDefaultMessageFactory;
-import io.neutronjms.jms.message.JmsMapMessage;
-import io.neutronjms.jms.message.JmsMessageFactory;
-import io.neutronjms.jms.message.facade.JmsMapMessageFacade;
-import io.neutronjms.jms.message.facade.defaults.JmsDefaultMapMessageFacade;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,6 +31,11 @@ import javax.jms.JMSException;
 import javax.jms.MessageFormatException;
 import javax.jms.MessageNotWriteableException;
 
+import org.apache.qpid.jms.message.JmsDefaultMessageFactory;
+import org.apache.qpid.jms.message.JmsMapMessage;
+import org.apache.qpid.jms.message.JmsMessageFactory;
+import org.apache.qpid.jms.message.facade.JmsMapMessageFacade;
+import org.apache.qpid.jms.message.facade.defaults.JmsDefaultMapMessageFacade;
 import org.junit.Test;
 
 /**

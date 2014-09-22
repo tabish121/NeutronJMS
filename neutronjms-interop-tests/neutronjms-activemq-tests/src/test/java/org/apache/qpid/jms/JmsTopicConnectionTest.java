@@ -17,12 +17,12 @@
 package org.apache.qpid.jms;
 
 import static org.junit.Assert.assertNotNull;
-import io.neutronjms.jms.JmsConnectionFactory;
 
 import javax.jms.JMSException;
 import javax.jms.JMSSecurityException;
 import javax.jms.TopicConnection;
 
+import org.apache.qpid.jms.JmsConnectionFactory;
 import org.apache.qpid.jms.support.AmqpTestSupport;
 import org.junit.Test;
 

@@ -21,8 +21,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import io.neutronjms.jms.JmsMessageAvailableListener;
-import io.neutronjms.jms.JmsMessageConsumer;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -44,6 +42,8 @@ import javax.jms.Topic;
 
 import org.apache.activemq.broker.jmx.QueueViewMBean;
 import org.apache.activemq.broker.jmx.TopicViewMBean;
+import org.apache.qpid.jms.JmsMessageAvailableListener;
+import org.apache.qpid.jms.JmsMessageConsumer;
 import org.apache.qpid.jms.support.AmqpTestSupport;
 import org.apache.qpid.jms.support.Wait;
 import org.junit.Test;

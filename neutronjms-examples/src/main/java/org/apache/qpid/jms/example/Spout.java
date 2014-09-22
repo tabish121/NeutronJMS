@@ -20,8 +20,6 @@
  */
 package org.apache.qpid.jms.example;
 
-import io.neutronjms.jms.JmsConnectionFactory;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,6 +30,8 @@ import javax.jms.Message;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
 import javax.jms.TextMessage;
+
+import org.apache.qpid.jms.JmsConnectionFactory;
 
 public class Spout
 {

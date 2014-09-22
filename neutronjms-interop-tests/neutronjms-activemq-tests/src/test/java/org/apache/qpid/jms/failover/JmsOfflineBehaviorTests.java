@@ -19,8 +19,6 @@ package org.apache.qpid.jms.failover;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import io.neutronjms.jms.JmsConnection;
-import io.neutronjms.provider.Provider;
 
 import java.net.URI;
 import java.util.List;
@@ -33,6 +31,8 @@ import javax.jms.MessageProducer;
 import javax.jms.Queue;
 import javax.jms.Session;
 
+import org.apache.qpid.jms.JmsConnection;
+import org.apache.qpid.jms.provider.Provider;
 import org.apache.qpid.jms.support.AmqpTestSupport;
 import org.apache.qpid.jms.support.Wait;
 import org.junit.Test;

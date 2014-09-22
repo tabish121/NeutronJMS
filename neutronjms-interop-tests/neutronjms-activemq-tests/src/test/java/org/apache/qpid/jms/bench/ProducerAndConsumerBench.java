@@ -18,7 +18,6 @@ package org.apache.qpid.jms.bench;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import io.neutronjms.jms.JmsConnection;
 
 import java.util.Vector;
 import java.util.concurrent.ExecutorService;
@@ -40,6 +39,7 @@ import org.apache.activemq.broker.BrokerService;
 import org.apache.activemq.broker.region.policy.PolicyEntry;
 import org.apache.activemq.broker.region.policy.PolicyMap;
 import org.apache.activemq.broker.region.policy.VMPendingQueueMessageStoragePolicy;
+import org.apache.qpid.jms.JmsConnection;
 import org.apache.qpid.jms.support.AmqpTestSupport;
 import org.junit.Ignore;
 import org.junit.Test;

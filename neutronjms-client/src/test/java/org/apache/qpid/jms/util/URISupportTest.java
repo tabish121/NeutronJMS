@@ -16,14 +16,14 @@
  */
 package org.apache.qpid.jms.util;
 
-import io.neutronjms.util.PropertyUtil;
-import io.neutronjms.util.URISupport;
-import io.neutronjms.util.URISupport.CompositeData;
-
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.apache.qpid.jms.util.PropertyUtil;
+import org.apache.qpid.jms.util.URISupport;
+import org.apache.qpid.jms.util.URISupport.CompositeData;
 
 import junit.framework.TestCase;
 

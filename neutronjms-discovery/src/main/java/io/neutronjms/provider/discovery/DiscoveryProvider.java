@@ -16,14 +16,13 @@
  */
 package io.neutronjms.provider.discovery;
 
-import io.neutronjms.provider.ProviderWrapper;
-import io.neutronjms.provider.failover.FailoverProvider;
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.qpid.jms.provider.ProviderWrapper;
+import org.apache.qpid.jms.provider.failover.FailoverProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

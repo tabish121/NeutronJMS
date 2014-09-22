@@ -16,15 +16,15 @@
  */
 package io.neutronjms.provider.discovery;
 
-import io.neutronjms.provider.Provider;
-import io.neutronjms.provider.ProviderFactory;
-import io.neutronjms.provider.failover.FailoverProvider;
-import io.neutronjms.util.PropertyUtil;
-import io.neutronjms.util.URISupport;
-import io.neutronjms.util.URISupport.CompositeData;
-
 import java.net.URI;
 import java.util.Map;
+
+import org.apache.qpid.jms.provider.Provider;
+import org.apache.qpid.jms.provider.ProviderFactory;
+import org.apache.qpid.jms.provider.failover.FailoverProvider;
+import org.apache.qpid.jms.util.PropertyUtil;
+import org.apache.qpid.jms.util.URISupport;
+import org.apache.qpid.jms.util.URISupport.CompositeData;
 
 /**
  * Factory for creating the Discovery Provider

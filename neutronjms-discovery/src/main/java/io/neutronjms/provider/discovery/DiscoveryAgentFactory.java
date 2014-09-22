@@ -16,11 +16,10 @@
  */
 package io.neutronjms.provider.discovery;
 
-import io.neutronjms.util.FactoryFinder;
-
 import java.io.IOException;
 import java.net.URI;
 
+import org.apache.qpid.jms.util.FactoryFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +32,8 @@ public abstract class DiscoveryAgentFactory {
     private static final Logger LOG = LoggerFactory.getLogger(DiscoveryAgentFactory.class);
 
     private static final FactoryFinder<DiscoveryAgentFactory> AGENT_FACTORY_FINDER =
-        new FactoryFinder<DiscoveryAgentFactory>(DiscoveryAgentFactory.class, "META-INF/services/io/neutronjms/providers/agents/");
+        new FactoryFinder<DiscoveryAgentFactory>(DiscoveryAgentFactory.class,
+            "META-INF/services/org/apache/qpid/jms/providers/agents/");
 
     /**
      * Creates an instance of the given DiscoveryAgent and configures it using the

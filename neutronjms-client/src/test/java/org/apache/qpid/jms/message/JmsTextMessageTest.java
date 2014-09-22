@@ -21,9 +21,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import io.neutronjms.jms.message.JmsDefaultMessageFactory;
-import io.neutronjms.jms.message.JmsMessageFactory;
-import io.neutronjms.jms.message.JmsTextMessage;
 
 import java.io.IOException;
 
@@ -31,6 +28,9 @@ import javax.jms.JMSException;
 import javax.jms.MessageNotReadableException;
 import javax.jms.MessageNotWriteableException;
 
+import org.apache.qpid.jms.message.JmsDefaultMessageFactory;
+import org.apache.qpid.jms.message.JmsMessageFactory;
+import org.apache.qpid.jms.message.JmsTextMessage;
 import org.junit.Test;
 
 /**

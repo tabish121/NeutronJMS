@@ -18,7 +18,6 @@ package org.apache.qpid.jms.producer;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import io.neutronjms.jms.JmsConnectionFactory;
 
 import javax.jms.Queue;
 import javax.jms.QueueConnection;
@@ -27,6 +26,7 @@ import javax.jms.QueueSession;
 import javax.jms.Session;
 
 import org.apache.activemq.broker.jmx.QueueViewMBean;
+import org.apache.qpid.jms.JmsConnectionFactory;
 import org.apache.qpid.jms.support.AmqpTestSupport;
 import org.junit.Test;
 

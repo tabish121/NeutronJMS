@@ -17,10 +17,6 @@
 package org.apache.qpid.jms.discovery;
 
 import static org.junit.Assert.assertTrue;
-import io.neutronjms.jms.JmsConnection;
-import io.neutronjms.jms.JmsConnectionFactory;
-import io.neutronjms.jms.JmsConnectionListener;
-import io.neutronjms.jms.message.JmsInboundMessageDispatch;
 
 import java.net.URI;
 import java.util.concurrent.CountDownLatch;
@@ -28,6 +24,10 @@ import java.util.concurrent.TimeUnit;
 
 import javax.jms.Connection;
 
+import org.apache.qpid.jms.JmsConnection;
+import org.apache.qpid.jms.JmsConnectionFactory;
+import org.apache.qpid.jms.JmsConnectionListener;
+import org.apache.qpid.jms.message.JmsInboundMessageDispatch;
 import org.apache.qpid.jms.support.AmqpTestSupport;
 import org.apache.qpid.jms.support.Wait;
 import org.junit.Before;

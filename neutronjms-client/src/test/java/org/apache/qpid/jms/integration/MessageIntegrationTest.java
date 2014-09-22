@@ -25,9 +25,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
-import io.neutronjms.jms.JmsClientProperties;
-import io.neutronjms.provider.amqp.message.AmqpMessageSupport;
-import io.neutronjms.provider.amqp.message.AmqpMessageIdHelper;
 
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
@@ -43,6 +40,9 @@ import javax.jms.Queue;
 import javax.jms.Session;
 import javax.jms.Topic;
 
+import org.apache.qpid.jms.JmsClientProperties;
+import org.apache.qpid.jms.provider.amqp.message.AmqpMessageIdHelper;
+import org.apache.qpid.jms.provider.amqp.message.AmqpMessageSupport;
 import org.apache.qpid.jms.test.QpidJmsTestCase;
 import org.apache.qpid.jms.test.testpeer.TestAmqpPeer;
 import org.apache.qpid.jms.test.testpeer.describedtypes.sections.AmqpValueDescribedType;

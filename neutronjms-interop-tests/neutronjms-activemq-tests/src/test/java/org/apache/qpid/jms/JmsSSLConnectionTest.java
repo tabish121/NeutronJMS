@@ -17,13 +17,13 @@
 package org.apache.qpid.jms;
 
 import static org.junit.Assert.assertNotNull;
-import io.neutronjms.jms.JmsConnection;
-import io.neutronjms.jms.JmsConnectionFactory;
 
 import java.net.URI;
 
 import org.apache.activemq.broker.BrokerService;
 import org.apache.activemq.broker.TransportConnector;
+import org.apache.qpid.jms.JmsConnection;
+import org.apache.qpid.jms.JmsConnectionFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

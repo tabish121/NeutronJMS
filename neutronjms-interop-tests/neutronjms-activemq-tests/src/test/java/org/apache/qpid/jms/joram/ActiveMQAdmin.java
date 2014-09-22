@@ -16,10 +16,6 @@
  */
 package org.apache.qpid.jms.joram;
 
-import io.neutronjms.jms.JmsConnectionFactory;
-import io.neutronjms.jms.JmsQueue;
-import io.neutronjms.jms.JmsTopic;
-
 import java.io.File;
 import java.net.URI;
 import java.util.Hashtable;
@@ -32,6 +28,9 @@ import javax.naming.NamingException;
 import org.apache.activemq.broker.BrokerFactory;
 import org.apache.activemq.broker.BrokerService;
 import org.apache.activemq.broker.TransportConnector;
+import org.apache.qpid.jms.JmsConnectionFactory;
+import org.apache.qpid.jms.JmsQueue;
+import org.apache.qpid.jms.JmsTopic;
 import org.objectweb.jtests.jms.admin.Admin;
 
 /**

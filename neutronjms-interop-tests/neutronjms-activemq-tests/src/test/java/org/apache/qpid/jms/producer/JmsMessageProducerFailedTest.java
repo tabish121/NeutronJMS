@@ -17,7 +17,6 @@
 package org.apache.qpid.jms.producer;
 
 import static org.junit.Assert.assertTrue;
-import io.neutronjms.jms.JmsConnection;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -27,6 +26,7 @@ import javax.jms.JMSException;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
 
+import org.apache.qpid.jms.JmsConnection;
 import org.apache.qpid.jms.support.Wait;
 
 /**

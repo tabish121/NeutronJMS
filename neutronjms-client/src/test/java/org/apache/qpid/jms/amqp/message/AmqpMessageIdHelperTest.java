@@ -21,13 +21,13 @@
 package org.apache.qpid.jms.amqp.message;
 
 import static org.junit.Assert.*;
-import io.neutronjms.jms.exceptions.IdConversionException;
-import io.neutronjms.provider.amqp.message.AmqpMessageIdHelper;
 
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.util.UUID;
 
+import org.apache.qpid.jms.exceptions.IdConversionException;
+import org.apache.qpid.jms.provider.amqp.message.AmqpMessageIdHelper;
 import org.apache.qpid.jms.test.QpidJmsTestCase;
 import org.junit.Before;
 import org.junit.Test;
