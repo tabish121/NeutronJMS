@@ -25,14 +25,13 @@
 
   <artifactId>neutronjms-examples</artifactId>
   <packaging>jar</packaging>
-  <name>NeutronJMS Examples</name>
-  <description>Examples for NeutronJMS</description>
+  <name>QPidJMS Examples</name>
+  <description>Examples for QPidJMS</description>
 
   <dependencies>
     <dependency>
       <groupId>io.neutronjms</groupId>
       <artifactId>neutronjms-client</artifactId>
-      <version>${project.version}</version>
     </dependency>
   </dependencies>
 </project>

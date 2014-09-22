@@ -32,8 +32,7 @@
   <url>https://github.com/fusesource/neutronjms/</url>
 
   <description>
-      NeutronJMS is a JMS framework featuring support for a variety of wire level protocols and
-      advance messaging features.
+      QPidJMS is a JMS framework featuring support for AMQP v1.0
   </description>
 
   <prerequisites>

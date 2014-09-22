@@ -24,8 +24,8 @@
   </parent>
 
   <artifactId>neutronjms-discovery</artifactId>
-  <name>NeutronJMS Discovery Library</name>
-  <description>The Broker Discovery module for NeutronJMS</description>
+  <name>QPidJMS Discovery Library</name>
+  <description>The Broker Discovery module for QPidJMS</description>
   <packaging>jar</packaging>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

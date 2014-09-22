@@ -25,8 +25,8 @@
 
   <artifactId>neutronjms-client</artifactId>
   <packaging>jar</packaging>
-  <name>NeutronJMS Client</name>
-  <description>The core JMS Client implementation for NeutronJMS</description>
+  <name>QPidJMS Client</name>
+  <description>The core JMS Client implementation</description>
 
   <dependencies>
     <!-- =================================== -->
