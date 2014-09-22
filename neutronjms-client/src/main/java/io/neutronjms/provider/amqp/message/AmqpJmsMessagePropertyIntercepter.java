@@ -127,11 +127,11 @@ public class AmqpJmsMessagePropertyIntercepter {
         PROPERTY_INTERCEPTERS.put(JMS_AMQP_TYPED_ENCODING, new PropertyIntercepter() {
             @Override
             public Object getProperty(AmqpJmsMessageFacade message) throws JMSException {
-                if (message instanceof AmqpJmsSerializedObjectMessageFacade) {
-                    // ((AmqpJmsSerializedObjectMessageFacade) message);
+                if (message instanceof AmqpJmsObjectMessageFacade) {
+                    return ((AmqpJmsObjectMessageFacade) message).isAmqpTypedEncoding();
                 }
 
-                return false; // TODO
+                return false;
             }
 
             @Override
@@ -142,7 +142,7 @@ public class AmqpJmsMessagePropertyIntercepter {
                 }
 
                 // TODO - Finished Typed encoding work.
-                if (message instanceof AmqpJmsSerializedObjectMessageFacade) {
+                if (message instanceof AmqpJmsObjectMessageFacade) {
                     // ((AmqpJmsSerializedObjectMessageFacade) message)
                 } else {
                     throw new MessageFormatException(JMS_AMQP_TYPED_ENCODING + " is only applicable to ObjectMessage");
@@ -151,11 +151,14 @@ public class AmqpJmsMessagePropertyIntercepter {
 
             @Override
             public boolean propertyExists(AmqpJmsMessageFacade message) {
-                if (message instanceof AmqpJmsSerializedObjectMessageFacade) {
-                    // ((AmqpJmsSerializedObjectMessageFacade) message);
+                if (message instanceof AmqpJmsObjectMessageFacade) {
+                    // TODO - See notes in AmqpObjectMessageFacade about whether this should
+                    //        always be exposed for ObjectMessage or only if it's currently
+                    //        the case that the message uses the AMQP typed encoding.
+                    return ((AmqpJmsObjectMessageFacade) message).isAmqpTypedEncoding();
                 }
 
-                return false;  // TODO
+                return false;
             }
         });
     }

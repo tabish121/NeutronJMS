@@ -16,19 +16,10 @@
  */
 package io.neutronjms.provider.amqp.message;
 
-import static io.neutronjms.provider.amqp.message.AmqpMessageSupport.JMS_MSG_TYPE;
-import static io.neutronjms.provider.amqp.message.AmqpMessageSupport.JMS_OBJECT_MESSAGE;
-import io.neutronjms.jms.exceptions.JmsExceptionSupport;
-import io.neutronjms.jms.message.facade.JmsObjectMessageFacade;
-import io.neutronjms.provider.amqp.AmqpConnection;
-
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
-
-import javax.jms.JMSException;
-import javax.jms.MessageEOFException;
 
 import org.apache.qpid.proton.amqp.messaging.AmqpSequence;
 import org.apache.qpid.proton.amqp.messaging.AmqpValue;
@@ -40,56 +31,18 @@ import org.apache.qpid.proton.message.Message;
  * Wrapper around an AMQP Message instance that will be treated as a JMS ObjectMessage
  * type.
  */
-public class AmqpJmsAmqpTypedObjectMessageFacade extends AmqpJmsMessageFacade implements JmsObjectMessageFacade {
+public class AmqpTypedObjectDelegate implements AmqpObjectTypeDelegate {
+
+    private final Message message;
 
     /**
-     * Peek and return the next element in the stream.  If the stream has been fully read
-     * then this method should throw a MessageEOFException.  Multiple calls to peek should
-     * return the same element.
+     * Create a new delegate that uses Java serialization to store the message content.
      *
-     * @returns the next value in the stream without removing it.
-     *
-     * @throws MessageEOFException if end of message stream has been reached.
-     */
-    public AmqpJmsAmqpTypedObjectMessageFacade(AmqpConnection connection) {
-        super(connection);
-        //setContentType(AmqpObjectMessageSerializedDelegate.CONTENT_TYPE);
-        setAnnotation(JMS_MSG_TYPE, JMS_OBJECT_MESSAGE);
-    }
-
-    /**
-     * @return the appropriate byte value that indicates the type of message this is.
-     */
-    @Override
-    public byte getJmsMsgType() {
-        return JMS_OBJECT_MESSAGE;
-    }
-
-    /**
-     * Creates a new Facade around an incoming AMQP Message for dispatch to the
-     * JMS Consumer instance.
-     *
-     * @param connection
-     *        the connection that created this Facade.
      * @param message
-     *        the incoming Message instance that is being wrapped.
+     *        the AMQP message instance where the object is to be stored / read.
      */
-    public AmqpJmsAmqpTypedObjectMessageFacade(AmqpConnection connection, Message message) {
-        super(connection, message);
-    }
-
-    @Override
-    public JmsObjectMessageFacade copy() throws JMSException {
-        AmqpJmsAmqpTypedObjectMessageFacade copy = new AmqpJmsAmqpTypedObjectMessageFacade(connection);
-        copyInto(copy);
-
-        try {
-            copy.setObject(getObject());
-        } catch (Exception e) {
-            throw JmsExceptionSupport.create("Error while copying object content", e);
-        }
-
-        return copy;
+    public AmqpTypedObjectDelegate(Message message) {
+        this.message = message;
     }
 
     @Override
@@ -97,7 +50,7 @@ public class AmqpJmsAmqpTypedObjectMessageFacade extends AmqpJmsMessageFacade im
         // TODO: this should actually return a snapshot of the object, so we
         // need to save the bytes so we can return an equal/unmodified object later
 
-        Section body = getAmqpMessage().getBody();
+        Section body = message.getBody();
         if (body == null) {
             return null;
         } else if (body instanceof AmqpValue) {
@@ -121,7 +74,7 @@ public class AmqpJmsAmqpTypedObjectMessageFacade extends AmqpJmsMessageFacade im
         if (value == null) {
             // TODO: verify whether not sending a body is OK, send some form of
             // null (AmqpValue containing null) instead if it isn't?
-            getAmqpMessage().setBody(null);
+            message.setBody(null);
         } else if (isSupportedAmqpValueObjectType(value)) {
             // TODO: This is a temporary hack, we actually need to take a snapshot of the object
             // at this point in time, not simply set the object itself into the Proton message.
@@ -132,21 +85,13 @@ public class AmqpJmsAmqpTypedObjectMessageFacade extends AmqpJmsMessageFacade im
             // body to send, unless we augment Proton to allow setting the bytes directly.
             // We will always need to decode bytes to return a snapshot from getObject(). We
             // will need to save the bytes somehow to support that on received messages.
-            getAmqpMessage().setBody(new AmqpValue(value));
+            message.setBody(new AmqpValue(value));
         } else {
             // TODO: Data and AmqpSequence?
             throw new IllegalArgumentException("Encoding this object type with the AMQP type system is not supported: " + value.getClass().getName());
         }
 
         // TODO: ensure content type is not set (assuming we aren't using data sections)?
-    }
-
-    @Override
-    public void clearBody() {
-        try {
-            setObject(null);
-        } catch (IOException e) {
-        }
     }
 
     private boolean isSupportedAmqpValueObjectType(Serializable serializable) {
