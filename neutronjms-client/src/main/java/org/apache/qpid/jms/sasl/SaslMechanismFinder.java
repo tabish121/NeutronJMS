@@ -40,7 +40,7 @@ public class SaslMechanismFinder {
 
     private static final FactoryFinder<MechanismFactory> MECHANISM_FACTORY_FINDER =
         new FactoryFinder<MechanismFactory>(MechanismFactory.class,
-            "META-INF/services/org/apache/qpid/jms/sasl/");
+            "META-INF/services/" + SaslMechanismFinder.class.getPackage().getName().replace(".", "/") + "/");
 
     /**
      * Attempts to find a matching Mechanism implementation given a list of supported
