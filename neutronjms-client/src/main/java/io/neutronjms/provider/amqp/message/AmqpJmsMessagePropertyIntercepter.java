@@ -151,6 +151,10 @@ public class AmqpJmsMessagePropertyIntercepter {
 
             @Override
             public boolean propertyExists(AmqpJmsMessageFacade message) {
+                if (message instanceof AmqpJmsSerializedObjectMessageFacade) {
+                    // ((AmqpJmsSerializedObjectMessageFacade) message);
+                }
+
                 return false;  // TODO
             }
         });
