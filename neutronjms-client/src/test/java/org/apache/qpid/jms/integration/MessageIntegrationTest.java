@@ -231,7 +231,7 @@ public class MessageIntegrationTest extends QpidJmsTestCase
     }
 
     /**
-     * Tests that the {@link DestinationHelper#TO_TYPE_MSG_ANNOTATION_SYMBOL_NAME} set on a message to
+     * Tests that the {@link AmqpMessageSupport#AMQP_TO_ANNOTATION} set on a message to
      * indicate its 'to' address represents a Topic results in the JMSDestination object being a
      * Topic. Ensure the consumers destination is not used by consuming from a Queue.
      */
@@ -315,7 +315,7 @@ public class MessageIntegrationTest extends QpidJmsTestCase
     }
 
     /**
-     * Tests that the {@link DestinationHelper#REPLY_TO_TYPE_MSG_ANNOTATION_SYMBOL_NAME} set on a message to
+     * Tests that the {@link AmqpMessageSupport#AMQP_REPLY_TO_ANNOTATION} set on a message to
      * indicate its 'reply-to' address represents a Topic results in the JMSReplyTo object being a
      * Topic. Ensure the consumers destination is not used by consuming from a Queue.
      */
@@ -358,7 +358,7 @@ public class MessageIntegrationTest extends QpidJmsTestCase
     }
 
     /**
-     * Tests that lack of the {@link DestinationHelper#REPLY_TO_TYPE_MSG_ANNOTATION_SYMBOL_NAME} set on a
+     * Tests that lack of the {@link AmqpMessageSupport#AMQP_REPLY_TO_ANNOTATION} set on a
      * message to indicate type of its 'reply-to' address results in it being classed as the same
      * type as the destination used to create the consumer.
      */
