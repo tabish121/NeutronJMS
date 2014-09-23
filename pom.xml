@@ -29,7 +29,7 @@
   <packaging>pom</packaging>
   <name>QpidJMS</name>
   <inceptionYear>2013</inceptionYear>
-  <url>https://github.com/fusesource/neutronjms/</url>
+  <url>https://qpid.apache.org</url>
 
   <description>
       QpidJMS is a JMS framework featuring support for AMQP v1.0
@@ -74,14 +74,14 @@
   </properties>
 
   <issueManagement>
-    <url>https://github.com/fusesource/neutronjms/issues</url>
-    <system>GitHub Issues</system>
+    <url>https://issues.apache.org/jira/browse/QPIDJMS</url>
+    <system>JIRA</system>
   </issueManagement>
 
   <scm>
-    <connection>scm:git:git://github.com/tabish121/NeutronJMS.git</connection>
-    <developerConnection>scm:git:git://github.com/tabish121/NeutronJMS.git</developerConnection>
-    <url>hhttps://github.com/tabish121/NeutronJMS/issues</url>
+    <connection>scm:git:http://git-wip-us.apache.org/repos/asf/qpid-jms.git</connection>
+    <developerConnection>scm:git:https://git-wip-us.apache.org/repos/asf/qpid-jms.git</developerConnection>
+    <url>https://git-wip-us.apache.org/repos/asf?p=qpid-jms.git</url>
     <tag>HEAD</tag>
   </scm>
 
