@@ -32,7 +32,7 @@
   <url>https://github.com/fusesource/neutronjms/</url>
 
   <description>
-      QPidJMS is a JMS framework featuring support for AMQP v1.0
+      QpidJMS is a JMS framework featuring support for AMQP v1.0
   </description>
 
   <prerequisites>
