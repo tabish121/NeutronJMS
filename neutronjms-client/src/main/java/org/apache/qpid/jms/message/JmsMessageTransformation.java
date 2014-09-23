@@ -40,7 +40,7 @@ import org.apache.qpid.jms.JmsTemporaryTopic;
 import org.apache.qpid.jms.JmsTopic;
 
 /**
- * A helper class for converting normal JMS interfaces into the NeutronJMS specific
+ * A helper class for converting normal JMS interfaces into the QpidJMS specific
  * versions.
  */
 public final class JmsMessageTransformation {

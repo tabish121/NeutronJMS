@@ -28,7 +28,7 @@ import org.apache.qpid.jms.JmsConnectionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AmqpTestSupport extends NeutronJmsTestSupport {
+public class AmqpTestSupport extends QpidJmsTestSupport {
 
     protected static final Logger LOG = LoggerFactory.getLogger(AmqpTestSupport.class);
 

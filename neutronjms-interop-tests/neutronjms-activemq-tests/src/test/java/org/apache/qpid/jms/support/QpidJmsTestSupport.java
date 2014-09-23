@@ -65,13 +65,13 @@ import org.slf4j.LoggerFactory;
 /**
  * Base class for all protocol test support classes.
  */
-public class NeutronJmsTestSupport {
+public class QpidJmsTestSupport {
 
     public static final String KAHADB_DIRECTORY = "target/activemq-data";
 
     @Rule public TestName name = new TestName();
 
-    protected static final Logger LOG = LoggerFactory.getLogger(NeutronJmsTestSupport.class);
+    protected static final Logger LOG = LoggerFactory.getLogger(QpidJmsTestSupport.class);
     protected BrokerService brokerService;
     protected final List<BrokerService> brokers = new ArrayList<BrokerService>();
     protected final Vector<Throwable> exceptions = new Vector<Throwable>();

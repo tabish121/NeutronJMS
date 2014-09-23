@@ -20,7 +20,7 @@ import org.vertx.java.core.buffer.Buffer;
 
 /**
  * Listener interface that should be implemented by users of the various
- * NeutronJMS Transport classes.
+ * QpidJMS Transport classes.
  */
 public interface TransportListener {
 

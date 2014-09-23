@@ -27,7 +27,7 @@
   <artifactId>neutronjms-parent</artifactId>
   <version>1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
-  <name>NeutronJMS</name>
+  <name>QpidJMS</name>
   <inceptionYear>2013</inceptionYear>
   <url>https://github.com/fusesource/neutronjms/</url>
 
@@ -95,7 +95,7 @@
   <dependencyManagement>
     <dependencies>
       <!-- =============================== -->
-      <!-- Internal NeutronJMS Dependencies -->
+      <!-- Internal QpidJMS Dependencies -->
       <!-- =============================== -->
       <dependency>
         <groupId>io.neutronjms</groupId>

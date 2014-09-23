@@ -116,7 +116,7 @@ public class RawTcpTransport implements Transport, Runnable {
         initialiseSocket(socket);
         initializeStreams();
 
-        runner = new Thread(null, this, "NeutronJMS RawTcpTransport: " + toString());
+        runner = new Thread(null, this, "QpidJMS RawTcpTransport: " + toString());
         runner.setDaemon(false);
         runner.start();
     }

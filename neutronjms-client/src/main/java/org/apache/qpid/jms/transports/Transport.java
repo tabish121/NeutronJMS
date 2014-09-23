@@ -22,7 +22,7 @@ import java.nio.ByteBuffer;
 import org.fusesource.hawtbuf.Buffer;
 
 /**
- * Base class for all NeutronJMS Transport instances.
+ * Base class for all QpidJMS Transport instances.
  */
 public interface Transport {
 
