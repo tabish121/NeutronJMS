@@ -18,7 +18,7 @@
  * under the License.
  *
  */
-package org.apache.qpid.jms.amqp.message;
+package org.apache.qpid.jms.provider.amqp.message;
 
 import static org.junit.Assert.*;
 
