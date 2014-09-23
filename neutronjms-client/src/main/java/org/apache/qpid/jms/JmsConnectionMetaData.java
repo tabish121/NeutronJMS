@@ -40,7 +40,7 @@ public final class JmsConnectionMetaData implements ConnectionMetaData {
         int major = 0;
         int minor = 0;
         try {
-            Package p = Package.getPackage("io.neutronjns");
+            Package p = Package.getPackage("org.apache.qpid.jms");
             if (p != null) {
                 version = p.getImplementationVersion();
                 Pattern pattern = Pattern.compile("(\\d+)\\.(\\d+).*");

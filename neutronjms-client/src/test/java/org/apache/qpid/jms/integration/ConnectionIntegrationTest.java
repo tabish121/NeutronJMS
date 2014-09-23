@@ -21,12 +21,15 @@
 package org.apache.qpid.jms.integration;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import javax.jms.Connection;
+import javax.jms.ConnectionMetaData;
 import javax.jms.Session;
 
 import org.apache.qpid.jms.test.QpidJmsTestCase;
 import org.apache.qpid.jms.test.testpeer.TestAmqpPeer;
+import org.junit.Ignore;
 import org.junit.Test;
 
 // TODO find a way to make the test abort immediately if the TestAmqpPeer throws an exception
@@ -49,6 +52,17 @@ public class ConnectionIntegrationTest extends QpidJmsTestCase {
             testPeer.expectBegin(true);
             Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
             assertNotNull("Session should not be null", session);
+        }
+    }
+
+    @Ignore //TODO: Currently fails. Possible the current version implementation only works against a jar, not the classes dir.
+    @Test(timeout=5000)
+    public void testConnectionMetaDataVersion() throws Exception {
+        try (TestAmqpPeer testPeer = new TestAmqpPeer(IntegrationTestFixture.PORT);) {
+            Connection connection = testFixture.establishConnecton(testPeer);
+
+            ConnectionMetaData meta = connection.getMetaData();
+            assertTrue("Expected non-zero provider major version", meta.getProviderMajorVersion() != 0);
         }
     }
 }
